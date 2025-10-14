@@ -4,9 +4,9 @@
 import { z } from "zod";
 import { User, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/firebase/config";
-import { setDoc, doc, updateDoc, increment } from "firebase/firestore";
+import { setDoc, doc } from "firebase/firestore";
 import { getFirebaseAdmin } from "@/firebase/admin";
-import { revalidatePath } from "next/cache";
+import { createVsdTransaction } from "./vsd-transaction";
 
 const SignUpSchema = z.object({
   email: z.string().email(),
@@ -56,8 +56,7 @@ export async function signupAction(
       email: email,
       role: "artist",
       username: email.split('@')[0], // Default username
-      vsdBalance: 10, // Initial free token balance
-      dailyTokenClaimed: new Date().toISOString().split('T')[0], // Set today as claimed
+      vsdBalance: 0, // Initial balance is 0, will be updated by transaction
       onboardingCompleted: {
         dashboard: false,
         upload: false,
@@ -67,6 +66,14 @@ export async function signupAction(
         legalEagle: false,
         settings: false,
       }
+    });
+
+    // Grant initial tokens via a transaction
+    await createVsdTransaction({
+        userId: userCredential.uid,
+        amount: 10,
+        type: 'deposit',
+        details: 'Initial sign-up reward'
     });
 
     if (email === 'support@vndrmusic.com') {
@@ -101,29 +108,6 @@ export async function loginAction(
     return {
         message: "Redirecting to dashboard..."
     }
-}
-
-export async function claimDailyTokensAction(userId: string): Promise<{ message: string; success: boolean }> {
-  if (!userId) {
-    return { message: 'You must be logged in to claim tokens.', success: false };
-  }
-
-  try {
-    const { db } = await getFirebaseAdmin();
-    const userRef = doc(db, 'users', userId);
-
-    // This would typically be a transaction in a real app to ensure atomicity
-    await updateDoc(userRef, {
-      vsdBalance: increment(5),
-      dailyTokenClaimed: new Date().toISOString().split('T')[0],
-    });
-
-    revalidatePath('/dashboard');
-    return { message: 'You have successfully claimed 5 VSD tokens!', success: true };
-  } catch (error) {
-    console.error('Error claiming daily tokens:', error);
-    return { message: 'Failed to claim daily tokens. Please try again later.', success: false };
-  }
 }
 
 export async function completeOnboardingStepAction(userId: string, step: string): Promise<{ success: boolean }> {

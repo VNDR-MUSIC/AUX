@@ -9,9 +9,13 @@
  */
 
 import {ai} from '@/ai/genkit';
+import {createVsdTransaction} from '@/app/actions/vsd-transaction';
 import {z} from 'genkit';
 
-export const LegalEagleInputSchema = z.string().describe("The user's question for the simulated legal adviser.");
+export const LegalEagleInputSchema = z.object({
+  userId: z.string().describe("The ID of the user asking the question."),
+  question: z.string().describe("The user's question for the simulated legal adviser."),
+});
 export type LegalEagleInput = z.infer<typeof LegalEagleInputSchema>;
 
 export const LegalEagleOutputSchema = z.string().describe("The AI's response, framed as a simulated entertainment attorney.");
@@ -23,7 +27,7 @@ export async function legalEagleChat(input: LegalEagleInput): Promise<LegalEagle
 
 const prompt = ai.definePrompt({
   name: 'legalEaglePrompt',
-  input: {schema: LegalEagleInputSchema},
+  input: {schema: z.string()},
   output: {schema: LegalEagleOutputSchema},
   prompt: `You are 'Legal Eagle,' a simulated AI entertainment attorney. Your role is to answer questions about entertainment law for independent artists on the VNDR Music platform.
 
@@ -52,7 +56,19 @@ const legalEagleFlow = ai.defineFlow(
     outputSchema: LegalEagleOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
+    // Deduct VSD token before getting the answer
+    const transactionResult = await createVsdTransaction({
+      userId: input.userId,
+      amount: -1, // Deduction
+      type: 'service_fee',
+      details: 'Legal Eagle query',
+    });
+
+    if (!transactionResult.success) {
+      throw new Error(transactionResult.message);
+    }
+    
+    const {output} = await prompt(input.question);
     return output!;
   }
 );

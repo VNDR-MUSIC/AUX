@@ -28,7 +28,7 @@ import { useUser, useFirebase, useCollection, useDoc, useMemoFirebase } from "@/
 import { doc, collection, query, where } from "firebase/firestore";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Icons } from "@/components/icons";
-import { claimDailyTokensAction } from "@/app/actions/user";
+import { claimDailyTokensAction } from "@/app/actions/vsd-transaction";
 import { useToast } from "@/hooks/use-toast";
 import { useMusicPlayer } from "@/store/music-player-store";
 import { useOnboarding } from "@/hooks/use-onboarding";

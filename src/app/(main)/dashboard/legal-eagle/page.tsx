@@ -12,6 +12,8 @@ import { legalEagleChat } from '@/ai/flows/legal-eagle-flow';
 import { Icons } from '@/components/icons';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useOnboarding } from '@/hooks/use-onboarding';
+import { useUser } from '@/firebase';
+import { useToast } from '@/hooks/use-toast';
 
 interface Message {
   text: string;
@@ -29,12 +31,14 @@ export default function LegalEaglePage() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const { user } = useUser();
+  const { toast } = useToast();
 
   useOnboarding('legalEagle');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isLoading) return;
+    if (!input.trim() || isLoading || !user) return;
 
     const userMessage: Message = { text: input, isUser: true };
     setMessages(prev => [...prev, userMessage]);
@@ -42,12 +46,17 @@ export default function LegalEaglePage() {
     setIsLoading(true);
 
     try {
-      const response = await legalEagleChat(input);
+      const response = await legalEagleChat({ userId: user.uid, question: input });
       const aiMessage: Message = { text: response, isUser: false };
       setMessages(prev => [...prev, aiMessage]);
+      toast({
+        title: 'VSD Token Deducted',
+        description: '1 VSD token has been deducted for your query.',
+      });
     } catch (error) {
       console.error("Legal Eagle chat error:", error);
-      const errorMessage: Message = { text: "Sorry, I'm having trouble connecting right now. Please try again later.", isUser: false };
+      const errorMessageText = error instanceof Error ? error.message : "Sorry, I'm having trouble connecting right now. Please try again later.";
+      const errorMessage: Message = { text: errorMessageText, isUser: false };
       setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
@@ -122,12 +131,12 @@ export default function LegalEaglePage() {
         <CardFooter>
             <form onSubmit={handleSubmit} className="w-full flex items-center gap-2">
                 <div className="relative flex-1">
-                    <Input placeholder="Ask a general question about entertainment law..." value={input} onChange={(e) => setInput(e.target.value)} disabled={isLoading} />
+                    <Input placeholder="Ask a general question about entertainment law..." value={input} onChange={(e) => setInput(e.target.value)} disabled={isLoading || !user} />
                     <div className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground flex items-center gap-1">
                         1 <Icons.vsd className="h-3 w-3"/> Lite
                     </div>
                 </div>
-                <Button type="submit" disabled={isLoading || !input.trim()}>
+                <Button type="submit" disabled={isLoading || !input.trim() || !user}>
                     {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                 </Button>
             </form>
