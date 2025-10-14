@@ -1,3 +1,52 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "album-1",
+      "description": "Abstract colorful waves",
+      "imageUrl": "https://picsum.photos/seed/ab1/400/400",
+      "imageHint": "abstract colorful"
+    },
+    {
+      "id": "album-2",
+      "description": "Synthwave sunset over a city",
+      "imageUrl": "https://picsum.photos/seed/ab2/400/400",
+      "imageHint": "synthwave city"
+    },
+    {
+      "id": "album-3",
+      "description": "A lone figure on a mountain",
+      "imageUrl": "https://picsum.photos/seed/ab3/400/400",
+      "imageHint": "lone mountain"
+    },
+    {
+      "id": "album-4",
+      "description": "Neon geometric shapes",
+      "imageUrl": "https://picsum.photos/seed/ab4/400/400",
+      "imageHint": "neon geometric"
+    },
+    {
+      "id": "album-5",
+      "description": "A calm, serene lake at dawn",
+      "imageUrl": "https://picsum.photos/seed/ab5/400/400",
+      "imageHint": "serene lake"
+    },
+    {
+      "id": "album-6",
+      "description": "A vibrant, bustling street market",
+      "imageUrl": "https://picsum.photos/seed/ab6/400/400",
+      "imageHint": "street market"
+    },
+    {
+      "id": "user-avatar-1",
+      "description": "User avatar 1",
+      "imageUrl": "https://picsum.photos/seed/u1/100/100",
+      "imageHint": "person portrait"
+    },
+    {
+      "id": "user-avatar-2",
+      "description": "User avatar 2",
+      "imageUrl": "https://picsum.photos/seed/u2/100/100",
+      "imageHint": "person profile"
+    }
+  ]
 }
