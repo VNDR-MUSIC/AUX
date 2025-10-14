@@ -2,7 +2,7 @@
 
 import { useFormState, useFormStatus } from "react-dom";
 import Image from "next/image";
-import { generateCoverArtAction, recommendLicensingPriceAction } from "@/app/actions/music";
+import { generateCoverArtAction, recommendLicensingPriceAction, uploadTrackAction } from "@/app/actions/music";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -36,6 +36,11 @@ const initialLicensingState = {
     errors: {},
 };
 
+const initialUploadState = {
+    message: null,
+    errors: {},
+}
+
 function GenerateCoverArtButton() {
   const { pending } = useFormStatus();
   return (
@@ -64,19 +69,32 @@ function RecommendPriceButton() {
     );
 }
 
+function UploadButton() {
+    const { pending } = useFormStatus();
+    return (
+        <Button className="w-full" type="submit" disabled={pending} form="upload-track-form">
+             {pending ? (
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Uploading...</>
+            ) : "Upload Track & Finalize"}
+        </Button>
+    )
+}
+
 export default function UploadForm() {
   const [coverArtState, coverArtFormAction] = useFormState(generateCoverArtAction, initialCoverArtState);
   const [licensingState, licensingFormAction] = useFormState(recommendLicensingPriceAction, initialLicensingState);
+  const [uploadState, uploadFormAction] = useFormState(uploadTrackAction, initialUploadState);
   
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [isUploading, setIsUploading] = useState(false);
   const [pricingOption, setPricingOption] = useState("ai");
   const [manualPrice, setManualPrice] = useState("");
   const { toast } = useToast();
 
   const coverArtFormRef = useRef<HTMLFormElement>(null);
   const licensingFormRef = useRef<HTMLFormElement>(null);
+  const mainFormRef = useRef<HTMLFormElement>(null);
 
+
+  // Toasts for form actions
   useEffect(() => {
     if (coverArtState.message) {
       toast({
@@ -101,76 +119,87 @@ export default function UploadForm() {
         });
     }
   }, [licensingState, toast]);
-  
-  const handleUpload = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsUploading(true);
-    setUploadProgress(0);
 
-    const interval = setInterval(() => {
-        setUploadProgress(prev => {
-            if (prev >= 95) {
-                clearInterval(interval);
-                return 100;
-            }
-            return prev + 5;
-        });
-    }, 200);
-
-    setTimeout(() => {
-        setIsUploading(false);
+  useEffect(() => {
+    if (uploadState.message) {
         toast({
-            title: "Upload Complete!",
-            description: "Your track has been successfully uploaded."
+            title: uploadState.errors ? "Error" : "Success!",
+            description: uploadState.message,
+            variant: uploadState.errors ? "destructive" : "default",
         });
-    }, 4500);
-  }
+        if (!uploadState.errors) {
+            mainFormRef.current?.reset();
+            // Consider redirecting or further actions
+        }
+    }
+  }, [uploadState, toast]);
+
+
+  // Determine the final price to be submitted
+  const finalPrice = pricingOption === 'ai' 
+    ? licensingState.recommendedPrice
+    : (manualPrice ? parseFloat(manualPrice) : undefined);
 
   return (
     <div className="grid md:grid-cols-3 gap-8">
-        <div className="md:col-span-2 space-y-6">
-            {/* Combined form for hidden inputs */}
-            <form ref={coverArtFormRef} id="cover-art-form" action={coverArtFormAction} className="hidden"></form>
-            <form ref={licensingFormRef} id="licensing-price-form" action={licensingFormAction} className="hidden"></form>
+        <div className="md:col-span-2">
+            {/* Main form for uploading the track */}
+            <form id="upload-track-form" action={uploadFormAction} ref={mainFormRef} className="space-y-6">
 
-            <div className="grid gap-2">
-                <Label htmlFor="trackTitle">Track Title</Label>
-                <Input id="trackTitle" name="trackTitle" placeholder="e.g., Midnight Bloom" required form="cover-art-form"/>
-                {coverArtState.errors?.trackTitle && <p className="text-sm text-destructive">{coverArtState.errors.trackTitle[0]}</p>}
-            </div>
+                {/* These forms are used to trigger specific server actions without submitting the main form */}
+                <form ref={coverArtFormRef} id="cover-art-form" action={coverArtFormAction} className="hidden"></form>
+                <form ref={licensingFormRef} id="licensing-price-form" action={licensingFormAction} className="hidden"></form>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="grid gap-2">
-                    <Label htmlFor="artistName">Artist Name</Label>
-                    <Input id="artistName" name="artistName" placeholder="e.g., Synthwave Samurai" defaultValue="Synthwave Samurai" />
+                    <Label htmlFor="trackTitle">Track Title</Label>
+                    <Input id="trackTitle" name="trackTitle" placeholder="e.g., Midnight Bloom" required form="cover-art-form" />
+                    {coverArtState.errors?.trackTitle && <p className="text-sm text-destructive">{coverArtState.errors.trackTitle[0]}</p>}
                 </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div className="grid gap-2">
+                        <Label htmlFor="artistName">Artist Name</Label>
+                        <Input id="artistName" name="artistName" placeholder="e.g., Synthwave Samurai" defaultValue="Synthwave Samurai" />
+                    </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="genre">Genre</Label>
+                        <Select name="genre" required onValueChange={(value) => {
+                            // Sync genre value for all forms
+                            if (coverArtFormRef.current) (coverArtFormRef.current.elements.namedItem('genre') as HTMLInputElement).value = value;
+                            if (licensingFormRef.current) (licensingFormRef.current.elements.namedItem('genre') as HTMLInputElement).value = value;
+                        }}>
+                            <SelectTrigger id="genre">
+                                <SelectValue placeholder="Select a genre"/>
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="Synthwave">Synthwave</SelectItem>
+                                <SelectItem value="Lofi Hip-Hop">Lofi Hip-Hop</SelectItem>
+                                <SelectItem value="Future Funk">Future Funk</SelectItem>
+                                <SelectItem value="Ambient">Ambient</SelectItem>
+                                <SelectItem value="Electronic">Electronic</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        {coverArtState.errors?.genre && <p className="text-sm text-destructive">{coverArtState.errors.genre[0]}</p>}
+                    </div>
+                </div>
+
                 <div className="grid gap-2">
-                    <Label htmlFor="genre">Genre</Label>
-                    <Select name="genre" required form="cover-art-form">
-                        <SelectTrigger id="genre">
-                            <SelectValue placeholder="Select a genre"/>
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="Synthwave">Synthwave</SelectItem>
-                            <SelectItem value="Lofi Hip-Hop">Lofi Hip-Hop</SelectItem>
-                            <SelectItem value="Future Funk">Future Funk</SelectItem>
-                            <SelectItem value="Ambient">Ambient</SelectItem>
-                            <SelectItem value="Electronic">Electronic</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    {coverArtState.errors?.genre && <p className="text-sm text-destructive">{coverArtState.errors.genre[0]}</p>}
-                    {/* Hidden input for licensing form */}
-                    <input type="hidden" name="genre" value={coverArtFormRef.current?.genre?.value} form="licensing-price-form" />
+                    <Label htmlFor="description">Description (Optional)</Label>
+                    <Textarea id="description" name="description" placeholder="Add a short description about your track. This helps the AI generate better cover art and pricing." onBlur={(e) => {
+                        if (licensingFormRef.current) (licensingFormRef.current.elements.namedItem('description') as HTMLInputElement).value = e.target.value;
+                    }}/>
                 </div>
-            </div>
+                
+                 {/* Hidden inputs to pass all data to the final upload action */}
+                <input type="hidden" name="trackTitle" form="upload-track-form" value={coverArtFormRef.current?.trackTitle.value} />
+                <input type="hidden" name="genre" form="upload-track-form" value={coverArtFormRef.current?.genre.value} />
+                <input type="hidden" name="description" form="upload-track-form" value={mainFormRef.current?.description.value} />
+                <input type="hidden" name="price" form="upload-track-form" value={finalPrice} />
+                <input type="hidden" name="coverArtDataUri" form="upload-track-form" value={coverArtState.coverArtDataUri || ""} />
 
-            <div className="grid gap-2">
-                <Label htmlFor="description">Description (Optional)</Label>
-                <Textarea id="description" name="description" placeholder="Add a short description about your track. This helps the AI generate better cover art and pricing." form="cover-art-form"/>
-                 {/* Hidden input for licensing form */}
-                <input type="hidden" name="description" value={coverArtFormRef.current?.description?.value} form="licensing-price-form" />
-            </div>
-
+            </form>
+            
+            {/* Standalone UI components, not part of the main form submission */}
             <div className="grid gap-4 p-4 border rounded-lg">
                 <h3 className="font-semibold">Licensing & Pricing</h3>
                 <RadioGroup value={pricingOption} onValueChange={setPricingOption} className="flex flex-col sm:flex-row gap-4">
@@ -233,6 +262,7 @@ export default function UploadForm() {
             <div className="flex justify-end gap-2">
                 <GenerateCoverArtButton />
             </div>
+
         </div>
 
         <div className="space-y-4">
@@ -247,17 +277,8 @@ export default function UploadForm() {
                     </div>
                 )}
             </div>
-            <form onSubmit={handleUpload}>
-                <Button className="w-full" type="submit" disabled={isUploading || !coverArtState.coverArtDataUri}>
-                    {isUploading ? "Uploading..." : "Upload Track & Finalize"}
-                </Button>
-                {isUploading && (
-                    <div className="mt-2 space-y-1">
-                        <Progress value={uploadProgress} />
-                        <p className="text-sm text-center text-muted-foreground">{uploadProgress}%</p>
-                    </div>
-                )}
-            </form>
+            <UploadButton />
+             {uploadState.errors?._form && <p className="text-sm text-destructive text-center">{uploadState.errors._form[0]}</p>}
         </div>
     </div>
   );

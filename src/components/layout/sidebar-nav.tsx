@@ -9,6 +9,7 @@ import {
   FileText,
   DollarSign,
   Settings,
+  Library,
 } from "lucide-react";
 
 import {
@@ -27,6 +28,7 @@ import { cn } from "@/lib/utils";
 const menuItems = [
   { href: "/dashboard", icon: Home, label: "Dashboard" },
   { href: "/dashboard/upload", icon: Upload, label: "Upload" },
+  { href: "/dashboard/catalog", icon: Library, label: "Catalog" },
   { href: "/dashboard/licensing", icon: FileText, label: "Licensing" },
   { href: "/vsd-demo", icon: DollarSign, label: "VSD Demo" },
 ];

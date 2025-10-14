@@ -3,6 +3,11 @@
 import { z } from "zod";
 import { generateCoverArt } from "@/ai/flows/ai-cover-art-generation";
 import { recommendLicensingPrice } from "@/ai/flows/ai-licensing-price-recommendation";
+import { getFirebaseAdmin } from "@/firebase/admin";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { auth } from "@/firebase/config";
+import { getCurrentUser } from 'aws-amplify/auth';
+
 
 const coverArtSchema = z.object({
   trackTitle: z.string().min(1, "Track title is required."),
@@ -34,6 +39,26 @@ type LicensingPriceState = {
     }
 }
 
+const uploadTrackSchema = z.object({
+    trackTitle: z.string().min(1, "Track title is required."),
+    artistName: z.string().min(1, "Artist name is required."),
+    genre: z.string().min(1, "Genre is required."),
+    description: z.string().optional(),
+    price: z.number().optional(),
+    coverArtDataUri: z.string().min(1, "Cover art is required."),
+});
+
+type UploadTrackState = {
+    message?: string | null;
+    errors?: {
+        trackTitle?: string[];
+        artistName?: string[];
+        genre?: string[];
+        price?: string[];
+        coverArtDataUri?: string[];
+        _form?: string[];
+    }
+}
 
 export async function generateCoverArtAction(
   prevState: CoverArtState,
@@ -109,6 +134,69 @@ export async function recommendLicensingPriceAction(
             errors: {
                 _form: ["AI price recommendation failed. Please try again."],
             }
+        }
+    }
+}
+
+export async function uploadTrackAction(
+    prevState: UploadTrackState,
+    formData: FormData,
+): Promise<UploadTrackState> {
+
+    // Note: In a real app, you would get the current user's ID from the session.
+    const artistId = "temp_artist_id"; 
+    
+    const rawPrice = formData.get("price");
+    const price = rawPrice ? Number(rawPrice) : undefined;
+    
+    const validatedFields = uploadTrackSchema.safeParse({
+        trackTitle: formData.get("trackTitle"),
+        artistName: formData.get("artistName"),
+        genre: formData.get("genre"),
+        description: formData.get("description"),
+        coverArtDataUri: formData.get("coverArtDataUri"),
+        price: price,
+    });
+    
+    if (!validatedFields.success) {
+        console.log(validatedFields.error.flatten().fieldErrors);
+        return {
+            errors: validatedFields.error.flatten().fieldErrors,
+            message: "Missing or invalid fields. Failed to upload track.",
+        };
+    }
+
+    const { trackTitle, artistName, genre, description, coverArtDataUri } = validatedFields.data;
+
+    try {
+        const { db } = await getFirebaseAdmin();
+        const tracksCollection = collection(db, "tracks");
+        
+        // In a real app, the trackUrl would come from uploading the audio file to Cloud Storage
+        const trackUrl = "https://firebasestorage.googleapis.com/v0/b/your-project-id.appspot.com/o/example-track.mp3?alt=media";
+        
+        await addDoc(tracksCollection, {
+            title: trackTitle,
+            artistId: artistId,
+            artistName: artistName, // Denormalizing for easier display
+            genre: genre,
+            description: description,
+            uploadDate: serverTimestamp(),
+            coverArtUrl: coverArtDataUri, // For demo, using data URI. In prod, upload to Storage and save URL.
+            trackUrl: trackUrl,
+            price: price || 0,
+            plays: 0,
+        });
+
+        return {
+            message: "Track uploaded successfully!",
+        };
+
+    } catch (error) {
+        console.error(error);
+        return {
+            message: "An error occurred during upload.",
+            errors: { _form: ["Failed to save track to database. Please try again."] }
         }
     }
 }
