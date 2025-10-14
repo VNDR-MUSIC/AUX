@@ -47,13 +47,18 @@ export default function ProfilePage() {
     [firestore, userId]
   );
   const { data: tracks, isLoading: areTracksLoading } = useCollection(tracksQuery);
+  
+  const adminRef = useMemoFirebase(() => (firestore && currentUser ? doc(firestore, `roles_admin/${currentUser.uid}`) : null), [firestore, currentUser]);
+  const { data: adminDoc } = useDoc(adminRef);
+  const isAdmin = !!adminDoc;
 
   const profileHeaderImage = PlaceHolderImages.find(p => p.id === 'hero-4');
   const userAvatarImage = PlaceHolderImages.find(p => p.id === 'user-avatar-1');
   const isOwnProfile = currentUser?.uid === userId;
+  const canModerate = isOwnProfile || isAdmin;
 
   const handleDeleteTrack = async (trackId: string) => {
-    if (!isOwnProfile) return;
+    if (!canModerate) return;
     const result = await deleteTrackAction(trackId, userId as string);
      toast({
       title: result.error ? 'Error' : 'Success',
@@ -139,7 +144,7 @@ export default function ProfilePage() {
             {tracks.map(track => (
               <div key={track.id} className="relative group">
                 <TrackCard track={track as any} />
-                 {isOwnProfile && (
+                 {canModerate && (
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                        <Button variant="destructive" size="icon" className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
