@@ -21,6 +21,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { useUser, FirebaseClientProvider } from '@/firebase';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const heroSlides = [
   {
@@ -103,7 +107,34 @@ const faqs = [
 ];
 
 
-export default function Home() {
+function Home() {
+  const { user, isUserLoading } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isUserLoading && user) {
+      router.push('/dashboard');
+    }
+  }, [user, isUserLoading, router]);
+
+  if (isUserLoading || user) {
+    return (
+        <div className="flex flex-col min-h-screen bg-background">
+            <LandingPageHeader />
+            <main className="flex-1 flex items-center justify-center">
+                <div className="space-y-4 w-full container">
+                    <Skeleton className="h-[80vh] w-full" />
+                    <div className="grid grid-cols-2 gap-4">
+                        <Skeleton className="h-32 w-full" />
+                        <Skeleton className="h-32 w-full" />
+                    </div>
+                </div>
+            </main>
+            <Footer />
+        </div>
+    );
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <LandingPageHeader />
@@ -387,6 +418,14 @@ export default function Home() {
       <Footer />
     </div>
   );
+}
+
+export default function HomePageWrapper() {
+  return (
+    <FirebaseClientProvider>
+      <Home />
+    </FirebaseClientProvider>
+  )
 }
 
     
