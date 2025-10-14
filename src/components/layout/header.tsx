@@ -88,7 +88,7 @@ export default function Header() {
   };
 
   return (
-    <header className="flex h-14 items-center gap-4 border-b bg-background/80 backdrop-blur-lg px-4 lg:h-[60px] lg:px-6 sticky top-0 z-50">
+    <header className="flex h-14 items-center gap-4 border-b bg-transparent px-4 lg:h-[60px] lg:px-6 sticky top-0 z-50">
       <div className="flex items-center gap-2">
         <SidebarTrigger className="hidden md:flex" />
       </div>

@@ -14,7 +14,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
           <SidebarNav />
         </Sidebar>
         <div className="flex flex-col min-h-screen">
-          <SidebarInset className="pb-24 flex flex-col">
+          <SidebarInset className="pb-24 flex flex-col bg-background/80 backdrop-blur-lg">
             <Header />
             <main className="flex-1 p-4 md:p-6">{children}</main>
             <Footer />

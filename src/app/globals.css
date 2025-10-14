@@ -32,7 +32,7 @@
     --chart-5: 210 20% 98%;
 
     /* Sidebar vars */
-    --sidebar-background: 0 0% 0% / 0.8;
+    --sidebar-background: 0 0% 0%;
     --sidebar-foreground: 210 20% 98%;
     --sidebar-primary: 277 76% 53%;
     --sidebar-primary-foreground: 210 20% 98%;
@@ -69,7 +69,7 @@
     --chart-5: 210 20% 98%;
 
     /* Sidebar vars for dark mode */
-    --sidebar-background: 0 0% 0% / 0.8;
+    --sidebar-background: 0 0% 0%;
     --sidebar-foreground: 210 20% 98%;
     --sidebar-primary: 277 76% 53%;
     --sidebar-primary-foreground: 210 20% 98%;
@@ -85,7 +85,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
   }
 }
 

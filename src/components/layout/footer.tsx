@@ -41,7 +41,7 @@ export default function Footer() {
 
   return (
     <>
-    <footer className="bg-background/80 backdrop-blur-lg border-t">
+    <footer className="bg-transparent border-t">
       <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
             <div className="col-span-2 lg:col-span-1">
