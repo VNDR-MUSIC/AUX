@@ -86,7 +86,6 @@
   }
   body {
     @apply bg-background text-foreground;
-    background-image: linear-gradient(to right, hsl(var(--primary)), hsl(var(--accent)), hsl(var(--destructive)));
   }
 }
 

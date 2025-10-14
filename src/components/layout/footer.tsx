@@ -4,8 +4,10 @@
 import Link from "next/link";
 import { Icons } from "../icons";
 import { useUser } from "@/firebase";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { FirebaseContext } from "@/firebase/provider";
+import Image from "next/image";
+import IVtvModal from "./ivtv-modal";
 
 const socialLinks = [
     { name: "Twitter", href: "#" },
@@ -34,10 +36,12 @@ export default function Footer() {
   const context = useContext(FirebaseContext);
   // Only call useUser if the context is available
   const user = context ? useUser().user : null;
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
 
   return (
-    <footer className="bg-background border-t">
+    <>
+    <footer className="bg-background/80 backdrop-blur-lg border-t">
       <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
             <div className="col-span-2 lg:col-span-1">
@@ -47,6 +51,14 @@ export default function Footer() {
                     </div>
                 </Link>
                 <p className="mt-4 text-sm text-muted-foreground">The future of music licensing and streaming.</p>
+                 <div className="mt-4">
+                    <button onClick={() => setIsModalOpen(true)} className="cursor-pointer">
+                        <Image src="https://i.ibb.co/FqwXfkL9/Screenshot-20250914-224236-Facebook.jpg" alt="IVtv Logo" width={100} height={50} />
+                    </button>
+                    <p className="text-xs text-muted-foreground mt-2">
+                        Video streaming by our subsidiary, IVtv (Indie Videos TV).
+                    </p>
+                </div>
             </div>
             
             {user && (
@@ -108,5 +120,7 @@ export default function Footer() {
         </div>
       </div>
     </footer>
+    <IVtvModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+    </>
   );
 }
