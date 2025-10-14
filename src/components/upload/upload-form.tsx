@@ -22,6 +22,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Icons } from "../icons";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { useUser } from "@/firebase";
+import Link from "next/link";
 
 
 const initialCoverArtState = {
@@ -226,7 +227,7 @@ export default function UploadForm() {
                                 <Info className="h-4 w-4" />
                                 <AlertTitle className="flex items-center gap-2">
                                     <span>AI Price Suggestion:</span> 
-                                    <span className="font-bold flex items-center gap-1"><Icons.vsd className="h-4 w-4"/> {licensingState.recommendedPrice}</span>
+                                    <span className="font-bold flex items-center gap-1"><Link href="https://vsd.network" target="_blank" rel="noopener noreferrer"><Icons.vsd className="h-4 w-4"/></Link> {licensingState.recommendedPrice}</span>
                                 </AlertTitle>
                                 <AlertDescription>
                                     {licensingState.justification}
@@ -240,7 +241,7 @@ export default function UploadForm() {
                     <div className="grid gap-2">
                         <Label htmlFor="manual-price" className="flex items-center gap-1">Licensing Price</Label>
                         <div className="relative">
-                            <Icons.vsd className="absolute left-2.5 top-2.5 h-5 w-5 text-muted-foreground" />
+                            <Link href="https://vsd.network" target="_blank" rel="noopener noreferrer" className="absolute left-2.5 top-2.5 h-5 w-5 text-muted-foreground"><Icons.vsd className="h-5 w-5" /></Link>
                             <Input id="manual-price" type="number" placeholder="e.g., 250" className="pl-9" value={manualPrice} onChange={(e) => setManualPrice(e.target.value)} />
                         </div>
                     </div>
@@ -288,3 +289,5 @@ export default function UploadForm() {
     </div>
   );
 }
+
+    

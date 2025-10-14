@@ -145,7 +145,7 @@ export default function DashboardPage() {
                     <TableCell className="text-right">
                         {track.price > 0 ? (
                             <div className="flex items-center justify-end gap-1 font-bold">
-                                <Icons.vsd className="h-4 w-4" />
+                                <Link href="https://vsd.network" target="_blank" rel="noopener noreferrer"><Icons.vsd className="h-4 w-4" /></Link>
                                 {track.price}
                             </div>
                         ) : (
@@ -176,7 +176,7 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent className="space-y-4">
                 <div className="flex items-center justify-center gap-4 text-4xl font-bold font-headline">
-                    <Icons.vsd className="h-8 w-8" />
+                    <Link href="https://vsd.network" target="_blank" rel="noopener noreferrer"><Icons.vsd className="h-8 w-8" /></Link>
                     <span>{userData?.vsdBalance || 0}</span>
                 </div>
                 <Button className="w-full" onClick={handleClaimTokens} disabled={!canClaimTokens}>
@@ -208,3 +208,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    

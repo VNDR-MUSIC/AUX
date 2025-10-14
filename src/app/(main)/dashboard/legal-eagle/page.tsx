@@ -14,6 +14,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useOnboarding } from '@/hooks/use-onboarding';
 import { useUser } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
+import Link from 'next/link';
 
 interface Message {
   text: string;
@@ -133,7 +134,7 @@ export default function LegalEaglePage() {
                 <div className="relative flex-1">
                     <Input placeholder="Ask a general question about entertainment law..." value={input} onChange={(e) => setInput(e.target.value)} disabled={isLoading || !user} />
                     <div className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground flex items-center gap-1">
-                        1 <Icons.vsd className="h-3 w-3"/> Lite
+                        1 <Link href="https://vsd.network" target="_blank" rel="noopener noreferrer"><Icons.vsd className="h-3 w-3"/></Link> Lite
                     </div>
                 </div>
                 <Button type="submit" disabled={isLoading || !input.trim() || !user}>
@@ -145,3 +146,5 @@ export default function LegalEaglePage() {
     </div>
   );
 }
+
+    

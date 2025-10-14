@@ -17,6 +17,7 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Badge } from '@/components/ui/badge';
 import { Icons } from '@/components/icons';
 import { Loader2 } from 'lucide-react';
+import Link from 'next/link';
 
 export default function VsdDemoPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -96,7 +97,7 @@ export default function VsdDemoPage() {
               </p>
             </div>
             <Badge variant="secondary" className="text-lg flex items-center gap-2">
-              <Icons.vsd className="h-4 w-4" />
+              <Link href="https://vsd.network" target="_blank" rel="noopener noreferrer"><Icons.vsd className="h-4 w-4" /></Link>
               <span>10</span>
             </Badge>
           </div>
@@ -112,7 +113,7 @@ export default function VsdDemoPage() {
             {isLoading ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
-              <Icons.vsd className="h-5 w-5" />
+              <Link href="https://vsd.network" target="_blank" rel="noopener noreferrer"><Icons.vsd className="h-5 w-5" /></Link>
             )}
             {isLoading ? 'Processing...' : 'Purchase with VSD'}
           </Button>
@@ -121,3 +122,5 @@ export default function VsdDemoPage() {
     </div>
   );
 }
+
+    

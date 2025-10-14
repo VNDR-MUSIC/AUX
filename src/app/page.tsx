@@ -60,7 +60,7 @@ const features = [
         description: "Tired of dead-end submissions? Our AI finds sync opportunities in films, games, and ads that match your sound, and our team closes the deal.",
     },
     {
-        icon: <div className="h-10 w-10 flex items-center justify-center"><Icons.vsd className="h-8 w-8" /></div>,
+        icon: <div className="h-10 w-10 flex items-center justify-center"><Link href="https://vsd.network" target="_blank" rel="noopener noreferrer"><Icons.vsd className="h-8 w-8" /></Link></div>,
         title: "Transparent Royalty Payments",
         description: "No more black boxes or confusing statements. Our VSD token system provides a transparent, instant, and fair royalty ledger.",
     },
@@ -172,7 +172,7 @@ export default function Home() {
                     <Gift className="h-16 w-16 mx-auto mb-4" />
                     <h2 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl">Get Paid to Participate.</h2>
                     <p className="max-w-[700px] mx-auto mt-4 text-primary-foreground/80 md:text-xl">
-                        Sign up for free and receive complimentary <Icons.vsd className="inline h-5 w-5" /> tokens every day. Our token economy rewards artists just for being part of the community.
+                        Sign up for free and receive complimentary <Link href="https://vsd.network" target="_blank" rel="noopener noreferrer" className="inline-block"><Icons.vsd className="inline h-5 w-5" /></Link> tokens every day. Our token economy rewards artists just for being part of the community.
                     </p>
                     <div className="flex flex-wrap justify-center gap-4 mt-8">
                         <Button asChild size="lg" className="font-bold bg-white text-black hover:bg-gray-200">
@@ -244,7 +244,7 @@ export default function Home() {
                                 <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Free unlimited distribution</li>
                                 <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Basic Analytics Dashboard</li>
                                 <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Monthly Royalty Payouts</li>
-                                <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Get paid daily <Icons.vsd className="h-5 w-5 mx-1" />!</li>
+                                <li className="flex items-center">Get paid daily <Link href="https://vsd.network" target="_blank" rel="noopener noreferrer"><Icons.vsd className="h-5 w-5 mx-1" /></Link>!</li>
                             </ul>
                         </CardContent>
                         <CardFooter>
@@ -273,7 +273,7 @@ export default function Home() {
                                 <li className="flex items-center font-bold text-foreground"><Check className="h-4 w-4 mr-2 text-primary"/>Active Sync Licensing Pitches</li>
                                 <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Global Royalty Collection</li>
                                 <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Full VNDR AI Ecosystem Access</li>
-                                <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Instant <Icons.vsd className="h-4 w-4 mx-1" /> Royalty Payouts</li>
+                                <li className="flex items-center">Instant <Link href="https://vsd.network" target="_blank" rel="noopener noreferrer"><Icons.vsd className="h-4 w-4 mx-1" /></Link> Royalty Payouts</li>
                             </ul>
                         </CardContent>
                         <CardFooter>
@@ -286,7 +286,7 @@ export default function Home() {
                             <CardTitle className="font-headline text-2xl flex items-center gap-2"><Sparkles /> AI Pro</CardTitle>
                             <CardDescription>Supercharge either plan with our full suite of AI tools.</CardDescription>
                             <div className="flex items-baseline gap-2">
-                                <Icons.vsd className="h-8 w-8 text-primary" />
+                                <Link href="https://vsd.network" target="_blank" rel="noopener noreferrer"><Icons.vsd className="h-8 w-8 text-primary" /></Link>
                                 <span className="text-4xl font-bold font-headline">250</span>
                                 <span className="text-lg font-normal text-muted-foreground">/mo</span>
                             </div>
@@ -388,3 +388,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
