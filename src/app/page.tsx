@@ -25,8 +25,8 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 const heroSlides = [
   {
     id: 'hero-1',
-    title: 'Stop Giving Away Your Royalties.',
-    description: "You made the music. You deserve the profits. VNDR is the only platform that gives you 100% of your rights and the AI-powered tools to grow your career.",
+    title: 'Your Partner in Publishing.',
+    description: "Focus on creating. We'll handle the business. VNDR acts as your dedicated publisher, securing global opportunities in exchange for a 50% publishing share. It's a true partnership.",
     imageHint: 'musician stage'
   },
   {
@@ -37,8 +37,8 @@ const heroSlides = [
   },
   {
     id: 'hero-3',
-    title: 'License Your Music, Keep Your Masters.',
-    description: "Get your tracks in films, games, and ads without selling your soul. We handle the deals, you collect the royalties. It's that simple.",
+    title: 'License Your Music, We Seal The Deal.',
+    description: "Get your tracks in films, games, and ads. As your publisher, we actively pitch your catalog and negotiate the best terms on your behalf. It's that simple.",
     imageHint: 'audio production'
   },
 ];
@@ -47,7 +47,7 @@ const features = [
     {
         icon: <Waves className="h-10 w-10 text-primary" />,
         title: "Unlimited Free Distribution",
-        description: "Stop paying per release. Distribute unlimited tracks to Spotify, Apple Music, and 150+ other platforms, and keep 100% of your rights.",
+        description: "Stop paying per release. Distribute unlimited tracks to Spotify, Apple Music, and 150+ other platforms, and keep 100% of your master rights.",
     },
     {
         icon: <Sparkles className="h-10 w-10 text-primary" />,
@@ -85,12 +85,12 @@ const testimonials = [
 
 const faqs = [
   {
-    question: "Do I really keep 100% of my rights?",
-    answer: "Yes, absolutely. You retain 100% of your copyright and ownership of your master recordings. We are a service provider and partner, not a publisher. Our agreement is for distribution and licensing representation, never a rights transfer."
+    question: "What does a 50% publishing share mean?",
+    answer: "By uploading your music to VNDR, you enter into a standard co-publishing agreement. You retain 100% ownership of your master recordings, but you grant VNDR a 50% share of the publishing rights. This partnership is what allows us to legally and actively represent your music, pitch it for sync licenses in film, TV, and games, and collect royalties on your behalf worldwide. It's a true partnership to maximize your music's earning potential."
   },
   {
       question: "How can you offer unlimited distribution for free?",
-      answer: "Our Starter plan is designed to remove the financial barrier to entry for artists. We operate on a 90/10 royalty split for this plan—you keep 90%, we take 10% commission. This allows us to cover distribution costs while you get your music everywhere. For artists earning serious revenue, our AI Pro plan offers a 98/2 split for a small monthly fee."
+      answer: "Our model is built on partnership. The Starter plan includes free unlimited distribution because we share in your success through our co-publishing agreement. This aligns our goals with yours: we only succeed when you succeed. For artists wanting more powerful tools, our AI Pro plan offers advanced features for a small monthly fee."
   },
   {
     question: "How does the VSD token and royalty system work?",
@@ -106,7 +106,7 @@ const faqs = [
   },
   {
     question: "What are the requirements for submitting music?",
-    answer: "We accept high-quality audio files (WAV, FLAC) and require that you are the sole copyright holder of both the composition and the master recording. All music goes through a brief quality review to ensure it meets the standards of streaming platforms."
+    answer: "We accept high-quality audio files (WAV, FLAC) and require that you control the rights to the music you upload. By uploading, you confirm you have the authority to enter into our co-publishing agreement for the submitted work."
   }
 ];
 
@@ -155,7 +155,7 @@ export default function Home() {
                             </p>
                             <div className="flex flex-wrap justify-center gap-4">
                             <Button asChild size="lg" className="font-bold">
-                                <Link href="/login">Sign Up & Start for Free</Link>
+                                <Link href="/login">Become a Partner Artist</Link>
                             </Button>
                             <Button asChild size="lg" variant="outline" className="font-bold bg-transparent text-white border-white hover:bg-white hover:text-primary">
                                 <Link href="#pricing">See The Plans</Link>
@@ -246,8 +246,8 @@ export default function Home() {
                         <CardContent className="flex-1 space-y-4">
                              <p className="font-semibold text-primary flex items-center gap-2"><CalendarCheck className="h-5 w-5" /> Free <Icons.vsd className="h-5 w-5" /> daily!</p>
                             <ul className="space-y-2 text-muted-foreground">
-                                <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Free unlimited distribution to 150+ platforms</li>
-                                <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>You Keep 90% of Royalties</li>
+                                <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Free unlimited distribution</li>
+                                <li className="flex items-center font-bold text-foreground"><Check className="h-4 w-4 mr-2 text-primary"/>50/50 Publishing Partnership</li>
                                 <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Basic Analytics Dashboard</li>
                                 <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Monthly Royalty Payouts</li>
                             </ul>
@@ -275,7 +275,6 @@ export default function Home() {
                         <CardContent className="flex-1 space-y-4">
                             <ul className="space-y-2 text-muted-foreground">
                                 <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Everything in Starter, plus:</li>
-                                <li className="flex items-center font-bold text-foreground"><Check className="h-4 w-4 mr-2 text-primary"/>You Keep 98% of Royalties</li>
                                 <li className="flex items-center font-bold text-foreground"><Check className="h-4 w-4 mr-2 text-primary"/>Full VNDR AI Ecosystem Access</li>
                                 <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>AI-Powered Promotion Tools</li>
                                 <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Automated Sync Licensing Submissions</li>
@@ -390,3 +389,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
