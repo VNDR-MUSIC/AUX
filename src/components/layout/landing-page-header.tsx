@@ -8,7 +8,7 @@ export default function LandingPageHeader() {
     <header className="sticky top-0 z-50 w-full border-b border-transparent bg-background/50 backdrop-blur-sm">
       <div className="container flex h-14 items-center">
         <Link href="/" className="mr-6 flex items-center space-x-2">
-           <div className="relative h-12 w-12">
+           <div className="relative h-14 w-14">
               <Icons.logo />
             </div>
         </Link>
@@ -29,7 +29,3 @@ export default function LandingPageHeader() {
     </header>
   );
 }
-
-    
-
-    
