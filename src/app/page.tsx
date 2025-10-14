@@ -15,7 +15,7 @@ import Link from 'next/link';
 import { Icons } from '@/components/icons';
 import AnimatedGradientText from '@/components/animated-gradient-text';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Award, Check, DollarSign, Music, Sparkles, Star, Waves } from 'lucide-react';
+import { Award, CalendarCheck, Check, DollarSign, Gift, Sparkles, Star, Waves } from 'lucide-react';
 import LandingPageHeader from '@/components/layout/landing-page-header';
 import Footer from '@/components/layout/footer';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -94,12 +94,12 @@ const faqs = [
     answer: "We use VSD tokens to create a transparent ledger of all streams, sales, and licensing deals. When a royalty payment is due, it's converted to your preferred currency and transferred instantly. This eliminates delays and opaque accounting common in the industry."
   },
   {
-    question: "What are the requirements for submitting music?",
-    answer: "We accept high-quality audio files (WAV, FLAC) and require that you are the sole copyright holder of both the composition and the master recording. Your music will go through a brief quality review before being distributed."
+    question: "How do I get more VSD tokens?",
+    answer: "You receive free VSD tokens daily just for being a member! If you need more for transactions, you can purchase them directly from our official partner at VSD.network."
   },
   {
-    question: "Can I cancel my subscription anytime?",
-    answer: "Yes, you can cancel your subscription at any time. If you cancel, your music will be removed from our distribution and licensing network at the end of your billing period. You will still receive any royalties earned during your active subscription."
+    question: "What are the requirements for submitting music?",
+    answer: "We accept high-quality audio files (WAV, FLAC) and require that you are the sole copyright holder of both the composition and the master recording. Your music will go through a brief quality review before being distributed."
   }
 ];
 
@@ -148,7 +148,7 @@ export default function Home() {
                             </p>
                             <div className="flex flex-wrap justify-center gap-4">
                             <Button asChild size="lg" className="font-bold">
-                                <Link href="/login">Start Your 14-Day Free Trial</Link>
+                                <Link href="/login">Sign Up & Claim Free Tokens</Link>
                             </Button>
                             <Button asChild size="lg" variant="outline" className="font-bold bg-transparent text-white border-white hover:bg-white hover:text-primary">
                                 <Link href="#pricing">View Pricing</Link>
@@ -163,6 +163,28 @@ export default function Home() {
                 <CarouselNext className="absolute right-4 z-30 hidden md:flex" />
             </Carousel>
         </section>
+
+        {/* Daily Rewards Section */}
+        <section id="rewards" className="py-16 md:py-24 bg-primary text-primary-foreground">
+            <div className="container px-4 md:px-6">
+                <div className="text-center">
+                    <Gift className="h-16 w-16 mx-auto mb-4" />
+                    <h2 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl">Get Rewarded Daily</h2>
+                    <p className="max-w-[700px] mx-auto mt-4 text-primary-foreground/80 md:text-xl">
+                        Sign up for free and receive complimentary VSD tokens every day. Learn how our token economy works and start building your wallet just by being part of the community.
+                    </p>
+                    <div className="flex flex-wrap justify-center gap-4 mt-8">
+                        <Button asChild size="lg" className="font-bold bg-white text-primary hover:bg-gray-200">
+                            <Link href="/login">Claim Your First Tokens</Link>
+                        </Button>
+                        <Button asChild size="lg" variant="outline" className="font-bold bg-transparent text-white border-white hover:bg-white hover:text-primary">
+                            <a href="https://vsd.network" target="_blank" rel="noopener noreferrer">Buy VSD Tokens</a>
+                        </Button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
 
         {/* Features Section */}
         <section id="features" className="py-16 md:py-24 bg-secondary">
@@ -206,12 +228,11 @@ export default function Home() {
                             <CardTitle className="font-headline text-2xl">Starter</CardTitle>
                             <CardDescription>For artists getting their music out there.</CardDescription>
                             <div className="flex items-baseline gap-2">
-                                <Icons.vsd className="h-8 w-8 text-primary" />
-                                <span className="text-4xl font-bold font-headline">90</span>
-                                <span className="text-lg font-normal text-muted-foreground">VSD/mo</span>
+                                <span className="text-4xl font-bold font-headline">Free</span>
                             </div>
                         </CardHeader>
                         <CardContent className="flex-1 space-y-4">
+                             <p className="font-semibold text-primary flex items-center gap-2"><CalendarCheck className="h-5 w-5" /> Free VSD tokens daily!</p>
                             <ul className="space-y-2 text-muted-foreground">
                                 <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Unlimited Song Uploads</li>
                                 <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Distribution to 20+ Platforms</li>
@@ -220,7 +241,9 @@ export default function Home() {
                             </ul>
                         </CardContent>
                         <CardFooter>
-                            <Button className="w-full" variant="outline">Get Started</Button>
+                            <Button className="w-full" asChild>
+                                <Link href="/login">Sign Up for Free</Link>
+                            </Button>
                         </CardFooter>
                     </Card>
                     {/* Pro Plan */}
@@ -345,7 +368,7 @@ export default function Home() {
                     Join hundreds of independent artists who trust VNDR for distribution, licensing, and royalties.
                 </p>
                 <Button asChild size="lg" className="font-bold bg-white text-primary hover:bg-gray-200">
-                    <Link href="/login">Start Your 14-Day Free Trial</Link>
+                    <Link href="/login">Sign Up & Claim Your Tokens</Link>
                 </Button>
             </div>
         </section>
