@@ -98,7 +98,7 @@ export default function DashboardPage() {
 
   return (
     <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
-      <Card className="xl:col-span-2 backdrop-blur-lg bg-card">
+      <Card className="xl:col-span-2">
         <CardHeader className="flex flex-row items-center">
           <div className="grid gap-2">
             <CardTitle className="font-headline">Welcome, {userData?.username || 'Artist'}!</CardTitle>
@@ -170,7 +170,7 @@ export default function DashboardPage() {
       </Card>
 
       <div className="grid auto-rows-min gap-4 md:gap-8">
-        <Card className="backdrop-blur-lg bg-card">
+        <Card>
             <CardHeader>
                 <CardTitle className="font-headline flex items-center justify-between">VSD Token Wallet</CardTitle>
             </CardHeader>
@@ -186,7 +186,7 @@ export default function DashboardPage() {
             </CardContent>
         </Card>
 
-        <Card className="backdrop-blur-lg bg-card">
+        <Card>
           <CardHeader>
             <CardTitle className="font-headline">AI-Powered Growth Tools</CardTitle>
           </CardHeader>
@@ -196,7 +196,7 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      <Card className="xl:col-span-3 backdrop-blur-lg bg-card">
+      <Card className="xl:col-span-3">
         <CardHeader>
           <CardTitle className="font-headline">Top Tracks Performance</CardTitle>
           <CardDescription>An overview of your most popular tracks this month.</CardDescription>
