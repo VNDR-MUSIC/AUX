@@ -9,7 +9,9 @@ export default function MusoLayout({ children }: { children: React.ReactNode }) 
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur-sm">
         <div className="container flex h-14 items-center">
             <Link href="/" className="mr-6 flex items-center space-x-2">
-                <Icons.logo className="h-8 w-8 text-primary" />
+                <div className="relative h-8 w-8">
+                    <Icons.logo />
+                </div>
                  <span className="font-light sm:inline-block font-headline text-lg text-muted-foreground">
                     + Muso.AI
                 </span>
