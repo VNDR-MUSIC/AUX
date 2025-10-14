@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 
 export default function LandingPageHeader() {
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-transparent bg-background/50 backdrop-blur-sm">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-lg">
       <div className="container flex h-14 items-center">
         <Link href="/" className="mr-6 flex items-center space-x-2">
            <div className="relative h-14 w-14">
