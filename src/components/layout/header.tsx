@@ -88,7 +88,7 @@ export default function Header() {
   };
 
   return (
-    <header className="flex h-14 items-center gap-4 border-b bg-background/95 backdrop-blur-sm px-4 lg:h-[60px] lg:px-6 sticky top-0 z-10 md:static md:z-auto md:border-none md:bg-transparent md:backdrop-blur-none">
+    <header className="flex h-14 items-center gap-4 border-b bg-background/50 backdrop-blur-sm px-4 lg:h-[60px] lg:px-6 sticky top-0 z-10 md:static md:z-auto md:border-none md:bg-transparent md:backdrop-blur-none">
       <SidebarTrigger className="md:hidden" />
       <div className="w-full flex-1">
         <form>
@@ -106,3 +106,5 @@ export default function Header() {
     </header>
   );
 }
+
+    
