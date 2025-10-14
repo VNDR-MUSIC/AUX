@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useFormState, useFormStatus } from "react-dom";
@@ -7,7 +8,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Icons } from "@/components/icons";
-import AnimatedGradientText from "@/components/animated-gradient-text";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { signupAction } from "@/app/actions/user";
 import { useEffect, useState } from "react";
@@ -90,7 +90,7 @@ export default function AuthForm() {
       <CardHeader className="text-center">
         <Icons.logo className="mx-auto h-12 w-12 text-primary" />
         <CardTitle className="font-headline text-2xl font-bold">
-          <AnimatedGradientText>Welcome to VNDR</AnimatedGradientText>
+          Welcome to VNDR
         </CardTitle>
         <CardDescription>
           Sign in or create an account to start your journey.
@@ -146,3 +146,5 @@ export default function AuthForm() {
     </Card>
   );
 }
+
+    

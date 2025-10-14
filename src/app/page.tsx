@@ -13,9 +13,8 @@ import Autoplay from 'embla-carousel-autoplay';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Icons } from '@/components/icons';
-import AnimatedGradientText from '@/components/animated-gradient-text';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Award, CalendarCheck, Check, DollarSign, Gift, Sparkles, Star, Waves } from 'lucide-react';
+import { Award, CalendarCheck, Check, Gift, Sparkles, Star, Waves } from 'lucide-react';
 import LandingPageHeader from '@/components/layout/landing-page-header';
 import Footer from '@/components/layout/footer';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -143,9 +142,9 @@ export default function Home() {
                         )}
                         <div className="absolute inset-0 bg-black/60 z-10" />
                         <div className="relative z-20 container h-full flex flex-col items-center justify-center gap-6 text-center text-white">
-                            <Icons.logo className="h-20 w-20 text-white drop-shadow-lg" />
-                            <h1 className="font-headline text-5xl font-bold tracking-tighter sm:text-6xl md:text-7xl lg:text-8xl drop-shadow-xl">
-                                <AnimatedGradientText>{slide.title}</AnimatedGradientText>
+                            <Icons.logo className="h-20 w-20 text-primary drop-shadow-lg" />
+                            <h1 className="font-headline text-5xl font-bold tracking-tighter sm:text-6xl md:text-7xl lg:text-8xl drop-shadow-xl text-primary">
+                                {slide.title}
                             </h1>
                             <p className="max-w-[700px] text-lg text-neutral-200 md:text-xl drop-shadow-lg">
                                 {slide.description}
@@ -178,7 +177,7 @@ export default function Home() {
                         Sign up for free and receive complimentary VSD tokens every day. Learn how our token economy works and start building your wallet just by being part of the community.
                     </p>
                     <div className="flex flex-wrap justify-center gap-4 mt-8">
-                        <Button asChild size="lg" className="font-bold bg-white text-primary hover:bg-gray-200">
+                        <Button asChild size="lg" className="font-bold bg-white text-black hover:bg-gray-200">
                             <Link href="/login">Claim Your First Tokens</Link>
                         </Button>
                         <Button asChild size="lg" variant="outline" className="font-bold bg-transparent text-white border-white hover:bg-white hover:text-primary">
@@ -215,7 +214,7 @@ export default function Home() {
         <section id="pricing" className="py-16 md:py-24">
             <div className="container px-4 md:px-6">
                 <div className="text-center mb-12">
-                    <h2 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl"><AnimatedGradientText>Simple, Transparent Pricing</AnimatedGradientText></h2>
+                    <h2 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl text-primary">Simple, Transparent Pricing</h2>
                     <p className="max-w-[700px] mx-auto mt-4 text-muted-foreground md:text-xl">
                         Choose the plan that's right for your journey. Cancel anytime.
                     </p>
@@ -371,7 +370,7 @@ export default function Home() {
                 <p className="max-w-[600px] mx-auto mt-4 mb-8 text-primary-foreground/80 md:text-xl">
                     Join hundreds of independent artists who trust VNDR for distribution, licensing, and royalties.
                 </p>
-                <Button asChild size="lg" className="font-bold bg-white text-primary hover:bg-gray-200">
+                <Button asChild size="lg" className="font-bold bg-white text-black hover:bg-gray-200">
                     <Link href="/login">Sign Up & Claim Your Tokens</Link>
                 </Button>
             </div>

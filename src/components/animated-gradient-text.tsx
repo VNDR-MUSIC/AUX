@@ -1,3 +1,4 @@
+
 import { cn } from "@/lib/utils";
 import React, { type FC, type HTMLAttributes } from "react";
 
@@ -13,7 +14,7 @@ const AnimatedGradientText: FC<AnimatedGradientTextProps> = ({
   return (
     <span
       className={cn(
-        "bg-gradient-to-r from-[#8A2BE2] via-[#FF69B4] to-[#FF0000] bg-clip-text text-transparent",
+        "bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent",
         "animate-gradient-animation bg-[length:200%_200%]",
         className
       )}
@@ -25,3 +26,5 @@ const AnimatedGradientText: FC<AnimatedGradientTextProps> = ({
 };
 
 export default AnimatedGradientText;
+
+    

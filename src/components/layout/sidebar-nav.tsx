@@ -43,16 +43,12 @@ export default function SidebarNav() {
       <SidebarHeader>
         <Link href="/dashboard" className="flex items-center gap-2 group">
            <div className={cn(
-            "h-10 w-10 rounded-lg p-1",
-            "bg-gradient-to-r from-[#8A2BE2] via-[#FF69B4] to-[#FF0000]",
-            "animate-gradient-animation bg-[length:200%_200%]"
+            "h-10 w-10 rounded-lg p-1 bg-primary text-primary-foreground flex items-center justify-center"
             )}>
-                <div className="flex h-full w-full items-center justify-center rounded-md bg-sidebar">
-                    <Icons.logo className="h-6 w-6 text-primary group-data-[collapsible=icon]:text-primary"/>
-                </div>
+                <Icons.logo className="h-6 w-6"/>
             </div>
           <div className="font-headline text-lg font-semibold group-data-[collapsible=icon]:hidden">
-            <AnimatedGradientText>VNDR</AnimatedGradientText>
+            <span className="text-foreground">VNDR</span>
           </div>
         </Link>
       </SidebarHeader>
@@ -90,3 +86,5 @@ export default function SidebarNav() {
     </>
   );
 }
+
+    

@@ -1,7 +1,6 @@
 
 import Link from 'next/link';
 import { Icons } from '@/components/icons';
-import AnimatedGradientText from '@/components/animated-gradient-text';
 import { Button } from '@/components/ui/button';
 
 export default function LandingPageHeader() {
@@ -10,8 +9,8 @@ export default function LandingPageHeader() {
       <div className="container flex h-14 items-center">
         <Link href="/" className="mr-6 flex items-center space-x-2">
           <Icons.logo className="h-6 w-6 text-primary" />
-          <span className="hidden font-bold sm:inline-block font-headline text-lg">
-             <AnimatedGradientText>VNDR</AnimatedGradientText>
+          <span className="hidden font-bold sm:inline-block font-headline text-lg text-foreground">
+             VNDR
           </span>
         </Link>
         <nav className="flex-1 items-center space-x-6 text-sm font-medium hidden md:flex">
