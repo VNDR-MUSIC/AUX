@@ -8,16 +8,17 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
-import { AspectRatio } from "@radix-ui/react-aspect-ratio";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+
 
 interface TrackCardProps {
   track: WithId<{
     title: string;
+    artistId: string;
     artistName?: string;
     genre?: string;
     coverArtUrl?: string;
     price?: number;
-    // Add other track properties here as needed from your 'Track' entity
   }>;
 }
 
@@ -28,21 +29,23 @@ export default function TrackCard({ track }: TrackCardProps) {
     <Card className="overflow-hidden flex flex-col">
       <CardHeader className="p-0">
         <AspectRatio ratio={1 / 1}>
-          <Image
-            src={track.coverArtUrl || 'https://picsum.photos/seed/placeholder/400/400'}
-            alt={track.title}
-            fill
-            className="object-cover"
-            data-ai-hint="album art"
-          />
+            <Link href={`/profile/${track.artistId}`}>
+                <Image
+                    src={track.coverArtUrl || 'https://picsum.photos/seed/placeholder/400/400'}
+                    alt={track.title}
+                    fill
+                    className="object-cover"
+                    data-ai-hint="album art"
+                />
+            </Link>
         </AspectRatio>
       </CardHeader>
       <CardContent className="p-4 flex-1">
         <h3 className="font-semibold text-lg truncate">{track.title}</h3>
         {track.artistName && (
-          <p className="text-sm text-muted-foreground truncate">
+           <Link href={`/profile/${track.artistId}`} className="text-sm text-muted-foreground hover:underline truncate">
             {track.artistName}
-          </p>
+          </Link>
         )}
         {track.genre && (
           <Badge variant="outline" className="mt-2">{track.genre}</Badge>
@@ -58,7 +61,6 @@ export default function TrackCard({ track }: TrackCardProps) {
           <div className="text-sm text-muted-foreground">Not for license</div>
         )}
         <Button asChild size="sm" disabled={!hasPrice}>
-            {/* The link can later point to a specific licensing page for this track */}
             <Link href={hasPrice ? "/dashboard/licensing" : "#"}>License</Link>
         </Button>
       </CardFooter>
