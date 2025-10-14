@@ -86,7 +86,7 @@
   }
   body {
     @apply bg-background text-foreground;
-    background-image: radial-gradient(circle at top right, hsl(var(--primary)), hsl(var(--accent)) 85%, hsl(var(--destructive)) 90%, hsl(var(--background)) 95%);
+    background-image: linear-gradient(to right, hsl(var(--primary)), hsl(var(--accent)), hsl(var(--destructive)));
   }
 }
 
