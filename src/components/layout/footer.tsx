@@ -51,11 +51,11 @@ export default function Footer() {
             
             {user && (
               <div>
-                  <h3 className="font-semibold text-foreground">For Artists</h3>
+                  <h3 className="font-semibold text-lg text-foreground">For Artists</h3>
                   <ul className="mt-4 space-y-2">
                       {artistLinks.map((link) => (
                           <li key={link.name}>
-                              <Link href={link.href} className="text-sm text-muted-foreground hover:text-primary">
+                              <Link href={link.href} className="text-base text-muted-foreground hover:text-primary">
                                   {link.name}
                               </Link>
                           </li>
@@ -65,11 +65,11 @@ export default function Footer() {
             )}
 
             <div>
-                <h3 className="font-semibold text-foreground">Company</h3>
+                <h3 className="font-semibold text-lg text-foreground">Company</h3>
                 <ul className="mt-4 space-y-2">
                     {companyLinks.map((link) => (
                         <li key={link.name}>
-                            <Link href={link.href} className="text-sm text-muted-foreground hover:text-primary">
+                            <Link href={link.href} className="text-base text-muted-foreground hover:text-primary">
                                 {link.name}
                             </Link>
                         </li>
@@ -78,11 +78,11 @@ export default function Footer() {
             </div>
             
             <div>
-                <h3 className="font-semibold text-foreground">Legal</h3>
+                <h3 className="font-semibold text-lg text-foreground">Legal</h3>
                 <ul className="mt-4 space-y-2">
                     {legalLinks.map((link) => (
                         <li key={link.name}>
-                            <Link href={link.href} className="text-sm text-muted-foreground hover:text-primary">
+                            <Link href={link.href} className="text-base text-muted-foreground hover:text-primary">
                                 {link.name}
                             </Link>
                         </li>
@@ -91,11 +91,11 @@ export default function Footer() {
             </div>
 
             <div>
-                <h3 className="font-semibold text-foreground">Connect</h3>
+                <h3 className="font-semibold text-lg text-foreground">Connect</h3>
                 <ul className="mt-4 space-y-2">
                     {socialLinks.map((link) => (
                         <li key={link.name}>
-                            <Link href={link.href} className="text-sm text-muted-foreground hover:text-primary">
+                            <Link href={link.href} className="text-base text-muted-foreground hover:text-primary">
                                 {link.name}
                             </Link>
                         </li>
