@@ -1,10 +1,11 @@
+
 import { type SVGProps } from "react";
 import Image from "next/image";
 
 export const Icons = {
-  logo: (props: Omit<React.ComponentProps<typeof Image>, 'src' | 'alt' | 'fill' | 'className'>) => (
+  logo: (props: Omit<React.ComponentProps<typeof Image>, 'src' | 'alt' >) => (
      <Image
-      src="https://i.ibb.co/spK4hLTH/Background-Eraser-20251014-175202109.png"
+      src="https://i.ibb.co/LzYSVCtz/Background-Eraser-20251014-181324183.png"
       alt="VNDR Logo"
       fill
       className="object-contain"
