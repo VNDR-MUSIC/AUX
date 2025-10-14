@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { useCollection, useFirebase } from '@/firebase';
+import { useCollection, useFirebase, useMemoFirebase } from '@/firebase';
 import { collection } from 'firebase/firestore';
 import { Input } from '@/components/ui/input';
 import {
@@ -22,7 +22,7 @@ const genres = ["Synthwave", "Lofi Hip-Hop", "Future Funk", "Ambient", "Electron
 
 export default function CatalogPage() {
   const { firestore } = useFirebase();
-  const tracksQuery = useMemo(() => firestore ? collection(firestore, 'tracks') : null, [firestore]);
+  const tracksQuery = useMemoFirebase(() => firestore ? collection(firestore, 'tracks') : null, [firestore]);
   const { data: tracks, isLoading } = useCollection(tracksQuery);
 
   const [searchTerm, setSearchTerm] = useState('');
