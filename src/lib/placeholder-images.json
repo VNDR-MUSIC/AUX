@@ -37,6 +37,12 @@
       "imageHint": "street market"
     },
     {
+      "id": "licensing-header",
+      "description": "Person signing a document",
+      "imageUrl": "https://picsum.photos/seed/license/1200/300",
+      "imageHint": "signing contract"
+    },
+    {
       "id": "user-avatar-1",
       "description": "User avatar 1",
       "imageUrl": "https://picsum.photos/seed/u1/100/100",
@@ -47,6 +53,36 @@
       "description": "User avatar 2",
       "imageUrl": "https://picsum.photos/seed/u2/100/100",
       "imageHint": "person profile"
+    },
+    {
+      "id": "midnight-bloom",
+      "description": "Midnight Bloom track image",
+      "imageUrl": "https://picsum.photos/seed/track1/40/40",
+      "imageHint": "abstract flower"
+    },
+    {
+      "id": "crystal-caverns",
+      "description": "Crystal Caverns track image",
+      "imageUrl": "https://picsum.photos/seed/track2/40/40",
+      "imageHint": "crystal cave"
+    },
+    {
+      "id": "neon-drive",
+      "description": "Neon Drive track image",
+      "imageUrl": "https://picsum.photos/seed/track3/40/40",
+      "imageHint": "neon car"
+    },
+    {
+      "id": "lunar-tides",
+      "description": "Lunar Tides track image",
+      "imageUrl": "https://picsum.photos/seed/track4/40/40",
+      "imageHint": "moon ocean"
+    },
+    {
+      "id": "streetlight-sonata",
+      "description": "Streetlight Sonata track image",
+      "imageUrl": "https://picsum.photos/seed/track5/40/40",
+      "imageHint": "street light"
     }
   ]
 }

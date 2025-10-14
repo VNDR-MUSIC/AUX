@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,12 +17,27 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 export default function LicensingPage() {
+  const headerImage = PlaceHolderImages.find(img => img.id === 'licensing-header');
+
   return (
     <div className="container mx-auto py-8">
       <Card>
-        <CardHeader>
+        {headerImage && (
+            <div className="relative h-48 w-full">
+              <Image
+                src={headerImage.imageUrl}
+                alt={headerImage.description}
+                fill
+                className="object-cover rounded-t-lg"
+                data-ai-hint={headerImage.imageHint}
+              />
+              <div className="absolute inset-0 bg-black/50" />
+            </div>
+          )}
+        <CardHeader className="relative pt-8">
           <CardTitle className="font-headline text-3xl">Create Licensing Request</CardTitle>
           <CardDescription>
             Request a license to use a track in your project. Fill out the form below.

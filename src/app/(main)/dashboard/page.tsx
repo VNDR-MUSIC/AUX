@@ -23,16 +23,15 @@ import RecommendationsClient from "@/components/dashboard/recommendations-client
 import TopTracksChart from "@/components/dashboard/top-tracks-chart";
 
 const popularTracks = [
-  { title: "Midnight Bloom", artist: "Synthwave Samurai", plays: "2.1M", duration: "3:45" },
-  { title: "Crystal Caverns", artist: "Pixel Pulse", plays: "1.8M", duration: "4:12" },
-  { title: "Neon Drive", artist: "Future Funksters", plays: "1.5M", duration: "2:58" },
-  { title: "Lunar Tides", artist: "Cosmic Drifters", plays: "1.2M", duration: "5:02" },
-  { title: "Streetlight Sonata", artist: "Urban Echoes", plays: "980K", duration: "3:15" },
+  { id: "midnight-bloom", title: "Midnight Bloom", artist: "Synthwave Samurai", plays: "2.1M", duration: "3:45" },
+  { id: "crystal-caverns", title: "Crystal Caverns", artist: "Pixel Pulse", plays: "1.8M", duration: "4:12" },
+  { id: "neon-drive", title: "Neon Drive", artist: "Future Funksters", plays: "1.5M", duration: "2:58" },
+  { id: "lunar-tides", title: "Lunar Tides", artist: "Cosmic Drifters", plays: "1.2M", duration: "5:02" },
+  { id: "streetlight-sonata", title: "Streetlight Sonata", artist: "Urban Echoes", plays: "980K", duration: "3:15" },
 ];
 
 export default function DashboardPage() {
   const nowPlayingImg = PlaceHolderImages.find(img => img.id === 'album-2');
-  const trackImage = PlaceHolderImages.find(p => p.id === 'album-1');
 
   return (
     <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
@@ -62,16 +61,31 @@ export default function DashboardPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {popularTracks.map((track) => (
-                <TableRow key={track.title}>
-                  <TableCell>
-                    <div className="font-medium">{track.title}</div>
-                  </TableCell>
-                  <TableCell className="hidden sm:table-cell">{track.artist}</TableCell>
-                  <TableCell className="hidden md:table-cell">{track.plays}</TableCell>
-                  <TableCell className="text-right">{track.duration}</TableCell>
-                </TableRow>
-              ))}
+              {popularTracks.map((track) => {
+                const trackImage = PlaceHolderImages.find(p => p.id === track.id);
+                return (
+                  <TableRow key={track.title}>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        {trackImage && (
+                            <Image
+                              alt={track.title}
+                              className="aspect-square rounded-md object-cover"
+                              height="40"
+                              width="40"
+                              src={trackImage.imageUrl}
+                              data-ai-hint={trackImage.imageHint}
+                            />
+                        )}
+                        <div className="font-medium">{track.title}</div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="hidden sm:table-cell">{track.artist}</TableCell>
+                    <TableCell className="hidden md:table-cell">{track.plays}</TableCell>
+                    <TableCell className="text-right">{track.duration}</TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </CardContent>
