@@ -238,7 +238,7 @@ export default function UploadForm() {
 
                 {pricingOption === 'manual' && (
                     <div className="grid gap-2">
-                        <Label htmlFor="manual-price" className="flex items-center gap-1">Licensing Price (<Icons.vsd className="h-4 w-4"/>)</Label>
+                        <Label htmlFor="manual-price" className="flex items-center gap-1">Licensing Price</Label>
                         <div className="relative">
                             <Icons.vsd className="absolute left-2.5 top-2.5 h-5 w-5 text-muted-foreground" />
                             <Input id="manual-price" type="number" placeholder="e.g., 250" className="pl-9" value={manualPrice} onChange={(e) => setManualPrice(e.target.value)} />

@@ -112,7 +112,7 @@ export default function VsdDemoPage() {
             {isLoading ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
-              <Icons.vsd className="mr-2 h-5 w-5" />
+              <Icons.vsd className="h-5 w-5" />
             )}
             {isLoading ? 'Processing...' : 'Purchase with VSD'}
           </Button>
