@@ -13,6 +13,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
+import { Icons } from "@/components/icons";
 
 const notificationSettings = [
   { id: 'licenseRequests', label: 'New License Requests', description: 'When a user requests to license one of your tracks.' },
@@ -45,7 +46,9 @@ export default function SettingsPage() {
                         <div key={setting.id}>
                             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                                 <div className="mb-2 sm:mb-0">
-                                    <Label htmlFor={setting.id} className="font-semibold">{setting.label}</Label>
+                                    <Label htmlFor={setting.id} className="font-semibold flex items-center gap-2">
+                                        {setting.id === 'vsdTokens' ? <><Icons.vsd className="h-4 w-4" /> Token Updates</> : setting.label}
+                                    </Label>
                                     <p className="text-sm text-muted-foreground">{setting.description}</p>
                                 </div>
                                 <div className="flex items-center space-x-4">

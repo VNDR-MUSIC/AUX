@@ -97,7 +97,7 @@ export default function VsdDemoPage() {
             </div>
             <Badge variant="secondary" className="text-lg flex items-center gap-2">
               <Icons.vsd className="h-4 w-4" />
-              <span>10 VSD</span>
+              <span>10</span>
             </Badge>
           </div>
           <div className="font-code text-sm bg-muted p-4 rounded-md">
