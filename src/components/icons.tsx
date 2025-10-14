@@ -1,4 +1,5 @@
 import { type SVGProps } from "react";
+import Image from "next/image";
 
 export const Icons = {
   logo: (props: SVGProps<SVGSVGElement>) => (
@@ -17,14 +18,13 @@ export const Icons = {
       <circle cx="18" cy="16" r="3" />
     </svg>
   ),
-  vsd: (props: SVGProps<SVGSVGElement>) => (
-    <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="currentColor"
-        {...props}
-    >
-        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5-10-5-10 5z" />
-    </svg>
+  vsd: (props: Omit<React.ComponentProps<typeof Image>, 'src' | 'alt'>) => (
+     <Image
+      src="https://i.ibb.co/Kpg55Cc/Adobe-Express-20250422-1254090-1.png"
+      alt="VSD Token"
+      width={24}
+      height={24}
+      {...props}
+    />
   ),
 };

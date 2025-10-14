@@ -44,6 +44,13 @@ export default function TopTracksChart() {
   return (
     <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
       <BarChart accessibilityLayer data={chartData}>
+        <defs>
+            <linearGradient id="colorSoundwave" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8}/>
+                <stop offset="50%" stopColor="hsl(var(--accent))" stopOpacity={0.8}/>
+                <stop offset="95%" stopColor="hsl(var(--destructive))" stopOpacity={0.8}/>
+            </linearGradient>
+        </defs>
         <CartesianGrid vertical={false} />
         <XAxis
           dataKey="month"
@@ -54,9 +61,9 @@ export default function TopTracksChart() {
         />
         <YAxis />
         <ChartTooltip content={<ChartTooltipContent />} />
-        <Bar dataKey="track" fill="var(--color-track)" radius={4} />
-        <Bar dataKey="track2" fill="var(--color-track2)" radius={4} />
-        <Bar dataKey="track3" fill="var(--color-track3)" radius={4} />
+        <Bar dataKey="track" fill="url(#colorSoundwave)" radius={4} />
+        <Bar dataKey="track2" fill="url(#colorSoundwave)" radius={4} />
+        <Bar dataKey="track3" fill="url(#colorSoundwave)" radius={4} />
       </BarChart>
     </ChartContainer>
   );
