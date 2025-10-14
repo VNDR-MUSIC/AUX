@@ -9,11 +9,11 @@ import { Label } from "@/components/ui/label";
 import { Icons } from "@/components/icons";
 import AnimatedGradientText from "@/components/animated-gradient-text";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { signupAction, loginAction } from "@/app/actions/user";
+import { signupAction } from "@/app/actions/user";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
-import { useFirebase, initiateEmailSignIn } from "@/firebase";
+import { useFirebase, initiateEmailSignIn, useUser } from "@/firebase";
 import { Loader2 } from "lucide-react";
 
 const initialState = {
@@ -36,11 +36,18 @@ export default function AuthForm() {
   const { toast } = useToast();
   const router = useRouter();
   const { auth } = useFirebase();
+  const { user, isUserLoading } = useUser();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
+  useEffect(() => {
+    // If user is already logged in, redirect to dashboard
+    if (!isUserLoading && user) {
+      router.push('/dashboard');
+    }
+  }, [user, isUserLoading, router]);
 
   useEffect(() => {
     if (signupState.message) {
@@ -50,21 +57,31 @@ export default function AuthForm() {
         variant: signupState.errors ? "destructive" : "default",
       });
       if (signupState.user) {
-        router.push('/dashboard');
+        // After successful sign-up, Firebase onAuthStateChanged will trigger,
+        // and the previous useEffect will handle the redirect.
+        // No need to redirect here explicitly.
       }
     }
-  }, [signupState, toast, router]);
+  }, [signupState, toast]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (!auth) return;
     setIsLoggingIn(true);
+    // initiateEmailSignIn is non-blocking. onAuthStateChanged listener handles the rest.
     initiateEmailSignIn(auth, email, password);
-    // The onAuthStateChanged listener in FirebaseProvider will handle the redirect
-    // We add a small delay to give firebase time to process
+    // Let's add a small timeout to handle cases where login fails silently
+    // before onAuthStateChanged gets a chance to react.
     setTimeout(() => {
-        router.push('/dashboard');
-    }, 1000);
+        if(!auth.currentUser) {
+            setIsLoggingIn(false);
+            toast({
+                title: "Login Failed",
+                description: "Please check your email and password.",
+                variant: "destructive"
+            })
+        }
+    }, 2000);
   };
 
 
@@ -100,8 +117,8 @@ export default function AuthForm() {
                 </div>
                 <Input id="login-password" type="password" required value={password} onChange={e => setPassword(e.target.value)} />
               </div>
-              <Button type="submit" className="w-full" disabled={isLoggingIn}>
-                {isLoggingIn ? <Loader2 className="animate-spin" /> : "Login"}
+              <Button type="submit" className="w-full" disabled={isLoggingIn || isUserLoading}>
+                {isLoggingIn || isUserLoading ? <Loader2 className="animate-spin" /> : "Login"}
               </Button>
             </form>
           </TabsContent>
@@ -129,5 +146,3 @@ export default function AuthForm() {
     </Card>
   );
 }
-
-    

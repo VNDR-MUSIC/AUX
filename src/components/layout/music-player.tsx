@@ -2,14 +2,93 @@
 'use client';
 
 import Image from "next/image";
-import { Play, Pause, SkipBack, SkipForward, ListMusic, Laptop2, Volume1 } from "lucide-react";
+import { Play, Pause, SkipBack, SkipForward, ListMusic, Laptop2, Volume1, Volume2, VolumeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { useMusicPlayer } from "@/store/music-player-store";
+import { useEffect, useState, useRef } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function MusicPlayer() {
-  const { currentTrack, isPlaying, play, pause, nextTrack, prevTrack } = useMusicPlayer();
+  const { 
+    currentTrack, 
+    isPlaying, 
+    play, 
+    pause, 
+    nextTrack, 
+    prevTrack, 
+    volume, 
+    setVolume,
+    isMuted,
+    toggleMute,
+  } = useMusicPlayer();
   
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [progress, setProgress] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (currentTrack && audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.play().catch(e => console.error("Audio play failed:", e));
+      } else {
+        audioRef.current.pause();
+      }
+    }
+  }, [isPlaying, currentTrack]);
+
+  useEffect(() => {
+    if (audioRef.current) {
+        audioRef.current.volume = isMuted ? 0 : volume;
+    }
+  }, [volume, isMuted])
+
+  const handleTimeUpdate = () => {
+    if (audioRef.current) {
+      setProgress(audioRef.current.currentTime);
+    }
+  };
+
+  const handleLoadedMetadata = () => {
+    if (audioRef.current) {
+      setDuration(audioRef.current.duration);
+    }
+  };
+
+  const handleProgressChange = (value: number[]) => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = value[0];
+      setProgress(value[0]);
+    }
+  };
+  
+  const formatTime = (timeInSeconds: number) => {
+    const minutes = Math.floor(timeInSeconds / 60);
+    const seconds = Math.floor(timeInSeconds % 60);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const handlePlayPause = () => {
+     if (currentTrack?.trackUrl === "https://firebasestorage.googleapis.com/v0/b/your-project-id.appspot.com/o/example-track.mp3?alt=media") {
+      toast({
+        title: "Demo Audio",
+        description: "This is a placeholder audio track. You can replace it by uploading your own music!",
+      });
+    }
+    if (isPlaying) {
+      pause();
+    } else {
+      play();
+    }
+  }
+
+  const getVolumeIcon = () => {
+    if (isMuted || volume === 0) return <VolumeX className="h-4 w-4 hidden sm:block" />;
+    if (volume < 0.5) return <Volume1 className="h-4 w-4 hidden sm:block" />;
+    return <Volume2 className="h-4 w-4 hidden sm:block" />;
+  }
+
   if (!currentTrack) {
     return (
         <footer className="fixed bottom-0 left-0 right-0 z-20 border-t bg-background/95 backdrop-blur-sm">
@@ -21,6 +100,16 @@ export default function MusicPlayer() {
   }
 
   return (
+    <>
+    {currentTrack.trackUrl && (
+        <audio 
+            ref={audioRef}
+            src={currentTrack.trackUrl}
+            onTimeUpdate={handleTimeUpdate}
+            onLoadedMetadata={handleLoadedMetadata}
+            onEnded={nextTrack}
+        />
+    )}
     <footer className="fixed bottom-0 left-0 right-0 z-20 border-t bg-background/95 backdrop-blur-sm">
       <div className="flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-3 w-1/3">
@@ -45,7 +134,7 @@ export default function MusicPlayer() {
             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={prevTrack}>
               <SkipBack className="h-4 w-4" />
             </Button>
-            <Button variant="default" size="icon" className="h-10 w-10" onClick={isPlaying ? pause : play}>
+            <Button variant="default" size="icon" className="h-10 w-10" onClick={handlePlayPause}>
               {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
             </Button>
             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={nextTrack}>
@@ -53,9 +142,9 @@ export default function MusicPlayer() {
             </Button>
           </div>
           <div className="flex items-center gap-2 w-full max-w-xs">
-            <span className="text-xs text-muted-foreground">0:00</span>
-            <Slider defaultValue={[0]} max={100} step={1} className="w-full" />
-            <span className="text-xs text-muted-foreground">0:00</span>
+            <span className="text-xs text-muted-foreground">{formatTime(progress)}</span>
+            <Slider value={[progress]} max={duration} step={1} onValueChange={handleProgressChange} className="w-full" />
+            <span className="text-xs text-muted-foreground">{formatTime(duration)}</span>
           </div>
         </div>
 
@@ -67,11 +156,14 @@ export default function MusicPlayer() {
             <Laptop2 className="h-4 w-4" />
           </Button>
           <div className="flex items-center gap-2">
-            <Volume1 className="h-4 w-4 hidden sm:block" />
-            <Slider defaultValue={[80]} max={100} step={1} className="w-24 hidden sm:block" />
+            <Button variant="ghost" size="icon" onClick={toggleMute} className="h-8 w-8 hidden sm:flex">
+                {getVolumeIcon()}
+            </Button>
+            <Slider value={[volume]} onValueChange={(v) => setVolume(v[0])} max={1} step={0.05} className="w-24 hidden sm:block" />
           </div>
         </div>
       </div>
     </footer>
+    </>
   );
 }

@@ -2,6 +2,7 @@
 'use client';
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { CircleUser, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,10 +15,34 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { useUser } from "@/firebase";
+import { useUser, useFirebase } from "@/firebase";
+import { signOut } from "firebase/auth";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Header() {
   const { user } = useUser();
+  const { auth } = useFirebase();
+  const router = useRouter();
+  const { toast } = useToast();
+
+  const handleLogout = async () => {
+    if (!auth) return;
+    try {
+      await signOut(auth);
+      toast({
+        title: "Logged Out",
+        description: "You have been successfully logged out.",
+      });
+      router.push("/");
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast({
+        title: "Logout Failed",
+        description: "An error occurred while logging out.",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <header className="flex h-14 items-center gap-4 border-b bg-background/95 backdrop-blur-sm px-4 lg:h-[60px] lg:px-6 sticky top-0 z-10 md:static md:z-auto md:border-none md:bg-transparent md:backdrop-blur-none">
@@ -51,8 +76,8 @@ export default function Header() {
             <Link href="/dashboard/settings">Settings</Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <Link href="/">Logout</Link>
+          <DropdownMenuItem onClick={handleLogout}>
+            Logout
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

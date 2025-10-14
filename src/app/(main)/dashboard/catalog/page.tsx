@@ -3,7 +3,7 @@
 
 import { useState, useMemo } from 'react';
 import { useCollection, useFirebase, useMemoFirebase } from '@/firebase';
-import { collection } from 'firebase/firestore';
+import { collection, DocumentData } from 'firebase/firestore';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -17,13 +17,14 @@ import { Label } from '@/components/ui/label';
 import { Search } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import TrackCard from '@/components/catalog/track-card';
+import { Track } from '@/store/music-player-store';
 
 const genres = ["Synthwave", "Lofi Hip-Hop", "Future Funk", "Ambient", "Electronic", "All"];
 
 export default function CatalogPage() {
   const { firestore } = useFirebase();
   const tracksQuery = useMemoFirebase(() => firestore ? collection(firestore, 'tracks') : null, [firestore]);
-  const { data: tracks, isLoading } = useCollection(tracksQuery);
+  const { data: tracks, isLoading } = useCollection<DocumentData>(tracksQuery);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('All');
@@ -43,7 +44,7 @@ export default function CatalogPage() {
       })
       .filter(track => {
         return !showLicensedOnly || (track.price && track.price > 0);
-      });
+      }) as Track[] | undefined;
   }, [tracks, searchTerm, selectedGenre, showLicensedOnly]);
 
   return (
@@ -95,7 +96,7 @@ export default function CatalogPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredTracks?.map(track => (
-            <TrackCard key={track.id} track={track} />
+            <TrackCard key={track.id} track={track} playlist={filteredTracks} />
           ))}
         </div>
       )}

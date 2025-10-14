@@ -19,6 +19,8 @@ interface MusicPlayerState {
   currentTrack: Track | null;
   currentTrackIndex: number;
   isPlaying: boolean;
+  volume: number;
+  isMuted: boolean;
   
   setPlaylist: (tracks: Track[]) => void;
   playTrack: (track: Track, playlist?: Track[]) => void;
@@ -26,6 +28,8 @@ interface MusicPlayerState {
   pause: () => void;
   nextTrack: () => void;
   prevTrack: () => void;
+  setVolume: (volume: number) => void;
+  toggleMute: () => void;
 }
 
 export const useMusicPlayer = create<MusicPlayerState>((set, get) => ({
@@ -33,30 +37,28 @@ export const useMusicPlayer = create<MusicPlayerState>((set, get) => ({
   currentTrack: null,
   currentTrackIndex: -1,
   isPlaying: false,
+  volume: 0.8,
+  isMuted: false,
 
   setPlaylist: (tracks) => set({ playlist: tracks }),
 
   playTrack: (track, playlist) => {
-    const { currentTrack, play } = get();
-    if (playlist) {
-      set({ playlist });
-    }
     const newPlaylist = playlist || get().playlist;
     const trackIndex = newPlaylist.findIndex(t => t.id === track.id);
     
     set({
       currentTrack: track,
+      playlist: newPlaylist,
       currentTrackIndex: trackIndex,
       isPlaying: true,
     });
-    
-    // In a real app, you would handle audio playback here.
-    // For example:
-    // const audio = new Audio(track.trackUrl);
-    // audio.play();
   },
 
-  play: () => set({ isPlaying: true }),
+  play: () => {
+    if (get().currentTrack) {
+        set({ isPlaying: true });
+    }
+  },
   
   pause: () => set({ isPlaying: false }),
 
@@ -64,7 +66,7 @@ export const useMusicPlayer = create<MusicPlayerState>((set, get) => ({
     const { playlist, currentTrackIndex, playTrack } = get();
     if (playlist.length > 0) {
       const nextIndex = (currentTrackIndex + 1) % playlist.length;
-      playTrack(playlist[nextIndex]);
+      playTrack(playlist[nextIndex], playlist);
     }
   },
 
@@ -72,7 +74,15 @@ export const useMusicPlayer = create<MusicPlayerState>((set, get) => ({
     const { playlist, currentTrackIndex, playTrack } = get();
     if (playlist.length > 0) {
       const prevIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
-      playTrack(playlist[prevIndex]);
+      playTrack(playlist[prevIndex], playlist);
     }
   },
+
+  setVolume: (volume) => {
+    set({ volume, isMuted: volume === 0 });
+  },
+
+  toggleMute: () => {
+    set(state => ({ isMuted: !state.isMuted }));
+  }
 }));

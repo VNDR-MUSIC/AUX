@@ -3,35 +3,27 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { WithId } from "@/firebase";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Play } from "lucide-react";
-import { useMusicPlayer } from "@/store/music-player-store";
+import { useMusicPlayer, Track } from "@/store/music-player-store";
 
 
 interface TrackCardProps {
-  track: WithId<{
-    title: string;
-    artistId: string;
-    artistName?: string;
-    genre?: string;
-    coverArtUrl?: string;
-    trackUrl?: string;
-    price?: number;
-  }>;
+  track: Track;
+  playlist?: Track[];
 }
 
-export default function TrackCard({ track }: TrackCardProps) {
+export default function TrackCard({ track, playlist }: TrackCardProps) {
   const hasPrice = track.price && track.price > 0;
   const { playTrack } = useMusicPlayer();
 
   const handlePlay = (e: React.MouseEvent) => {
     e.preventDefault(); // Prevent link navigation
-    playTrack(track);
+    playTrack(track, playlist);
   };
 
   return (
