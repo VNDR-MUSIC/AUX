@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "User": {
@@ -31,6 +32,18 @@
             "type": "string",
             "format": "date",
             "description": "The date the user last claimed their daily VSD tokens."
+        },
+        "notificationPreferences": {
+          "type": "object",
+          "description": "User's preferences for receiving notifications.",
+          "properties": {
+            "licenseRequests": { "type": "object", "properties": { "app": {"type": "boolean"}, "email": {"type": "boolean"}, "push": {"type": "boolean"} } },
+            "offers": { "type": "object", "properties": { "app": {"type": "boolean"}, "email": {"type": "boolean"}, "push": {"type": "boolean"} } },
+            "auctions": { "type": "object", "properties": { "app": {"type": "boolean"}, "email": {"type": "boolean"}, "push": {"type": "boolean"} } },
+            "vsdTokens": { "type": "object", "properties": { "app": {"type": "boolean"}, "email": {"type": "boolean"}, "push": {"type": "boolean"} } },
+            "comments": { "type": "object", "properties": { "app": {"type": "boolean"}, "email": {"type": "boolean"}, "push": {"type": "boolean"} } },
+            "platformUpdates": { "type": "object", "properties": { "app": {"type": "boolean"}, "email": {"type": "boolean"}, "push": {"type": "boolean"} } }
+          }
         }
       },
       "required": [
@@ -305,4 +318,3 @@
     "reasoning": "The Firestore structure is designed to provide a secure, scalable, and easily maintainable backend for the VNDR Music platform. It prioritizes authorization independence by denormalizing data where necessary and segregates data based on access requirements. The structure avoids complex hierarchical dependencies to enable atomic operations and simplifies security rules.\n\n*   **Users:** User data is stored in `/users/{userId}`. This top-level collection stores essential user information.\n*   **Artists:** Artist profiles are stored in `/artists/{artistId}`.  The `userId` field links each artist to a specific user. This allows easy retrieval of an artist's profile via the artist ID and provides a clear association with a user.\n*   **Tracks:** Tracks are stored in `/tracks/{trackId}`. The `artistId` field associates each track with an artist.\n*   **License Requests:** Licensing requests are stored in `/license_requests/{licenseRequestId}`. The `trackId` field links each request to a specific track, and the `requestorId` links it to the user making the request.\n*   **VSD Transactions:** VSD token transactions are stored in `/vsd_transactions/{vsdTransactionId}`. The `userId` field links each transaction to a specific user.\n*   **Admin Roles:** The existence of a document in `/roles_admin/{userId}` grants admin privileges.\n\n**Authorization Independence (Denormalization):**\n\n*   In cases where authorization depends on parent document attributes, those attributes are denormalized into child documents. For example, while not explicitly required by the current schema, if licensing requests needed to be restricted based on attributes of the track or artist, those attributes would be copied into the `LicenseRequest` document.\n\n**QAPs (Rules are not Filters):**\n\n*   The segregation of data into separate collections based on entity type (users, artists, tracks, license requests, VSD transactions) supports secure `list` operations. Each collection can have specific security rules that govern which users can access which documents. The use of explicit ownership via `userId` and `artistId` fields enables efficient filtering and authorization.\n*   Admin privileges are managed via document existence in the `/roles_admin/{userId}` collection, enabling quick and efficient role checks without complex data lookups."
   }
 }
-    

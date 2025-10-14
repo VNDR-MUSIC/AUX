@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -60,7 +61,7 @@ export default function SidebarNav() {
             <SidebarMenuItem key={item.href}>
               <SidebarMenuButton
                 asChild
-                isActive={pathname === item.href}
+                isActive={pathname.startsWith(item.href) && (item.href !== '/dashboard' || pathname === '/dashboard')}
                 tooltip={{ children: item.label }}
               >
                 <Link href={item.href}>
@@ -76,8 +77,8 @@ export default function SidebarNav() {
         <SidebarSeparator />
         <SidebarMenu>
             <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip={{children: "Settings"}}>
-                    <Link href="#">
+                <SidebarMenuButton asChild tooltip={{children: "Settings"}} isActive={pathname.startsWith('/dashboard/settings')}>
+                    <Link href="/dashboard/settings">
                         <Settings/>
                         <span>Settings</span>
                     </Link>
