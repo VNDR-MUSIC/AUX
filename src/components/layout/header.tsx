@@ -1,9 +1,10 @@
 
 'use client';
 
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { CircleUser, LogIn, Search } from "lucide-react";
+import { CircleUser, LogIn, Menu, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -18,13 +19,15 @@ import { useUser, useFirebase } from "@/firebase";
 import { signOut } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "../ui/skeleton";
-import { SidebarTrigger } from "../ui/sidebar";
+import FullScreenNav from "./full-screen-nav";
+import { Icons } from "../icons";
 
 export default function Header() {
   const { user, isUserLoading } = useUser();
   const { auth } = useFirebase();
   const router = useRouter();
   const { toast } = useToast();
+  const [isNavOpen, setIsNavOpen] = useState(false);
 
   const handleLogout = async () => {
     if (!auth) return;
@@ -88,23 +91,36 @@ export default function Header() {
   };
 
   return (
-    <header className="flex h-14 items-center gap-4 border-b bg-transparent px-4 lg:h-[60px] lg:px-6 sticky top-0 z-50">
-      <div className="flex items-center gap-2">
-        <SidebarTrigger className="hidden md:flex" />
-      </div>
-      <div className="w-full flex-1">
-        <form>
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search artists, tracks, albums..."
-              className="w-full appearance-none bg-transparent pl-8 shadow-none md:w-2/3 lg:w-1/3"
-            />
-          </div>
-        </form>
-      </div>
-      {renderUserMenu()}
-    </header>
+    <>
+      <header className="flex h-14 items-center gap-4 border-b bg-background/80 backdrop-blur-lg px-4 lg:h-[60px] lg:px-6 sticky top-0 z-40">
+        <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon" onClick={() => setIsNavOpen(true)}>
+                <Menu />
+                <span className="sr-only">Open Menu</span>
+            </Button>
+            <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2 group justify-center">
+              <div
+                className='h-10 w-20 relative'
+              >
+                <Icons.logo />
+              </div>
+            </Link>
+        </div>
+        <div className="w-full flex-1">
+          <form>
+            <div className="relative">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Search artists, tracks, albums..."
+                className="w-full appearance-none bg-transparent pl-8 shadow-none md:w-2/3 lg:w-1/3"
+              />
+            </div>
+          </form>
+        </div>
+        {renderUserMenu()}
+      </header>
+      <FullScreenNav isOpen={isNavOpen} setIsOpen={setIsNavOpen} />
+    </>
   );
 }
