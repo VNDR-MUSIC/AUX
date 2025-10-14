@@ -46,6 +46,11 @@ const heroSlides = [
 
 const features = [
     {
+        icon: <Waves className="h-10 w-10 text-primary" />,
+        title: "Free Global Distribution",
+        description: "Release your music on Spotify, Apple Music, and 150+ other platforms. You keep 100% of your rights, always.",
+    },
+    {
         icon: <Sparkles className="h-10 w-10 text-primary" />,
         title: "AI-Powered Curation & Promo",
         description: "Our intelligent engine gets your music to playlist curators and fans most likely to love it, amplifying your reach.",
@@ -60,11 +65,6 @@ const features = [
         title: "Blockchain Royalty Payments",
         description: "Using VSD tokens, we provide transparent, instant, and fair royalty payments directly to you.",
     },
-    {
-        icon: <DollarSign className="h-10 w-10 text-primary" />,
-        title: "Keep 100% of Your Rights",
-        description: "You own your music. Always. We're your partner, not your owner. You retain full copyright and control.",
-    }
 ];
 
 const testimonials = [
@@ -88,6 +88,10 @@ const faqs = [
   {
     question: "Do I keep the rights to my music?",
     answer: "Yes, absolutely. You retain 100% of your copyright and ownership. We are a service provider and partner, not a publisher. Our agreement is a distribution and licensing representation agreement, not a rights transfer."
+  },
+  {
+      question: "How does the music distribution and royalty split work?",
+      answer: "Our Starter plan offers free music distribution to over 150 platforms. For this service, we operate on a 50/50 royalty split. You keep 50% of all royalties earned, and we take 50% commission. If you upgrade to our Pro plan, you get a much better rate, keeping 90% of your royalties."
   },
   {
     question: "How does the blockchain royalty system work?",
@@ -234,8 +238,8 @@ export default function Home() {
                         <CardContent className="flex-1 space-y-4">
                              <p className="font-semibold text-primary flex items-center gap-2"><CalendarCheck className="h-5 w-5" /> Free VSD tokens daily!</p>
                             <ul className="space-y-2 text-muted-foreground">
-                                <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Unlimited Song Uploads</li>
-                                <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Distribution to 20+ Platforms</li>
+                                <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Free unlimited distribution to 150+ platforms</li>
+                                <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>50/50 Royalty Split</li>
                                 <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Basic Analytics</li>
                                 <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Monthly Royalty Payouts</li>
                             </ul>
@@ -263,10 +267,10 @@ export default function Home() {
                         <CardContent className="flex-1 space-y-4">
                             <ul className="space-y-2 text-muted-foreground">
                                 <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Everything in Starter, plus:</li>
+                                <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>90/10 Royalty Split</li>
                                 <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>AI-Powered Promotion Tools</li>
                                 <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Sync Licensing Submissions</li>
                                 <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Instant VSD Royalty Payouts</li>
-                                <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Advanced Analytics & Trends</li>
                             </ul>
                         </CardContent>
                         <CardFooter>
