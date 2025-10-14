@@ -12,6 +12,7 @@ import {
   Settings,
   Gavel,
   BrainCircuit,
+  Scale,
 } from 'lucide-react';
 import { useUser } from '@/firebase';
 
@@ -34,6 +35,7 @@ const authenticatedMenuItems = [
   { href: '/dashboard/catalog', icon: Library, label: 'Catalog' },
   { href: '/dashboard/licensing', icon: FileText, label: 'Licensing' },
   { href: '/dashboard/auctions', icon: Gavel, label: 'Auctions' },
+  { href: '/dashboard/legal-eagle', icon: Scale, label: 'Legal Eagle' },
 ];
 
 const publicMenuItems = [
@@ -73,7 +75,25 @@ export default function SidebarNav() {
             </div>
         ) : (
             <SidebarMenu>
-                {menuItems.map(item => (
+                {publicMenuItems.map(item => (
+                <SidebarMenuItem key={item.href}>
+                    <SidebarMenuButton
+                    asChild
+                    isActive={
+                        pathname.startsWith(item.href) &&
+                        (item.href !== '/dashboard' || pathname === '/dashboard')
+                    }
+                    tooltip={{ children: item.label }}
+                    >
+                    <Link href={item.href}>
+                        <item.icon />
+                        <span>{item.label}</span>
+                    </Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+                ))}
+                {user && <SidebarSeparator />}
+                {user && menuItems.map(item => (
                 <SidebarMenuItem key={item.href}>
                     <SidebarMenuButton
                     asChild

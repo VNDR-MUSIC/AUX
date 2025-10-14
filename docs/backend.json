@@ -25,13 +25,13 @@
           "description": "The user's role (e.g., artist, listener, publisher, admin)."
         },
         "vsdBalance": {
-            "type": "number",
-            "description": "The user's current VSD token balance."
+          "type": "number",
+          "description": "The user's current VSD token balance."
         },
         "dailyTokenClaimed": {
-            "type": "string",
-            "format": "date",
-            "description": "The date the user last claimed their daily VSD tokens."
+          "type": "string",
+          "format": "date",
+          "description": "The date the user last claimed their daily VSD tokens."
         },
         "notificationPreferences": {
           "type": "object",
@@ -203,7 +203,11 @@
         },
         "type": {
           "type": "string",
-          "description": "The type of transaction (e.g., purchase, sale)."
+          "description": "The type of transaction (e.g., purchase, sale, service_fee)."
+        },
+        "details": {
+          "type": "string",
+          "description": "Additional details about the transaction (e.g., 'Legal Eagle query')."
         }
       },
       "required": [
