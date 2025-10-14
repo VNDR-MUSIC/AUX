@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import './globals.css';
 import { Inter, Poppins } from 'next/font/google';
 import VideoBackground from '@/components/layout/video-background';
+import SessionRewind from '@/components/session-rewind';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const poppins = Poppins({
@@ -25,6 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${inter.variable} ${poppins.variable} font-body antialiased`}>
+        <SessionRewind />
         <VideoBackground />
         <div className="relative z-10">
           {children}
