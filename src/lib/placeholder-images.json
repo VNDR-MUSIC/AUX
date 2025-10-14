@@ -3,43 +3,43 @@
     {
       "id": "hero-1",
       "description": "A cheering crowd at a music concert",
-      "imageUrl": "https://picsum.photos/seed/hero1/1920/1080",
+      "imageUrl": "https://picsum.photos/seed/hero-a/1920/1080",
       "imageHint": "music concert"
     },
     {
       "id": "hero-2",
       "description": "Abstract visualization of sound waves",
-      "imageUrl": "https://picsum.photos/seed/hero2/1920/1080",
-      "imageHint": "soundwave abstract"
+      "imageUrl": "https://picsum.photos/seed/hero-b/1920/1080",
+      "imageHint": "audio soundwave"
     },
     {
       "id": "hero-3",
       "description": "A music producer working at a mixing console",
-      "imageUrl": "https://picsum.photos/seed/hero3/1920/1080",
-      "imageHint": "music production"
+      "imageUrl": "https://picsum.photos/seed/hero-c/1920/1080",
+      "imageHint": "audio production"
     },
     {
       "id": "hero-4",
       "description": "A guitarist performing on stage with dramatic lighting",
-      "imageUrl": "https://picsum.photos/seed/hero4/1920/1080",
-      "imageHint": "musician onstage"
+      "imageUrl": "https://picsum.photos/seed/hero-d/1920/1080",
+      "imageHint": "musician stage"
     },
     {
       "id": "hero-5",
       "description": "A close-up of a vinyl record playing on a turntable",
-      "imageUrl": "https://picsum.photos/seed/hero5/1920/1080",
-      "imageHint": "record player"
+      "imageUrl": "https://picsum.photos/seed/hero-e/1920/1080",
+      "imageHint": "vinyl record"
     },
     {
       "id": "hero-6",
       "description": "A person listening to music with headphones in a city",
-      "imageUrl": "https://picsum.photos/seed/hero6/1920/1080",
-      "imageHint": "headphones listening"
+      "imageUrl": "https://picsum.photos/seed/hero-f/1920/1080",
+      "imageHint": "headphones city"
     },
     {
       "id": "hero-7",
       "description": "A futuristic cityscape with neon music notes",
-      "imageUrl": "https://picsum.photos/seed/hero7/1920/1080",
+      "imageUrl": "https://picsum.photos/seed/hero-g/1920/1080",
       "imageHint": "futuristic music"
     },
     {
