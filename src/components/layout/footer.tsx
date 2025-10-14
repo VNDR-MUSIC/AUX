@@ -1,6 +1,11 @@
 
+'use client';
+
 import Link from "next/link";
 import { Icons } from "../icons";
+import { useUser } from "@/firebase";
+import { useContext } from "react";
+import { FirebaseContext } from "@/firebase/provider";
 
 const socialLinks = [
     { name: "Twitter", href: "#" },
@@ -26,6 +31,11 @@ const artistLinks = [
 ];
 
 export default function Footer() {
+  const context = useContext(FirebaseContext);
+  // Only call useUser if the context is available
+  const user = context ? useUser().user : null;
+
+
   return (
     <footer className="bg-background border-t">
       <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8">
@@ -40,18 +50,20 @@ export default function Footer() {
                 <p className="mt-4 text-sm text-muted-foreground">The future of music licensing and streaming.</p>
             </div>
             
-            <div>
-                <h3 className="font-semibold text-foreground">For Artists</h3>
-                <ul className="mt-4 space-y-2">
-                    {artistLinks.map((link) => (
-                        <li key={link.name}>
-                            <Link href={link.href} className="text-sm text-muted-foreground hover:text-primary">
-                                {link.name}
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
-            </div>
+            {user && (
+              <div>
+                  <h3 className="font-semibold text-foreground">For Artists</h3>
+                  <ul className="mt-4 space-y-2">
+                      {artistLinks.map((link) => (
+                          <li key={link.name}>
+                              <Link href={link.href} className="text-sm text-muted-foreground hover:text-primary">
+                                  {link.name}
+                              </Link>
+                          </li>
+                      ))}
+                  </ul>
+              </div>
+            )}
 
             <div>
                 <h3 className="font-semibold text-foreground">Company</h3>
@@ -99,5 +111,3 @@ export default function Footer() {
     </footer>
   );
 }
-
-    
