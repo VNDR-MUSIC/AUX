@@ -1,10 +1,11 @@
+
 "use server";
 
 import { z } from "zod";
 import { generateCoverArt } from "@/ai/flows/ai-cover-art-generation";
 import { recommendLicensingPrice } from "@/ai/flows/ai-licensing-price-recommendation";
 import { getFirebaseAdmin } from "@/firebase/admin";
-import { collection, addDoc, serverTimestamp, doc, deleteDoc } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, doc, deleteDoc, updateDoc, query, where, getDocs } from "firebase/firestore";
 import { revalidatePath } from "next/cache";
 
 
@@ -67,9 +68,7 @@ const licenseRequestSchema = z.object({
   artistName: z.string().min(1, "Artist name is required."),
   usageType: z.string().min(1, "Intended use is required."),
   description: z.string().min(1, "Project description is required."),
-  // In a real app, you would have trackId and requestorId from the logged-in user session
-  trackId: z.string().optional(), 
-  requestorId: z.string().optional(),
+  requestorId: z.string().min(1, "Requestor ID is required."),
 });
 
 type LicenseRequestState = {
@@ -196,17 +195,16 @@ export async function uploadTrackAction(
         const { db } = await getFirebaseAdmin();
         const tracksCollection = collection(db, "tracks");
         
-        // In a real app, the trackUrl would come from uploading the audio file to Cloud Storage
         const trackUrl = "https://firebasestorage.googleapis.com/v0/b/your-project-id.appspot.com/o/example-track.mp3?alt=media";
         
         await addDoc(tracksCollection, {
             title: trackTitle,
             artistId: artistId,
-            artistName: artistName, // Denormalizing for easier display
+            artistName: artistName,
             genre: genre,
             description: description,
             uploadDate: serverTimestamp(),
-            coverArtUrl: coverArtDataUri, // For demo, using data URI. In prod, upload to Storage and save URL.
+            coverArtUrl: coverArtDataUri,
             trackUrl: trackUrl,
             price: price || 0,
             plays: 0,
@@ -244,17 +242,34 @@ export async function submitLicenseRequestAction(
         };
     }
 
-    const { trackTitle, artistName, usageType, description, fullName, email } = validatedFields.data;
+    const { trackTitle, artistName, usageType, description, fullName, email, requestorId } = validatedFields.data;
 
     try {
         const { db } = await getFirebaseAdmin();
-        const licenseRequestsCollection = collection(db, "license_requests");
 
+        // Find the track and artist to link the request
+        const tracksRef = collection(db, "tracks");
+        const q = query(tracksRef, where("title", "==", trackTitle), where("artistName", "==", artistName));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+            return {
+                message: "Could not find the specified track and artist.",
+                errors: { _form: ["The track or artist could not be found. Please check the spelling and try again."] }
+            };
+        }
+
+        const trackDoc = querySnapshot.docs[0];
+        const trackId = trackDoc.id;
+        const artistId = trackDoc.data().artistId;
+
+        const licenseRequestsCollection = collection(db, "license_requests");
         await addDoc(licenseRequestsCollection, {
-            // In a real app, you'd get trackId and requestorId from the current context/user
-            // For now, we'll store the names as provided in the form
-            trackTitle,
-            artistName,
+            trackId,
+            artistId,
+            requestorId,
+            trackTitle, // Denormalize for easier display
+            artistName, // Denormalize for easier display
             usageType,
             projectDescription: description,
             requestorName: fullName,
@@ -293,5 +308,32 @@ export async function deleteTrackAction(trackId: string, artistId: string) {
     } catch (error) {
         console.error('Error deleting track:', error);
         return { error: 'Failed to delete track.' };
+    }
+}
+
+
+export async function approveLicenseRequestAction(requestId: string) {
+    try {
+        const { db } = await getFirebaseAdmin();
+        const requestRef = doc(db, 'license_requests', requestId);
+        await updateDoc(requestRef, { status: 'approved' });
+        revalidatePath('/dashboard/licensing');
+        return { success: true, message: 'Request approved successfully.' };
+    } catch (error) {
+        console.error('Error approving request:', error);
+        return { success: false, message: 'Failed to approve request.' };
+    }
+}
+
+export async function rejectLicenseRequestAction(requestId: string) {
+    try {
+        const { db } = await getFirebaseAdmin();
+        const requestRef = doc(db, 'license_requests', requestId);
+        await updateDoc(requestRef, { status: 'rejected' });
+        revalidatePath('/dashboard/licensing');
+        return { success: true, message: 'Request rejected successfully.' };
+    } catch (error) {
+        console.error('Error rejecting request:', error);
+        return { success: false, message: 'Failed to reject request.' };
     }
 }

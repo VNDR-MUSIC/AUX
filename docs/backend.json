@@ -151,6 +151,10 @@
           "type": "string",
           "description": "Reference to Track. (Relationship: Track 1:N LicenseRequest)"
         },
+        "artistId": {
+          "type": "string",
+          "description": "Reference to the Artist who owns the track."
+        },
         "requestorId": {
           "type": "string",
           "description": "Reference to User requesting the license. (Relationship: User 1:N LicenseRequest)"
@@ -168,6 +172,7 @@
       "required": [
         "id",
         "trackId",
+        "artistId",
         "requestorId",
         "requestDate",
         "status"
