@@ -1,3 +1,4 @@
+import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import MusicPlayer from "@/components/layout/music-player";
 import SidebarNav from "@/components/layout/sidebar-nav";
@@ -11,9 +12,10 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         <SidebarNav />
       </Sidebar>
       <div className="flex flex-col min-h-screen">
-        <SidebarInset className="pb-24">
+        <SidebarInset className="pb-24 flex flex-col">
           <Header />
           <main className="flex-1 p-4 md:p-6">{children}</main>
+          <Footer />
         </SidebarInset>
         <MusicPlayer />
       </div>
