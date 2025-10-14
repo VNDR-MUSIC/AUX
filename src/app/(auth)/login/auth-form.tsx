@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState, useFormStatus } from "react-dom";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,7 +32,7 @@ function AuthSubmitButton({ isLogin }: { isLogin: boolean }) {
 }
 
 export default function AuthForm() {
-  const [signupState, signupFormAction] = useFormState(signupAction, initialState);
+  const [signupState, signupFormAction] = useActionState(signupAction, initialState);
   const { toast } = useToast();
   const router = useRouter();
   const { auth } = useFirebase();
