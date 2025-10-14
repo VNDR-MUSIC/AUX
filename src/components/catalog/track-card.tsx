@@ -9,6 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Play } from "lucide-react";
+import { useMusicPlayer } from "@/store/music-player-store";
 
 
 interface TrackCardProps {
@@ -18,16 +20,23 @@ interface TrackCardProps {
     artistName?: string;
     genre?: string;
     coverArtUrl?: string;
+    trackUrl?: string;
     price?: number;
   }>;
 }
 
 export default function TrackCard({ track }: TrackCardProps) {
   const hasPrice = track.price && track.price > 0;
+  const { playTrack } = useMusicPlayer();
+
+  const handlePlay = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent link navigation
+    playTrack(track);
+  };
 
   return (
-    <Card className="overflow-hidden flex flex-col">
-      <CardHeader className="p-0">
+    <Card className="overflow-hidden flex flex-col group">
+      <CardHeader className="p-0 relative">
         <AspectRatio ratio={1 / 1}>
             <Link href={`/profile/${track.artistId}`}>
                 <Image
@@ -39,6 +48,13 @@ export default function TrackCard({ track }: TrackCardProps) {
                 />
             </Link>
         </AspectRatio>
+         <Button
+          size="icon"
+          className="absolute bottom-2 right-2 z-10 rounded-full h-10 w-10 opacity-0 group-hover:opacity-100 transition-opacity"
+          onClick={handlePlay}
+        >
+          <Play className="h-5 w-5" />
+        </Button>
       </CardHeader>
       <CardContent className="p-4 flex-1">
         <h3 className="font-semibold text-lg truncate">{track.title}</h3>

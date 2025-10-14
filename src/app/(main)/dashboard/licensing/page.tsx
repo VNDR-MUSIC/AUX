@@ -1,4 +1,9 @@
+
+'use client';
+
 import Image from "next/image";
+import { useFormState } from "react-dom";
+import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -18,9 +23,34 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { submitLicenseRequestAction } from "@/app/actions/music";
+import { useToast } from "@/hooks/use-toast";
+import SubmitButton from "@/components/submit-button";
+
+const initialState = {
+  message: null,
+  errors: {},
+};
 
 export default function LicensingPage() {
+  const [state, formAction] = useFormState(submitLicenseRequestAction, initialState);
+  const { toast } = useToast();
+  const formRef = useRef<HTMLFormElement>(null);
+  
   const headerImage = PlaceHolderImages.find(img => img.id === 'licensing-header');
+
+  useEffect(() => {
+    if (state.message) {
+      toast({
+        title: state.errors ? "Error" : "Success!",
+        description: state.message,
+        variant: state.errors ? "destructive" : "default",
+      });
+      if (!state.errors) {
+        formRef.current?.reset();
+      }
+    }
+  }, [state, toast]);
 
   return (
     <div className="container mx-auto py-8">
@@ -44,30 +74,34 @@ export default function LicensingPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="grid gap-6">
+          <form ref={formRef} action={formAction} className="grid gap-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="fullName">Full Name</Label>
-                <Input id="fullName" placeholder="John Doe" />
+                <Input id="fullName" name="fullName" placeholder="John Doe" />
+                {state.errors?.fullName && <p className="text-sm text-destructive">{state.errors.fullName[0]}</p>}
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="email">Email Address</Label>
-                <Input id="email" type="email" placeholder="john.doe@example.com" />
+                <Input id="email" name="email" type="email" placeholder="john.doe@example.com" />
+                {state.errors?.email && <p className="text-sm text-destructive">{state.errors.email[0]}</p>}
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="grid gap-2">
                     <Label htmlFor="trackTitle">Track Title</Label>
-                    <Input id="trackTitle" placeholder="e.g., Midnight Bloom" />
+                    <Input id="trackTitle" name="trackTitle" placeholder="e.g., Midnight Bloom" />
+                    {state.errors?.trackTitle && <p className="text-sm text-destructive">{state.errors.trackTitle[0]}</p>}
                 </div>
                 <div className="grid gap-2">
                     <Label htmlFor="artistName">Artist Name</Label>
-                    <Input id="artistName" placeholder="e.g., Synthwave Samurai" />
+                    <Input id="artistName" name="artistName" placeholder="e.g., Synthwave Samurai" />
+                     {state.errors?.artistName && <p className="text-sm text-destructive">{state.errors.artistName[0]}</p>}
                 </div>
             </div>
             <div className="grid gap-2">
               <Label htmlFor="usageType">Intended Use</Label>
-              <Select>
+              <Select name="usageType">
                 <SelectTrigger id="usageType">
                   <SelectValue placeholder="Select usage type" />
                 </SelectTrigger>
@@ -79,17 +113,21 @@ export default function LicensingPage() {
                   <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>
+               {state.errors?.usageType && <p className="text-sm text-destructive">{state.errors.usageType[0]}</p>}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="description">Project Description</Label>
               <Textarea
                 id="description"
+                name="description"
                 placeholder="Briefly describe your project and how the track will be used."
                 className="min-h-[120px]"
               />
+              {state.errors?.description && <p className="text-sm text-destructive">{state.errors.description[0]}</p>}
             </div>
+            {state.errors?._form && <p className="text-sm text-destructive">{state.errors._form[0]}</p>}
             <div className="flex justify-end">
-              <Button type="submit">Submit Request</Button>
+                <SubmitButton buttonText="Submit Request" />
             </div>
           </form>
         </CardContent>

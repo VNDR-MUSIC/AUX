@@ -4,9 +4,8 @@ import { z } from "zod";
 import { generateCoverArt } from "@/ai/flows/ai-cover-art-generation";
 import { recommendLicensingPrice } from "@/ai/flows/ai-licensing-price-recommendation";
 import { getFirebaseAdmin } from "@/firebase/admin";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { auth } from "@/firebase/config";
-import { getCurrentUser } from 'aws-amplify/auth';
+import { collection, addDoc, serverTimestamp, doc, deleteDoc } from "firebase/firestore";
+import { revalidatePath } from "next/cache";
 
 
 const coverArtSchema = z.object({
@@ -41,6 +40,7 @@ type LicensingPriceState = {
 
 const uploadTrackSchema = z.object({
     trackTitle: z.string().min(1, "Track title is required."),
+    artistId: z.string().min(1, "Artist ID is required."),
     artistName: z.string().min(1, "Artist name is required."),
     genre: z.string().min(1, "Genre is required."),
     description: z.string().optional(),
@@ -59,6 +59,32 @@ type UploadTrackState = {
         _form?: string[];
     }
 }
+
+const licenseRequestSchema = z.object({
+  fullName: z.string().min(1, "Full name is required."),
+  email: z.string().email("Invalid email address."),
+  trackTitle: z.string().min(1, "Track title is required."),
+  artistName: z.string().min(1, "Artist name is required."),
+  usageType: z.string().min(1, "Intended use is required."),
+  description: z.string().min(1, "Project description is required."),
+  // In a real app, you would have trackId and requestorId from the logged-in user session
+  trackId: z.string().optional(), 
+  requestorId: z.string().optional(),
+});
+
+type LicenseRequestState = {
+    message?: string | null;
+    errors?: {
+        fullName?: string[];
+        email?: string[];
+        trackTitle?: string[];
+        artistName?: string[];
+        usageType?: string[];
+        description?: string[];
+        _form?: string[];
+    }
+}
+
 
 export async function generateCoverArtAction(
   prevState: CoverArtState,
@@ -142,15 +168,13 @@ export async function uploadTrackAction(
     prevState: UploadTrackState,
     formData: FormData,
 ): Promise<UploadTrackState> {
-
-    // Note: In a real app, you would get the current user's ID from the session.
-    const artistId = "temp_artist_id"; 
     
     const rawPrice = formData.get("price");
     const price = rawPrice ? Number(rawPrice) : undefined;
     
     const validatedFields = uploadTrackSchema.safeParse({
         trackTitle: formData.get("trackTitle"),
+        artistId: formData.get("artistId"),
         artistName: formData.get("artistName"),
         genre: formData.get("genre"),
         description: formData.get("description"),
@@ -166,7 +190,7 @@ export async function uploadTrackAction(
         };
     }
 
-    const { trackTitle, artistName, genre, description, coverArtDataUri } = validatedFields.data;
+    const { trackTitle, artistId, artistName, genre, description, coverArtDataUri } = validatedFields.data;
 
     try {
         const { db } = await getFirebaseAdmin();
@@ -188,6 +212,10 @@ export async function uploadTrackAction(
             plays: 0,
         });
 
+        revalidatePath('/dashboard');
+        revalidatePath(`/profile/${artistId}`);
+        revalidatePath('/dashboard/catalog');
+
         return {
             message: "Track uploaded successfully!",
         };
@@ -198,5 +226,72 @@ export async function uploadTrackAction(
             message: "An error occurred during upload.",
             errors: { _form: ["Failed to save track to database. Please try again."] }
         }
+    }
+}
+
+export async function submitLicenseRequestAction(
+    prevState: LicenseRequestState,
+    formData: FormData
+): Promise<LicenseRequestState> {
+    const validatedFields = licenseRequestSchema.safeParse(
+        Object.fromEntries(formData.entries())
+    );
+
+    if (!validatedFields.success) {
+        return {
+            errors: validatedFields.error.flatten().fieldErrors,
+            message: "Missing fields. Failed to submit request.",
+        };
+    }
+
+    const { trackTitle, artistName, usageType, description, fullName, email } = validatedFields.data;
+
+    try {
+        const { db } = await getFirebaseAdmin();
+        const licenseRequestsCollection = collection(db, "license_requests");
+
+        await addDoc(licenseRequestsCollection, {
+            // In a real app, you'd get trackId and requestorId from the current context/user
+            // For now, we'll store the names as provided in the form
+            trackTitle,
+            artistName,
+            usageType,
+            projectDescription: description,
+            requestorName: fullName,
+            requestorEmail: email,
+            requestDate: serverTimestamp(),
+            status: "pending",
+        });
+
+        revalidatePath('/dashboard/licensing');
+        return { message: "Your license request has been submitted successfully!" };
+    } catch (error) {
+        console.error("License request submission error:", error);
+        return {
+            message: "An error occurred while submitting your request.",
+            errors: {
+                _form: ["Could not save your request to the database. Please try again later."],
+            },
+        };
+    }
+}
+
+export async function deleteTrackAction(trackId: string, artistId: string) {
+    if (!trackId || !artistId) {
+        return { error: 'Missing track or artist ID.' };
+    }
+
+    try {
+        const { db } = await getFirebaseAdmin();
+        await deleteDoc(doc(db, 'tracks', trackId));
+
+        revalidatePath('/dashboard');
+        revalidatePath(`/profile/${artistId}`);
+        revalidatePath('/dashboard/catalog');
+
+        return { message: 'Track deleted successfully.' };
+    } catch (error) {
+        console.error('Error deleting track:', error);
+        return { error: 'Failed to delete track.' };
     }
 }

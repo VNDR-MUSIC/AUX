@@ -3,8 +3,9 @@
 import { z } from "zod";
 import { User, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/firebase/config";
-import { setDoc, doc } from "firebase/firestore";
+import { setDoc, doc, updateDoc, increment } from "firebase/firestore";
 import { getFirebaseAdmin } from "@/firebase/admin";
+import { revalidatePath } from "next/cache";
 
 const SignUpSchema = z.object({
   email: z.string().email(),
@@ -87,4 +88,25 @@ export async function loginAction(
     }
 }
 
-    
+export async function claimDailyTokensAction(userId: string): Promise<{ message: string; success: boolean }> {
+  if (!userId) {
+    return { message: 'You must be logged in to claim tokens.', success: false };
+  }
+
+  try {
+    const { db } = await getFirebaseAdmin();
+    const userRef = doc(db, 'users', userId);
+
+    // This would typically be a transaction in a real app to ensure atomicity
+    await updateDoc(userRef, {
+      vsdBalance: increment(5),
+      dailyTokenClaimed: new Date().toISOString().split('T')[0],
+    });
+
+    revalidatePath('/dashboard');
+    return { message: 'You have successfully claimed 5 VSD tokens!', success: true };
+  } catch (error) {
+    console.error('Error claiming daily tokens:', error);
+    return { message: 'Failed to claim daily tokens. Please try again later.', success: false };
+  }
+}

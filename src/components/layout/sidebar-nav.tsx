@@ -6,11 +6,11 @@ import { usePathname } from "next/navigation";
 import {
   Home,
   Upload,
-  Music,
+  Library,
   FileText,
   DollarSign,
   Settings,
-  Library,
+  Gavel,
 } from "lucide-react";
 
 import {
@@ -31,6 +31,7 @@ const menuItems = [
   { href: "/dashboard/upload", icon: Upload, label: "Upload" },
   { href: "/dashboard/catalog", icon: Library, label: "Catalog" },
   { href: "/dashboard/licensing", icon: FileText, label: "Licensing" },
+  { href: "/dashboard/auctions", icon: Gavel, label: "Auctions" },
   { href: "/vsd-demo", icon: DollarSign, label: "VSD Demo" },
 ];
 

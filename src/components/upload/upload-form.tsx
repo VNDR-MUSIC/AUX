@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useFormState, useFormStatus } from "react-dom";
@@ -6,7 +7,6 @@ import { generateCoverArtAction, recommendLicensingPriceAction, uploadTrackActio
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import { Info, Loader2, Wand2, UploadCloud } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -21,6 +21,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Icons } from "../icons";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import { useUser } from "@/firebase";
 
 
 const initialCoverArtState = {
@@ -84,6 +85,7 @@ export default function UploadForm() {
   const [coverArtState, coverArtFormAction] = useFormState(generateCoverArtAction, initialCoverArtState);
   const [licensingState, licensingFormAction] = useFormState(recommendLicensingPriceAction, initialLicensingState);
   const [uploadState, uploadFormAction] = useFormState(uploadTrackAction, initialUploadState);
+  const { user } = useUser();
   
   const [pricingOption, setPricingOption] = useState("ai");
   const [manualPrice, setManualPrice] = useState("");
@@ -159,7 +161,7 @@ export default function UploadForm() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div className="grid gap-2">
                         <Label htmlFor="artistName">Artist Name</Label>
-                        <Input id="artistName" name="artistName" placeholder="e.g., Synthwave Samurai" defaultValue="Synthwave Samurai" />
+                        <Input id="artistName" name="artistName" placeholder="e.g., Synthwave Samurai" defaultValue={user?.displayName || user?.email?.split('@')[0] || ''} />
                     </div>
                     <div className="grid gap-2">
                         <Label htmlFor="genre">Genre</Label>
@@ -196,6 +198,9 @@ export default function UploadForm() {
                 <input type="hidden" name="description" form="upload-track-form" value={mainFormRef.current?.description.value} />
                 <input type="hidden" name="price" form="upload-track-form" value={finalPrice} />
                 <input type="hidden" name="coverArtDataUri" form="upload-track-form" value={coverArtState.coverArtDataUri || ""} />
+                <input type="hidden" name="artistId" form="upload-track-form" value={user?.uid || ''} />
+                <input type="hidden" name="artistName" form="upload-track-form" value={user?.displayName || user?.email?.split('@')[0] || ''} />
+
 
             </form>
             

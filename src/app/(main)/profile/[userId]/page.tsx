@@ -11,12 +11,27 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import TrackCard from '@/components/catalog/track-card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Mail, User as UserIcon } from 'lucide-react';
+import { Mail, User as UserIcon, Trash2 } from 'lucide-react';
+import { deleteTrackAction } from '@/app/actions/music';
+import { useToast } from '@/hooks/use-toast';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+
 
 export default function ProfilePage() {
   const { userId } = useParams();
   const { firestore } = useFirebase();
   const { user: currentUser } = useUser();
+  const { toast } = useToast();
 
   const userRef = useMemoFirebase(
     () => (firestore && userId ? doc(firestore, 'users', userId as string) : null),
@@ -36,6 +51,16 @@ export default function ProfilePage() {
   const profileHeaderImage = PlaceHolderImages.find(p => p.id === 'hero-4');
   const userAvatarImage = PlaceHolderImages.find(p => p.id === 'user-avatar-1');
   const isOwnProfile = currentUser?.uid === userId;
+
+  const handleDeleteTrack = async (trackId: string) => {
+    if (!isOwnProfile) return;
+    const result = await deleteTrackAction(trackId, userId as string);
+     toast({
+      title: result.error ? 'Error' : 'Success',
+      description: result.error || result.message,
+      variant: result.error ? 'destructive' : 'default',
+    });
+  };
 
   if (isUserLoading) {
     return (
@@ -112,7 +137,33 @@ export default function ProfilePage() {
         ) : tracks && tracks.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {tracks.map(track => (
-              <TrackCard key={track.id} track={track as any} />
+              <div key={track.id} className="relative group">
+                <TrackCard track={track as any} />
+                 {isOwnProfile && (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                       <Button variant="destructive" size="icon" className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently delete the track
+                          &quot;{track.title}&quot; and remove its data from our servers.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => handleDeleteTrack(track.id)}>
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                )}
+              </div>
             ))}
           </div>
         ) : (
