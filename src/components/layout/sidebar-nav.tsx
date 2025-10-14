@@ -56,10 +56,10 @@ export default function SidebarNav() {
         <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2 group">
           <div
             className={cn(
-              'h-10 w-10 rounded-lg p-1 bg-primary text-primary-foreground flex items-center justify-center'
+              'h-10 w-10 rounded-lg p-1 flex items-center justify-center'
             )}
           >
-            <Icons.logo className="h-6 w-6" />
+            <Icons.logo className="h-8 w-8" />
           </div>
           <div className="font-headline text-lg font-semibold group-data-[collapsible=icon]:hidden">
             <span className="text-foreground">VNDR</span>

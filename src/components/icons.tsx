@@ -6,8 +6,8 @@ export const Icons = {
      <Image
       src="https://i.ibb.co/spK4hLTH/Background-Eraser-20251014-175202109.png"
       alt="VNDR Logo"
-      width={24}
-      height={24}
+      width={64}
+      height={64}
       {...props}
     />
   ),
