@@ -1,8 +1,10 @@
 
+
 'use client';
 
 import { create } from 'zustand';
 import { WithId } from '@/firebase';
+import { trackPlays } from '@/app/actions/music';
 
 export type Track = WithId<{
   title: string;
@@ -46,6 +48,8 @@ export const useMusicPlayer = create<MusicPlayerState>((set, get) => ({
     const newPlaylist = playlist || get().playlist;
     const trackIndex = newPlaylist.findIndex(t => t.id === track.id);
     
+    trackPlays(track.id);
+
     set({
       currentTrack: track,
       playlist: newPlaylist,

@@ -1,11 +1,12 @@
 
+
 "use server";
 
 import { z } from "zod";
 import { generateCoverArt } from "@/ai/flows/ai-cover-art-generation";
 import { recommendLicensingPrice } from "@/ai/flows/ai-licensing-price-recommendation";
 import { getFirebaseAdmin } from "@/firebase/admin";
-import { collection, addDoc, serverTimestamp, doc, deleteDoc, updateDoc, query, where, getDocs } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, doc, deleteDoc, updateDoc, query, where, getDocs, increment } from "firebase/firestore";
 import { revalidatePath } from "next/cache";
 
 
@@ -371,4 +372,22 @@ export async function rejectLicenseRequestAction(requestId: string) {
         console.error('Error rejecting request:', error);
         return { success: false, message: 'Failed to reject request.' };
     }
+}
+
+export async function trackPlays(trackId: string) {
+  if (!trackId) {
+    return { error: 'Missing track ID.' };
+  }
+
+  try {
+    const { db } = await getFirebaseAdmin();
+    const trackRef = doc(db, 'tracks', trackId);
+    await updateDoc(trackRef, {
+      plays: increment(1),
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('Error incrementing track plays:', error);
+    return { error: 'Failed to update play count.' };
+  }
 }
