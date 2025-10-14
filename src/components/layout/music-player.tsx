@@ -2,6 +2,7 @@
 'use client';
 
 import Image from "next/image";
+import Link from "next/link";
 import { Play, Pause, SkipBack, SkipForward, ListMusic, Laptop2, Volume1, Volume2, VolumeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -96,7 +97,7 @@ export default function MusicPlayer() {
     return (
         <footer className="fixed bottom-0 left-0 right-0 z-20 border-t bg-background/95 backdrop-blur-sm">
             <div className="flex h-20 items-center justify-center px-4 text-muted-foreground">
-                <p>No music selected. Choose a track to start playing.</p>
+                <p>No music selected. <Link href="/dashboard/catalog" className="text-primary hover:underline">Choose a track</Link> to start playing.</p>
             </div>
         </footer>
     )
