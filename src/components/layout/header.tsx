@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { CircleUser, LogIn, Search } from "lucide-react";
+import { CircleUser, LogIn, Menu, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -14,17 +14,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useUser, useFirebase } from "@/firebase";
 import { signOut } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "../ui/skeleton";
+import { useState } from "react";
+import FullScreenNav from "./full-screen-nav";
 
 export default function Header() {
   const { user, isUserLoading } = useUser();
   const { auth } = useFirebase();
   const router = useRouter();
   const { toast } = useToast();
+  const [isNavOpen, setIsNavOpen] = useState(false);
 
   const handleLogout = async () => {
     if (!auth) return;
@@ -88,8 +90,12 @@ export default function Header() {
   };
 
   return (
-    <header className="flex h-14 items-center gap-4 border-b bg-background/80 backdrop-blur-lg px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30">
-      <SidebarTrigger className="md:hidden" />
+    <>
+    <header className="flex h-14 items-center gap-4 border-b bg-background/80 backdrop-blur-lg px-4 lg:h-[60px] lg:px-6 sticky top-0 z-50">
+      <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsNavOpen(true)}>
+          <Menu className="h-5 w-5" />
+          <span className="sr-only">Open Menu</span>
+      </Button>
       <div className="w-full flex-1">
         <form>
           <div className="relative">
@@ -104,7 +110,7 @@ export default function Header() {
       </div>
       {renderUserMenu()}
     </header>
+    <FullScreenNav isOpen={isNavOpen} setIsOpen={setIsNavOpen} />
+    </>
   );
 }
-
-    
