@@ -85,20 +85,20 @@ const testimonials = [
 
 const faqs = [
   {
-    question: "What's the difference between Distribution and Publishing plans?",
-    answer: "The Distribution plan is for artists who want to manage their own careers. You get unlimited distribution and keep 90% of royalties. The Publishing Partnership is for artists who want us to act as their publisher. We take a 50% publishing share, and in return, we actively pitch your music for sync licenses and manage your rights. You always keep 100% of your master rights on both plans."
+    question: "What's the difference between the Distribution and Publishing plans?",
+    answer: "The Distribution plan is for artists who want to manage their own careers. You get unlimited distribution to all major platforms and keep 90% of your royalties. The Publishing Partnership is for artists who want us to act as their publisher. We take a 50% publishing share, and in return, we actively pitch your music for high-value sync licensing deals in film, TV, and games. You always keep 100% of your master rights on both plans."
   },
   {
       question: "How can you offer unlimited distribution for free?",
-      answer: "Our model is built on shared success. For our Distribution plan, we take a small 10% commission on royalties, which is one of the lowest in the industry. For our Publishing partners, the 50% share aligns our goals with yours. We also offer the AI Pro toolkit as an optional upgrade for artists who want to accelerate their growth."
+      answer: "Our model is built on shared success. For our Distribution plan, we take a small 10% commission on royalties, which is one of the lowest in the industry. For our Publishing partners, the 50% share aligns our goals with yours—we only make money when you do. This allows us to provide core services for free and offer powerful premium tools like our AI Pro toolkit."
   },
   {
     question: "How does the VSD token and royalty system work?",
-    answer: "We use our VSD token to create a transparent, verifiable ledger of all streams, sales, and licensing deals. When a royalty payment is due, it's paid instantly into your VNDR wallet. You can then hold it, use it on the platform, or convert it to your local currency. This eliminates the delays and opaque accounting common in the traditional music industry."
+    answer: "We use our VSD token to create a transparent, verifiable ledger of all streams, sales, and licensing deals. When a royalty payment is due, it's paid instantly into your VNDR wallet. You can then hold it, use it for services on the platform (like our Legal Eagle AI), or convert it to your local currency. This eliminates the delays and opaque accounting common in the traditional music industry."
   },
   {
     question: "What are the AI-powered tools?",
-    answer: "Our AI Pro plan gives you access to the VNDR Music AI Ecosystem. This includes tools to generate unique cover art, write marketing copy and press releases, get pricing recommendations for licenses, forecast potential earnings, and even get strategic career advice. It's like having an entire professional team at your fingertips."
+    answer: "Our AI Pro plan gives you access to the VNDR Music AI Ecosystem. This includes tools to generate unique cover art, write marketing copy and press releases, get pricing recommendations for licenses, and even get simulated legal advice on music industry topics. It's like having an entire professional team at your fingertips, available 24/7."
   },
 ];
 
@@ -386,3 +386,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
