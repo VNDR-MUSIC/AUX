@@ -152,8 +152,10 @@ export default function SymbiKnowledgeBasePage() {
               <li>
                 <strong>Legal Eagle (Simulated Legal Adviser):</strong> A
                 specialized AI chatbot that answers general, educational
-                questions about entertainment law topics like copyright,
-                contracts, and publishing for a small VSD token fee.
+-                questions about entertainment law topics like copyright,
+-                contracts, and publishing for a small VSD token fee.
++                questions about entertainment law topics like copyright,
++                contracts, and publishing for a small VSD token fee.
               </li>
             </ul>
           </section>
@@ -171,6 +173,9 @@ export default function SymbiKnowledgeBasePage() {
                 <strong>Artist & User Profiles:</strong> Public profiles for
                 artists to showcase their work and for users to manage their
                 settings.
+              </li>
+               <li>
+                <strong>Spotify-Inspired Music Catalog:</strong> A redesigned main music page that emulates Spotify's award-winning, user-friendly interface. It features a clean, dark, grid-based layout that prioritizes high-quality cover art and provides a seamless browsing experience.
               </li>
               <li>
                 <strong>Global Music Player:</strong> A persistent, site-wide

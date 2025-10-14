@@ -3,10 +3,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Icons } from "@/components/icons";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Play } from "lucide-react";
 import { useMusicPlayer, Track } from "@/store/music-player-store";
@@ -18,7 +16,6 @@ interface TrackCardProps {
 }
 
 export default function TrackCard({ track, playlist }: TrackCardProps) {
-  const hasPrice = track.price && track.price > 0;
   const { playTrack } = useMusicPlayer();
 
   const handlePlay = (e: React.MouseEvent) => {
@@ -27,51 +24,36 @@ export default function TrackCard({ track, playlist }: TrackCardProps) {
   };
 
   return (
-    <Card className="overflow-hidden flex flex-col group">
-      <CardHeader className="p-0 relative">
-        <AspectRatio ratio={1 / 1}>
-            <Link href={`/profile/${track.artistId}`}>
-                <Image
-                    src={track.coverArtUrl || 'https://picsum.photos/seed/placeholder/400/400'}
-                    alt={track.title}
-                    fill
-                    className="object-cover"
-                    data-ai-hint="album art"
-                />
-            </Link>
+    <Card className="overflow-hidden group/track-card bg-card hover:bg-muted/50 transition-colors duration-300 p-4 flex flex-col gap-4 w-full">
+      <div className="overflow-hidden relative">
+        <AspectRatio ratio={1 / 1} className="bg-muted rounded-md">
+            <Image
+                src={track.coverArtUrl || 'https://picsum.photos/seed/placeholder/400/400'}
+                alt={track.title}
+                fill
+                className="object-cover rounded-md"
+                data-ai-hint="album art"
+            />
         </AspectRatio>
          <Button
           size="icon"
-          className="absolute bottom-2 right-2 z-10 rounded-full h-10 w-10 opacity-0 group-hover:opacity-100 transition-opacity"
+          className="absolute bottom-2 right-2 z-10 rounded-full h-12 w-12 bg-primary text-primary-foreground shadow-lg
+                     opacity-0 transform translate-y-2 group-hover/track-card:opacity-100 group-hover/track-card:translate-y-0
+                     transition-all duration-300 ease-in-out hover:scale-110"
           onClick={handlePlay}
         >
-          <Play className="h-5 w-5" />
+          <Play className="h-6 w-6 fill-current" />
         </Button>
-      </CardHeader>
-      <CardContent className="p-4 flex-1">
-        <h3 className="font-semibold text-lg truncate">{track.title}</h3>
+      </div>
+      
+      <div className="flex flex-col truncate">
+        <h3 className="font-bold text-base truncate text-foreground">{track.title}</h3>
         {track.artistName && (
            <Link href={`/profile/${track.artistId}`} className="text-sm text-muted-foreground hover:underline truncate">
             {track.artistName}
           </Link>
         )}
-        {track.genre && (
-          <Badge variant="outline" className="mt-2">{track.genre}</Badge>
-        )}
-      </CardContent>
-      <CardFooter className="p-4 pt-0 flex justify-between items-center">
-        {hasPrice ? (
-          <div className="flex items-center gap-1 font-bold text-lg">
-            <Icons.vsd className="h-5 w-5" />
-            <span>{track.price}</span>
-          </div>
-        ) : (
-          <div className="text-sm text-muted-foreground">Not for license</div>
-        )}
-        <Button asChild size="sm" disabled={!hasPrice}>
-            <Link href={hasPrice ? "/dashboard/licensing" : "#"}>License</Link>
-        </Button>
-      </CardFooter>
+      </div>
     </Card>
   );
 }
