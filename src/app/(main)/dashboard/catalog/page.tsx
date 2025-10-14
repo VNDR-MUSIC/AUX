@@ -18,6 +18,7 @@ import { Search } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import TrackCard from '@/components/catalog/track-card';
 import { Track } from '@/store/music-player-store';
+import { useOnboarding } from '@/hooks/use-onboarding';
 
 const genres = ["Synthwave", "Lofi Hip-Hop", "Future Funk", "Ambient", "Electronic", "All"];
 
@@ -29,6 +30,8 @@ export default function CatalogPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('All');
   const [showLicensedOnly, setShowLicensedOnly] = useState(false);
+
+  useOnboarding('catalog');
 
   const filteredTracks = useMemo(() => {
     return tracks

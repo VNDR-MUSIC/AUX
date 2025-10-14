@@ -57,6 +57,15 @@ export async function signupAction(
       username: email.split('@')[0], // Default username
       vsdBalance: 10, // Initial free token balance
       dailyTokenClaimed: new Date().toISOString().split('T')[0], // Set today as claimed
+      onboardingCompleted: {
+        dashboard: false,
+        upload: false,
+        catalog: false,
+        licensing: false,
+        auctions: false,
+        legalEagle: false,
+        settings: false,
+      }
     });
 
     return {
@@ -108,5 +117,24 @@ export async function claimDailyTokensAction(userId: string): Promise<{ message:
   } catch (error) {
     console.error('Error claiming daily tokens:', error);
     return { message: 'Failed to claim daily tokens. Please try again later.', success: false };
+  }
+}
+
+export async function completeOnboardingStepAction(userId: string, step: string): Promise<{ success: boolean }> {
+  if (!userId || !step) {
+    return { success: false };
+  }
+
+  try {
+    const { db } = await getFirebaseAdmin();
+    const userRef = doc(db, 'users', userId);
+    await updateDoc(userRef, {
+      [`onboardingCompleted.${step}`]: true,
+    });
+    revalidatePath('/dashboard'); // Revalidate to update user data everywhere
+    return { success: true };
+  } catch (error) {
+    console.error(`Error completing onboarding step "${step}":`, error);
+    return { success: false };
   }
 }

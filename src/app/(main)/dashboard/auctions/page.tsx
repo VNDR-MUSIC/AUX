@@ -1,4 +1,6 @@
 
+'use client';
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,8 +11,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Gavel } from "lucide-react";
+import { useOnboarding } from "@/hooks/use-onboarding";
 
 export default function AuctionsPage() {
+  useOnboarding('auctions');
+
   return (
     <div className="container mx-auto py-8">
       <div className="mb-8">

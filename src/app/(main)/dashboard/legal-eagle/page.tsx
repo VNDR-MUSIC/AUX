@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -10,6 +11,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { legalEagleChat } from '@/ai/flows/legal-eagle-flow';
 import { Icons } from '@/components/icons';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useOnboarding } from '@/hooks/use-onboarding';
 
 interface Message {
   text: string;
@@ -27,6 +29,8 @@ export default function LegalEaglePage() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+
+  useOnboarding('legalEagle');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

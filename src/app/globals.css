@@ -88,3 +88,55 @@
     @apply bg-background text-foreground;
   }
 }
+
+.shepherd-element {
+  background: hsl(var(--card));
+  border-radius: var(--radius);
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.shepherd-header {
+  padding: 1rem 1rem 0.5rem;
+  background-color: transparent;
+}
+
+.shepherd-title {
+  color: hsl(var(--card-foreground));
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.shepherd-text {
+  padding: 0.5rem 1rem;
+  color: hsl(var(--muted-foreground));
+  font-size: 0.875rem;
+}
+
+.shepherd-footer {
+  padding: 0.75rem 1rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.shepherd-button {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border-radius: var(--radius);
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+.shepherd-button:disabled {
+  opacity: 0.5;
+}
+
+.shepherd-button.shepherd-button-secondary {
+  background-color: hsl(var(--secondary));
+  color: hsl(var(--secondary-foreground));
+}
+
+.shepherd-arrow, .shepherd-arrow:before {
+  display: none;
+}

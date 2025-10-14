@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Icons } from "@/components/icons";
+import { useOnboarding } from "@/hooks/use-onboarding";
 
 const notificationSettings = [
   { id: 'licenseRequests', label: 'New License Requests', description: 'When a user requests to license one of your tracks.' },
@@ -25,6 +26,8 @@ const notificationSettings = [
 ];
 
 export default function SettingsPage() {
+  useOnboarding('settings');
+  
   return (
     <div className="container mx-auto py-8">
        <div className="mb-8">

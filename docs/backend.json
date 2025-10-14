@@ -44,6 +44,19 @@
             "comments": { "type": "object", "properties": { "app": {"type": "boolean"}, "email": {"type": "boolean"}, "push": {"type": "boolean"} } },
             "platformUpdates": { "type": "object", "properties": { "app": {"type": "boolean"}, "email": {"type": "boolean"}, "push": {"type": "boolean"} } }
           }
+        },
+        "onboardingCompleted": {
+          "type": "object",
+          "description": "Tracks which onboarding steps the user has completed.",
+          "properties": {
+            "dashboard": { "type": "boolean" },
+            "upload": { "type": "boolean" },
+            "catalog": { "type": "boolean" },
+            "licensing": { "type": "boolean" },
+            "auctions": { "type": "boolean" },
+            "legalEagle": { "type": "boolean" },
+            "settings": { "type": "boolean" }
+          }
         }
       },
       "required": [

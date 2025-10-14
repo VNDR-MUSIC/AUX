@@ -31,12 +31,15 @@ import { Icons } from "@/components/icons";
 import { claimDailyTokensAction } from "@/app/actions/user";
 import { useToast } from "@/hooks/use-toast";
 import { useMusicPlayer } from "@/store/music-player-store";
+import { useOnboarding } from "@/hooks/use-onboarding";
 
 export default function DashboardPage() {
   const { user, isUserLoading } = useUser();
   const { firestore } = useFirebase();
   const { toast } = useToast();
   const { playTrack } = useMusicPlayer();
+  
+  useOnboarding('dashboard');
 
   const userRef = useMemoFirebase(() => (firestore && user ? doc(firestore, 'users', user.uid) : null), [firestore, user]);
   const { data: userData, isLoading: isUserDataLoading } = useDoc(userRef);

@@ -1,3 +1,6 @@
+
+'use client';
+
 import UploadForm from "@/components/upload/upload-form";
 import {
   Card,
@@ -6,8 +9,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useOnboarding } from "@/hooks/use-onboarding";
 
 export default function UploadPage() {
+  useOnboarding('upload');
+  
   return (
     <div className="container mx-auto py-8">
        <Card>

@@ -5,9 +5,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CreateLicenseRequestForm from '@/components/licensing/create-request-form';
 import ManageLicenseRequests from '@/components/licensing/manage-requests';
 import { useUser } from "@/firebase";
+import { useOnboarding } from "@/hooks/use-onboarding";
 
 export default function LicensingPage() {
   const { user } = useUser();
+  useOnboarding('licensing');
 
   return (
     <div className="container mx-auto py-8">
