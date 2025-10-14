@@ -32,13 +32,13 @@
     },
     {
       "id": "hero-6",
-      "description": "A person listening to music with headphones in a city",
+      "description": "A person listening to music with headphones",
       "imageUrl": "https://picsum.photos/seed/hero-f/1920/1080",
-      "imageHint": "headphones city"
+      "imageHint": "music headphones"
     },
     {
       "id": "hero-7",
-      "description": "A futuristic cityscape with neon music notes",
+      "description": "A futuristic visual with neon music notes",
       "imageUrl": "https://picsum.photos/seed/hero-g/1920/1080",
       "imageHint": "futuristic music"
     },
