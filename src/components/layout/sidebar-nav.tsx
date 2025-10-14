@@ -11,6 +11,7 @@ import {
   DollarSign,
   Settings,
   Gavel,
+  BrainCircuit,
 } from "lucide-react";
 
 import {
@@ -33,6 +34,7 @@ const menuItems = [
   { href: "/dashboard/licensing", icon: FileText, label: "Licensing" },
   { href: "/dashboard/auctions", icon: Gavel, label: "Auctions" },
   { href: "/vsd-demo", icon: DollarSign, label: "VSD Demo" },
+  { href: "/symbi", icon: BrainCircuit, label: "Symbi" },
 ];
 
 export default function SidebarNav() {
