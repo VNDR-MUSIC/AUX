@@ -42,7 +42,7 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
             <div className="col-span-2 lg:col-span-1">
                 <Link href="/" className="flex items-center gap-2">
-                    <div className="relative h-8 w-8">
+                    <div className="relative h-12 w-12">
                         <Icons.logo />
                     </div>
                 </Link>
