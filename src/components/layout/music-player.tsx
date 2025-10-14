@@ -31,12 +31,21 @@ export default function MusicPlayer() {
   useEffect(() => {
     if (currentTrack && audioRef.current) {
       if (isPlaying) {
-        audioRef.current.play().catch(e => console.error("Audio play failed:", e));
+        audioRef.current.play().catch(e => {
+            if (currentTrack?.trackUrl === "https://firebasestorage.googleapis.com/v0/b/your-project-id.appspot.com/o/example-track.mp3?alt=media") {
+                toast({
+                    title: "Demo Audio",
+                    description: "This is a placeholder audio track. You can replace it by uploading your own music!",
+                });
+            } else {
+                console.error("Audio play failed:", e)
+            }
+        });
       } else {
         audioRef.current.pause();
       }
     }
-  }, [isPlaying, currentTrack]);
+  }, [isPlaying, currentTrack, toast]);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -70,12 +79,6 @@ export default function MusicPlayer() {
   };
 
   const handlePlayPause = () => {
-     if (currentTrack?.trackUrl === "https://firebasestorage.googleapis.com/v0/b/your-project-id.appspot.com/o/example-track.mp3?alt=media") {
-      toast({
-        title: "Demo Audio",
-        description: "This is a placeholder audio track. You can replace it by uploading your own music!",
-      });
-    }
     if (isPlaying) {
       pause();
     } else {
@@ -108,6 +111,7 @@ export default function MusicPlayer() {
             onTimeUpdate={handleTimeUpdate}
             onLoadedMetadata={handleLoadedMetadata}
             onEnded={nextTrack}
+            autoPlay={isPlaying}
         />
     )}
     <footer className="fixed bottom-0 left-0 right-0 z-20 border-t bg-background/95 backdrop-blur-sm">
@@ -143,7 +147,7 @@ export default function MusicPlayer() {
           </div>
           <div className="flex items-center gap-2 w-full max-w-xs">
             <span className="text-xs text-muted-foreground">{formatTime(progress)}</span>
-            <Slider value={[progress]} max={duration} step={1} onValueChange={handleProgressChange} className="w-full" />
+            <Slider value={[progress]} max={duration || 1} step={1} onValueChange={handleProgressChange} className="w-full" />
             <span className="text-xs text-muted-foreground">{formatTime(duration)}</span>
           </div>
         </div>
@@ -159,7 +163,7 @@ export default function MusicPlayer() {
             <Button variant="ghost" size="icon" onClick={toggleMute} className="h-8 w-8 hidden sm:flex">
                 {getVolumeIcon()}
             </Button>
-            <Slider value={[volume]} onValueChange={(v) => setVolume(v[0])} max={1} step={0.05} className="w-24 hidden sm:block" />
+            <Slider value={[isMuted ? 0 : volume]} onValueChange={(v) => setVolume(v[0])} max={1} step={0.05} className="w-24 hidden sm:block" />
           </div>
         </div>
       </div>
