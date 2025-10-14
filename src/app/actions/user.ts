@@ -1,3 +1,4 @@
+
 "use server";
 
 import { z } from "zod";
@@ -67,6 +68,11 @@ export async function signupAction(
         settings: false,
       }
     });
+
+    if (email === 'support@vndrmusic.com') {
+      const adminRoleRef = doc(db, 'roles_admin', userCredential.uid);
+      await setDoc(adminRoleRef, { isAdmin: true });
+    }
 
     return {
       message: "Sign up successful! Welcome to VNDR.",
