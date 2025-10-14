@@ -15,9 +15,9 @@ export default function LandingPageHeader() {
           </span>
         </Link>
         <nav className="flex-1 items-center space-x-6 text-sm font-medium hidden md:flex">
-          <Link href="#features">Features</Link>
-          <Link href="/dashboard">For Artists</Link>
-          <Link href="#licensing">Licensing</Link>
+          <Link href="#features" className="text-muted-foreground hover:text-foreground">Features</Link>
+          <Link href="#pricing" className="text-muted-foreground hover:text-foreground">Pricing</Link>
+          <Link href="/dashboard/licensing" className="text-muted-foreground hover:text-foreground">Licensing</Link>
         </nav>
         <div className="flex flex-1 items-center justify-end space-x-4">
           <Button variant="ghost" asChild>
@@ -31,3 +31,5 @@ export default function LandingPageHeader() {
     </header>
   );
 }
+
+    
