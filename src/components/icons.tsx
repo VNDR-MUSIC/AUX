@@ -4,7 +4,7 @@ import Image from "next/image";
 export const Icons = {
   logo: (props: Omit<React.ComponentProps<typeof Image>, 'src' | 'alt'>) => (
      <Image
-      src="https://i.ibb.co/YTD4s8wv/Generated-Image-October-14-2025-5-35-PM-1-2.jpg"
+      src="https://i.ibb.co/spK4hLTH/Background-Eraser-20251014-175202109.png"
       alt="VNDR Logo"
       width={24}
       height={24}
