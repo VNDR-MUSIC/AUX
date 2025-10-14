@@ -138,7 +138,9 @@ export default function Home() {
                         )}
                         <div className="absolute inset-0 bg-black/60 z-10" />
                         <div className="relative z-20 container h-full flex flex-col items-center justify-center gap-6 text-center text-white">
-                            <Icons.logo width={160} height={160} className="text-primary drop-shadow-lg" />
+                            <div className="relative w-40 h-40">
+                                <Icons.logo className="text-primary drop-shadow-lg" />
+                            </div>
                             <h1 className="font-headline text-5xl font-bold tracking-tighter sm:text-6xl md:text-7xl lg:text-8xl drop-shadow-xl text-primary">
                                 {slide.title}
                             </h1>
@@ -386,7 +388,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
-
-    
