@@ -38,15 +38,15 @@
     },
     {
       "id": "hero-7",
-      "description": "A futuristic cityscape with neon lights",
+      "description": "A futuristic cityscape with neon music notes",
       "imageUrl": "https://picsum.photos/seed/hero7/1920/1080",
-      "imageHint": "futuristic city"
+      "imageHint": "glowing equalizer"
     },
     {
       "id": "album-1",
-      "description": "Abstract colorful waves",
+      "description": "Abstract colorful album art",
       "imageUrl": "https://picsum.photos/seed/ab1/400/400",
-      "imageHint": "abstract colorful"
+      "imageHint": "album art"
     },
     {
       "id": "album-2",
@@ -56,33 +56,33 @@
     },
     {
       "id": "album-3",
-      "description": "A lone figure on a mountain",
+      "description": "An acoustic guitar leaning against a rustic wall",
       "imageUrl": "https://picsum.photos/seed/ab3/400/400",
-      "imageHint": "lone mountain"
+      "imageHint": "acoustic guitar"
     },
     {
       "id": "album-4",
-      "description": "Neon geometric shapes",
+      "description": "A DJ setup with turntables and a mixer",
       "imageUrl": "https://picsum.photos/seed/ab4/400/400",
-      "imageHint": "neon geometric"
+      "imageHint": "DJ setup"
     },
     {
       "id": "album-5",
-      "description": "A calm, serene lake at dawn",
+      "description": "Close-up of piano keys",
       "imageUrl": "https://picsum.photos/seed/ab5/400/400",
-      "imageHint": "serene lake"
+      "imageHint": "piano keys"
     },
     {
       "id": "album-6",
-      "description": "A vibrant, bustling street market",
+      "description": "Colorful hip hop graffiti on a brick wall",
       "imageUrl": "https://picsum.photos/seed/ab6/400/400",
-      "imageHint": "street market"
+      "imageHint": "hiphop graffiti"
     },
     {
       "id": "licensing-header",
-      "description": "Person signing a document",
+      "description": "Person signing a music contract",
       "imageUrl": "https://picsum.photos/seed/license/1200/300",
-      "imageHint": "signing contract"
+      "imageHint": "music contract"
     },
     {
       "id": "user-avatar-1",
