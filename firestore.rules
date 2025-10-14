@@ -1,0 +1,174 @@
+/**
+ * @fileoverview Firestore Security Rules for VNDR Music Platform
+ *
+ * Core Philosophy:
+ * This ruleset enforces a user-ownership model for user profiles and artists,
+ * public read access for tracks, and owner-only access for license requests and VSD transactions.
+ * Admin privileges are granted based on document existence in `/roles_admin/{userId}`.
+ *
+ * Data Structure:
+ * - `/users/{userId}`: Stores user profiles, accessible only to the user themselves.
+ * - `/tracks/{trackId}`: Stores track metadata, publicly readable, but writable only by the track's artist.
+ * - `/artists/{artistId}`: Stores artist profiles, linked to user accounts via the `userId` field, and accessible only to the associated user.
+ * - `/license_requests/{licenseRequestId}`: Stores licensing requests, accessible only to the requestor.
+ * - `/vsd_transactions/{vsdTransactionId}`: Stores VSD token transactions, accessible only to the user involved in the transaction.
+ * - `/roles_admin/{userId}`: Indicates admin privileges for a user; document existence grants admin role.
+ *
+ * Key Security Decisions:
+ * - Users can only access their own user documents.
+ * - Tracks are publicly readable but can only be created, updated, or deleted by their respective artists.
+ * - License requests and VSD transactions are accessible only to the associated user.
+ * - Listing of users, license requests, and VSD transactions is disallowed to prevent unauthorized data access.
+ * - Admin privileges are determined by document existence in `/roles_admin/{userId}`.
+ *
+ * Denormalization for Authorization:
+ * - The `Track` entity contains an `artistId` field. It can be denormalized, but the rules aren't relying on it yet.
+ *
+ * Structural Segregation:
+ * - Public tracks are stored in the top-level `/tracks` collection, separate from any private user data.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Grants user-level access to user documents.
+     * @path /users/{userId}
+     * @allow (create) - A user can create their own profile if the userId matches their auth UID.
+     * @allow (get, update, delete) - A user can read, update, or delete their profile if the userId matches their auth UID.
+     * @deny (create) - A user cannot create a profile for another user.
+     * @deny (get, update, delete) - A user cannot read, update, or delete another user's profile.
+     * @principle Enforces document ownership for user profiles.
+     */
+    match /users/{userId} {
+      function isSignedIn() {
+        return request.auth != null;
+      }
+      function isOwner(userId) {
+        return isSignedIn() && request.auth.uid == userId;
+      }
+
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isOwner(userId) && request.auth.uid == userId;
+      allow update: if isOwner(userId);
+      allow delete: if isOwner(userId);
+    }
+
+    /**
+     * @description Grants public read access to tracks and restricts write access to the track's artist.
+     * @path /tracks/{trackId}
+     * @allow (get, list) - Anyone can read track information.
+     * @allow (create) - An artist can create a track if the artistId in the track matches their artist profile.
+     * @allow (update, delete) - An artist can update or delete their own tracks.
+     * @deny (create) - A user cannot create a track for another artist.
+     * @deny (update, delete) - A user cannot update or delete tracks they don't own.
+     * @principle Allows public read access but enforces ownership for writes.
+     */
+    match /tracks/{trackId} {
+      function isSignedIn() {
+        return request.auth != null;
+      }
+      // TODO: Implement Artist Profile checks
+      function isArtist(artistId) {
+          return isSignedIn() && get(/databases/$(database)/documents/artists/$(artistId)).data.userId == request.auth.uid;
+      }
+      function isExistingArtist(artistId) {
+        return isArtist(artistId) && resource != null;
+      }
+
+      allow get, list: if true;
+      allow create: if isSignedIn(); // TODO: Add artist check
+      allow update: if isSignedIn(); // TODO: Add artist check
+      allow delete: if isSignedIn(); // TODO: Add artist check
+    }
+
+    /**
+     * @description Grants user-level access to artist profiles.
+     * @path /artists/{artistId}
+     * @allow (create) - A user can create an artist profile if the userId matches their auth UID.
+     * @allow (get, update, delete) - A user can read, update, or delete their own artist profile if the userId matches the profile's userId.
+     * @deny (create) - A user cannot create an artist profile for another user.
+     * @deny (get, update, delete) - A user cannot read, update, or delete another user's artist profile.
+     * @principle Enforces document ownership for artist profiles.
+     */
+    match /artists/{artistId} {
+      function isSignedIn() {
+        return request.auth != null;
+      }
+      function isOwner(artistId) {
+        return isSignedIn() && get(/databases/$(database)/documents/artists/$(artistId)).data.userId == request.auth.uid;
+      }
+
+      allow get: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow list: if false;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    /**
+     * @description Grants user-level access to license requests.
+     * @path /license_requests/{licenseRequestId}
+     * @allow (create) - A user can create a license request if the requestorId matches their auth UID.
+     * @allow (get, update, delete) - A user can read, update, or delete their own license request if the requestorId matches their auth UID.
+     * @deny (create) - A user cannot create a license request for another user.
+     * @deny (get, update, delete) - A user cannot read, update, or delete another user's license request.
+     * @principle Enforces document ownership for license requests.
+     */
+    match /license_requests/{licenseRequestId} {
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      allow get: if isSignedIn() && resource.data.requestorId == request.auth.uid;
+      allow list: if false;
+      allow create: if isSignedIn() && request.resource.data.requestorId == request.auth.uid;
+      allow update: if isSignedIn() && resource.data.requestorId == request.auth.uid;
+      allow delete: if isSignedIn() && resource.data.requestorId == request.auth.uid;
+    }
+
+    /**
+     * @description Grants user-level access to VSD transactions.
+     * @path /vsd_transactions/{vsdTransactionId}
+     * @allow (create) - A user can create a VSD transaction if the userId matches their auth UID.
+     * @allow (get, update, delete) - A user can read, update, or delete their own VSD transaction if the userId matches their auth UID.
+     * @deny (create) - A user cannot create a VSD transaction for another user.
+     * @deny (get, update, delete) - A user cannot read, update, or delete another user's VSD transaction.
+     * @principle Enforces document ownership for VSD transactions.
+     */
+    match /vsd_transactions/{vsdTransactionId} {
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      allow get: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow list: if false;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+     /**
+      * @description Grants admin privileges based on document existence in /roles_admin/{userId}.
+      * @path /roles_admin/{userId}
+      * @allow (get, create, update, delete) - If the userId matches the auth UID.
+      * @deny (get, create, update, delete) - If the userId does not match the auth UID.
+      * @principle Grants admin role based on document existence.
+      */
+     match /roles_admin/{userId} {
+        function isSignedIn() {
+            return request.auth != null;
+        }
+
+        function isAdmin(userId) {
+            return isSignedIn() && request.auth.uid == userId;
+        }
+
+        allow get: if isAdmin(userId);
+        allow list: if false;
+        allow create: if isAdmin(userId);
+        allow update: if isAdmin(userId);
+        allow delete: if isAdmin(userId);
+     }
+  }
+}

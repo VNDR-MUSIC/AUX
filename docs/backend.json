@@ -1,0 +1,298 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the VNDR Music platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the User entity."
+        },
+        "username": {
+          "type": "string",
+          "description": "The user's username."
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's email address.",
+          "format": "email"
+        },
+        "role": {
+          "type": "string",
+          "description": "The user's role (e.g., artist, listener, publisher, admin)."
+        }
+      },
+      "required": [
+        "id",
+        "username",
+        "email",
+        "role"
+      ]
+    },
+    "Track": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Track",
+      "type": "object",
+      "description": "Represents a music track on the VNDR Music platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Track entity."
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the track."
+        },
+        "artistId": {
+          "type": "string",
+          "description": "Reference to the Artist. (Relationship: Artist 1:N Track)"
+        },
+        "genre": {
+          "type": "string",
+          "description": "The genre of the track."
+        },
+        "uploadDate": {
+          "type": "string",
+          "description": "The date the track was uploaded.",
+          "format": "date-time"
+        },
+        "coverArtUrl": {
+          "type": "string",
+          "description": "URL of the cover art for the track.",
+          "format": "uri"
+        },
+        "trackUrl": {
+          "type": "string",
+          "description": "URL of the music track.",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "artistId",
+        "genre",
+        "uploadDate",
+        "coverArtUrl",
+        "trackUrl"
+      ]
+    },
+    "Artist": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Artist",
+      "type": "object",
+      "description": "Represents an artist on the VNDR Music platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Artist entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:1 Artist)"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the artist."
+        },
+        "bio": {
+          "type": "string",
+          "description": "A short biography of the artist."
+        },
+        "profilePictureUrl": {
+          "type": "string",
+          "description": "URL of the artist's profile picture.",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "name",
+        "bio",
+        "profilePictureUrl"
+      ]
+    },
+    "LicenseRequest": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "LicenseRequest",
+      "type": "object",
+      "description": "Represents a licensing request made by a user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the LicenseRequest entity."
+        },
+        "trackId": {
+          "type": "string",
+          "description": "Reference to Track. (Relationship: Track 1:N LicenseRequest)"
+        },
+        "requestorId": {
+          "type": "string",
+          "description": "Reference to User requesting the license. (Relationship: User 1:N LicenseRequest)"
+        },
+        "requestDate": {
+          "type": "string",
+          "description": "The date the license was requested.",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "description": "The status of the licensing request (e.g., pending, approved, rejected)."
+        }
+      },
+      "required": [
+        "id",
+        "trackId",
+        "requestorId",
+        "requestDate",
+        "status"
+      ]
+    },
+    "VSDTransaction": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "VSDTransaction",
+      "type": "object",
+      "description": "Represents a VSD token transaction.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the VSDTransaction entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N VSDTransaction)"
+        },
+        "transactionDate": {
+          "type": "string",
+          "description": "The date and time of the transaction.",
+          "format": "date-time"
+        },
+        "amount": {
+          "type": "number",
+          "description": "The amount of VSD tokens involved in the transaction."
+        },
+        "type": {
+          "type": "string",
+          "description": "The type of transaction (e.g., purchase, sale)."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "transactionDate",
+        "amount",
+        "type"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user data. Path-based ownership enforced by {userId}.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/tracks/{trackId}",
+        "definition": {
+          "entityName": "Track",
+          "schema": {
+            "$ref": "#/backend/entities/Track"
+          },
+          "description": "Stores track data. Includes 'artistId' to reference the artist who owns the track.",
+          "params": [
+            {
+              "name": "trackId",
+              "description": "The unique identifier for the track."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/artists/{artistId}",
+        "definition": {
+          "entityName": "Artist",
+          "schema": {
+            "$ref": "#/backend/entities/Artist"
+          },
+          "description": "Stores artist profiles. Contains 'userId' to link the artist to a specific user account.",
+          "params": [
+            {
+              "name": "artistId",
+              "description": "The unique identifier for the artist."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/license_requests/{licenseRequestId}",
+        "definition": {
+          "entityName": "LicenseRequest",
+          "schema": {
+            "$ref": "#/backend/entities/LicenseRequest"
+          },
+          "description": "Stores license requests. Includes 'trackId' and 'requestorId' to track the track being licensed and the user requesting the license.",
+          "params": [
+            {
+              "name": "licenseRequestId",
+              "description": "The unique identifier for the license request."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/vsd_transactions/{vsdTransactionId}",
+        "definition": {
+          "entityName": "VSDTransaction",
+          "schema": {
+            "$ref": "#/backend/entities/VSDTransaction"
+          },
+          "description": "Stores VSD token transactions. Includes 'userId' to track the user involved in the transaction.",
+          "params": [
+            {
+              "name": "vsdTransactionId",
+              "description": "The unique identifier for the VSD transaction."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/roles_admin/{userId}",
+        "definition": {
+          "entityName": "role",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Indicates admin privileges for a user. Document existence grants admin role.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user with admin privileges."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to provide a secure, scalable, and easily maintainable backend for the VNDR Music platform. It prioritizes authorization independence by denormalizing data where necessary and segregates data based on access requirements. The structure avoids complex hierarchical dependencies to enable atomic operations and simplifies security rules.\n\n*   **Users:** User data is stored in `/users/{userId}`. This top-level collection stores essential user information.\n*   **Artists:** Artist profiles are stored in `/artists/{artistId}`.  The `userId` field links each artist to a specific user. This allows easy retrieval of an artist's profile via the artist ID and provides a clear association with a user.\n*   **Tracks:** Tracks are stored in `/tracks/{trackId}`. The `artistId` field associates each track with an artist.\n*   **License Requests:** Licensing requests are stored in `/license_requests/{licenseRequestId}`. The `trackId` field links each request to a specific track, and the `requestorId` links it to the user making the request.\n*   **VSD Transactions:** VSD token transactions are stored in `/vsd_transactions/{vsdTransactionId}`. The `userId` field links each transaction to a specific user.\n*   **Admin Roles:** The existence of a document in `/roles_admin/{userId}` grants admin privileges.\n\n**Authorization Independence (Denormalization):**\n\n*   In cases where authorization depends on parent document attributes, those attributes are denormalized into child documents. For example, while not explicitly required by the current schema, if licensing requests needed to be restricted based on attributes of the track or artist, those attributes would be copied into the `LicenseRequest` document.\n\n**QAPs (Rules are not Filters):**\n\n*   The segregation of data into separate collections based on entity type (users, artists, tracks, license requests, VSD transactions) supports secure `list` operations. Each collection can have specific security rules that govern which users can access which documents. The use of explicit ownership via `userId` and `artistId` fields enables efficient filtering and authorization.\n*   Admin privileges are managed via document existence in the `/roles_admin/{userId}` collection, enabling quick and efficient role checks without complex data lookups."
+  }
+}
