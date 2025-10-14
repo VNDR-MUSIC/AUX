@@ -205,7 +205,11 @@ export default function Home() {
                         <CardHeader>
                             <CardTitle className="font-headline text-2xl">Starter</CardTitle>
                             <CardDescription>For artists getting their music out there.</CardDescription>
-                            <p className="text-4xl font-bold font-headline">$9<span className="text-lg font-normal text-muted-foreground">/mo</span></p>
+                            <div className="flex items-baseline gap-2">
+                                <Icons.vsd className="h-8 w-8 text-primary" />
+                                <span className="text-4xl font-bold font-headline">90</span>
+                                <span className="text-lg font-normal text-muted-foreground">VSD/mo</span>
+                            </div>
                         </CardHeader>
                         <CardContent className="flex-1 space-y-4">
                             <ul className="space-y-2 text-muted-foreground">
@@ -227,7 +231,11 @@ export default function Home() {
                                 <div className="text-xs font-semibold bg-primary text-primary-foreground px-2 py-1 rounded-full">MOST POPULAR</div>
                             </div>
                             <CardDescription>For the serious artist building a career.</CardDescription>
-                            <p className="text-4xl font-bold font-headline">$19<span className="text-lg font-normal text-muted-foreground">/mo</span></p>
+                            <div className="flex items-baseline gap-2">
+                                <Icons.vsd className="h-8 w-8 text-primary" />
+                                <span className="text-4xl font-bold font-headline">190</span>
+                                <span className="text-lg font-normal text-muted-foreground">VSD/mo</span>
+                            </div>
                         </CardHeader>
                         <CardContent className="flex-1 space-y-4">
                             <ul className="space-y-2 text-muted-foreground">
