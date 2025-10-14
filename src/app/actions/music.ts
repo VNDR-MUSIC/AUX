@@ -385,6 +385,7 @@ export async function trackPlays(trackId: string) {
     await updateDoc(trackRef, {
       plays: increment(1),
     });
+    revalidatePath('/dashboard');
     return { success: true };
   } catch (error) {
     console.error('Error incrementing track plays:', error);

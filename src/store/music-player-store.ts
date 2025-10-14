@@ -14,6 +14,7 @@ export type Track = WithId<{
   coverArtUrl?: string;
   trackUrl?: string;
   price?: number;
+  plays?: number;
 }>;
 
 interface MusicPlayerState {
@@ -45,11 +46,15 @@ export const useMusicPlayer = create<MusicPlayerState>((set, get) => ({
   setPlaylist: (tracks) => set({ playlist: tracks }),
 
   playTrack: (track, playlist) => {
+    const { currentTrack } = get();
+    // Only increment play count if it's a new track
+    if (currentTrack?.id !== track.id) {
+      trackPlays(track.id);
+    }
+    
     const newPlaylist = playlist || get().playlist;
     const trackIndex = newPlaylist.findIndex(t => t.id === track.id);
     
-    trackPlays(track.id);
-
     set({
       currentTrack: track,
       playlist: newPlaylist,

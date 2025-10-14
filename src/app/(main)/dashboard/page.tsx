@@ -25,7 +25,7 @@ import { PlaceHolderImages } from "@/lib/placeholder-images";
 import RecommendationsClient from "@/components/dashboard/recommendations-client";
 import TopTracksChart from "@/components/dashboard/top-tracks-chart";
 import { useUser, useFirebase, useCollection, useDoc, useMemoFirebase } from "@/firebase";
-import { doc, collection, query, where } from "firebase/firestore";
+import { doc, collection, query, where, orderBy, limit } from "firebase/firestore";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Icons } from "@/components/icons";
 import { claimDailyTokensAction } from "@/app/actions/vsd-transaction";
@@ -44,10 +44,12 @@ export default function DashboardPage() {
   const userRef = useMemoFirebase(() => (firestore && user ? doc(firestore, 'users', user.uid) : null), [firestore, user]);
   const { data: userData, isLoading: isUserDataLoading } = useDoc(userRef);
 
-  const tracksQuery = useMemoFirebase(() => (firestore && user ? query(collection(firestore, 'tracks'), where('artistId', '==', user.uid)) : null), [firestore, user]);
-  const { data: tracks, isLoading: areTracksLoading } = useCollection(tracksQuery);
+  const artistTracksQuery = useMemoFirebase(() => (firestore && user ? query(collection(firestore, 'tracks'), where('artistId', '==', user.uid)) : null), [firestore, user]);
+  const { data: artistTracks, isLoading: areArtistTracksLoading } = useCollection(artistTracksQuery);
 
-  const nowPlayingImg = PlaceHolderImages.find(img => img.id === 'album-2');
+  // New query for all tracks, ordered by plays
+  const allTracksQuery = useMemoFirebase(() => (firestore ? query(collection(firestore, 'tracks'), orderBy('plays', 'desc'), limit(10)) : null), [firestore]);
+  const { data: allTracks, isLoading: areAllTracksLoading } = useCollection(allTracksQuery);
 
   const handleClaimTokens = async () => {
     if (!user) return;
@@ -62,10 +64,12 @@ export default function DashboardPage() {
   const today = new Date().toISOString().split('T')[0];
   const canClaimTokens = userData?.dailyTokenClaimed !== today;
 
-  if (isUserLoading || isUserDataLoading || areTracksLoading) {
+  const isLoading = isUserLoading || isUserDataLoading || areArtistTracksLoading || areAllTracksLoading;
+
+  if (isLoading) {
     return (
       <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
-        <Card className="xl:col-span-2">
+        <Card className="xl:col-span-2 backdrop-blur-lg bg-card/40">
           <CardHeader>
             <Skeleton className="h-8 w-48" />
             <Skeleton className="h-4 w-64" />
@@ -83,22 +87,31 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
         <div className="space-y-8">
-            <Card>
+            <Card className="backdrop-blur-lg bg-card/40">
                 <CardHeader><Skeleton className="h-8 w-32" /></CardHeader>
                 <CardContent><Skeleton className="h-10 w-full" /></CardContent>
             </Card>
-            <Card>
+            <Card className="backdrop-blur-lg bg-card/40">
                 <CardHeader><Skeleton className="h-8 w-40" /></CardHeader>
                 <CardContent><Skeleton className="h-10 w-full" /></CardContent>
             </Card>
         </div>
+         <Card className="xl:col-span-3 backdrop-blur-lg bg-card/40">
+            <CardHeader>
+                <Skeleton className="h-8 w-1/2" />
+                <Skeleton className="h-4 w-3/4" />
+            </CardHeader>
+            <CardContent>
+                <Skeleton className="h-48 w-full" />
+            </CardContent>
+        </Card>
       </div>
     );
   }
 
   return (
     <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
-      <Card className="xl:col-span-2">
+      <Card className="xl:col-span-2 backdrop-blur-lg bg-card/40">
         <CardHeader className="flex flex-row items-center">
           <div className="grid gap-2">
             <CardTitle className="font-headline">Welcome, {userData?.username || 'Artist'}!</CardTitle>
@@ -114,7 +127,7 @@ export default function DashboardPage() {
           </Button>
         </CardHeader>
         <CardContent>
-          {tracks && tracks.length > 0 ? (
+          {artistTracks && artistTracks.length > 0 ? (
             <Table>
               <TableHeader>
                 <TableRow>
@@ -125,7 +138,7 @@ export default function DashboardPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {tracks.map((track) => (
+                {artistTracks.map((track) => (
                   <TableRow key={track.id}>
                     <TableCell>
                       <div className="flex items-center gap-3">
@@ -145,7 +158,7 @@ export default function DashboardPage() {
                     <TableCell className="text-right">
                         {track.price > 0 ? (
                             <div className="flex items-center justify-end gap-1 font-bold">
-                                <Link href="https://vsd.network" target="_blank" rel="noopener noreferrer"><Icons.vsd className="h-4 w-4" /></Link>
+                                <Link href="https://vsd.network" target="_blank" rel="noopener noreferrer"><Icons.vsd className="h-4 w-4"/></Link>
                                 {track.price}
                             </div>
                         ) : (
@@ -170,7 +183,7 @@ export default function DashboardPage() {
       </Card>
 
       <div className="grid auto-rows-min gap-4 md:gap-8">
-        <Card>
+        <Card className="backdrop-blur-lg bg-card/40">
             <CardHeader>
                 <CardTitle className="font-headline flex items-center justify-between">VSD Token Wallet</CardTitle>
             </CardHeader>
@@ -186,7 +199,7 @@ export default function DashboardPage() {
             </CardContent>
         </Card>
 
-        <Card>
+        <Card className="backdrop-blur-lg bg-card/40">
           <CardHeader>
             <CardTitle className="font-headline">AI-Powered Growth Tools</CardTitle>
           </CardHeader>
@@ -196,17 +209,15 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      <Card className="xl:col-span-3">
+      <Card className="xl:col-span-3 backdrop-blur-lg bg-card/40">
         <CardHeader>
           <CardTitle className="font-headline">Top Tracks Performance</CardTitle>
-          <CardDescription>An overview of your most popular tracks this month.</CardDescription>
+          <CardDescription>An overview of the most popular tracks on the platform this month.</CardDescription>
         </CardHeader>
         <CardContent>
-          <TopTracksChart />
+          <TopTracksChart data={allTracks || []} />
         </CardContent>
       </Card>
     </div>
   );
 }
-
-    
