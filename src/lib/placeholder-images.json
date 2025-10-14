@@ -4,49 +4,49 @@
       "id": "hero-1",
       "description": "A cheering crowd at a music concert",
       "imageUrl": "https://picsum.photos/seed/hero1/1920/1080",
-      "imageHint": "concert crowd"
+      "imageHint": "synthwave concert"
     },
     {
       "id": "hero-2",
       "description": "Abstract visualization of sound waves",
       "imageUrl": "https://picsum.photos/seed/hero2/1920/1080",
-      "imageHint": "glowing soundwave"
+      "imageHint": "audio soundwave"
     },
     {
       "id": "hero-3",
       "description": "A music producer working at a mixing console",
       "imageUrl": "https://picsum.photos/seed/hero3/1920/1080",
-      "imageHint": "studio mixer"
+      "imageHint": "audio production"
     },
     {
       "id": "hero-4",
       "description": "A guitarist performing on stage with dramatic lighting",
       "imageUrl": "https://picsum.photos/seed/hero4/1920/1080",
-      "imageHint": "stage guitarist"
+      "imageHint": "musician performance"
     },
     {
       "id": "hero-5",
       "description": "A close-up of a vinyl record playing on a turntable",
       "imageUrl": "https://picsum.photos/seed/hero5/1920/1080",
-      "imageHint": "vinyl record"
+      "imageHint": "lofi vinyl"
     },
     {
       "id": "hero-6",
       "description": "A person listening to music with headphones in a city",
       "imageUrl": "https://picsum.photos/seed/hero6/1920/1080",
-      "imageHint": "city headphones"
+      "imageHint": "headphones city"
     },
     {
       "id": "hero-7",
       "description": "A futuristic cityscape with neon music notes",
       "imageUrl": "https://picsum.photos/seed/hero7/1920/1080",
-      "imageHint": "neon music"
+      "imageHint": "futuristic music"
     },
     {
       "id": "album-1",
       "description": "Abstract colorful album art",
       "imageUrl": "https://picsum.photos/seed/ab1/400/400",
-      "imageHint": "abstract album"
+      "imageHint": "electronic album"
     },
     {
       "id": "album-2",
@@ -58,55 +58,55 @@
       "id": "album-3",
       "description": "An acoustic guitar leaning against a rustic wall",
       "imageUrl": "https://picsum.photos/seed/ab3/400/400",
-      "imageHint": "acoustic guitar"
+      "imageHint": "ambient guitar"
     },
     {
       "id": "album-4",
       "description": "A DJ setup with turntables and a mixer",
       "imageUrl": "https://picsum.photos/seed/ab4/400/400",
-      "imageHint": "dj turntables"
+      "imageHint": "DJ setup"
     },
     {
       "id": "album-5",
       "description": "Close-up of piano keys",
       "imageUrl": "https://picsum.photos/seed/ab5/400/400",
-      "imageHint": "piano keys"
+      "imageHint": "synthesizer keys"
     },
     {
       "id": "album-6",
       "description": "Colorful hip hop graffiti on a brick wall",
       "imageUrl": "https://picsum.photos/seed/ab6/400/400",
-      "imageHint": "hiphop graffiti"
+      "imageHint": "future funk"
     },
     {
       "id": "licensing-header",
       "description": "Person signing a music contract",
       "imageUrl": "https://picsum.photos/seed/license/1200/300",
-      "imageHint": "signing contract"
+      "imageHint": "music contract"
     },
     {
       "id": "user-avatar-1",
       "description": "User avatar 1",
       "imageUrl": "https://picsum.photos/seed/u1/100/100",
-      "imageHint": "person portrait"
+      "imageHint": "musician portrait"
     },
     {
       "id": "user-avatar-2",
       "description": "User avatar 2",
       "imageUrl": "https://picsum.photos/seed/u2/100/100",
-      "imageHint": "person profile"
+      "imageHint": "artist profile"
     },
     {
       "id": "midnight-bloom",
       "description": "Midnight Bloom track image",
       "imageUrl": "https://picsum.photos/seed/track1/40/40",
-      "imageHint": "glowing flower"
+      "imageHint": "synthwave bloom"
     },
     {
       "id": "crystal-caverns",
       "description": "Crystal Caverns track image",
       "imageUrl": "https://picsum.photos/seed/track2/40/40",
-      "imageHint": "glowing crystal"
+      "imageHint": "pixel cavern"
     },
     {
       "id": "neon-drive",
@@ -118,13 +118,13 @@
       "id": "lunar-tides",
       "description": "Lunar Tides track image",
       "imageUrl": "https://picsum.photos/seed/track4/40/40",
-      "imageHint": "moonlight ocean"
+      "imageHint": "cosmic ocean"
     },
     {
       "id": "streetlight-sonata",
       "description": "Streetlight Sonata track image",
       "imageUrl": "https://picsum.photos/seed/track5/40/40",
-      "imageHint": "city streetlight"
+      "imageHint": "urban echo"
     }
   ]
 }
