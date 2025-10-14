@@ -55,7 +55,7 @@ export default function SidebarNav() {
         <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2 group justify-center">
           <div
             className={cn(
-              'h-8 w-8 relative'
+              'h-10 w-10 relative'
             )}
           >
             <Icons.logo />
