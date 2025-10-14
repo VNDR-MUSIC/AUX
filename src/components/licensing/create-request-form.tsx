@@ -2,7 +2,7 @@
 'use client';
 
 import Image from "next/image";
-import { useFormState } from "react-dom";
+import { useActionState } from "react";
 import { useEffect, useRef } from "react";
 import {
   Card,
@@ -34,7 +34,7 @@ const initialState = {
 
 export default function CreateLicenseRequestForm() {
   const { user } = useUser();
-  const [state, formAction] = useFormState(submitLicenseRequestAction, initialState);
+  const [state, formAction] = useActionState(submitLicenseRequestAction, initialState);
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
   

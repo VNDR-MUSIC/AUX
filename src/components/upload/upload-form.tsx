@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState, useFormStatus } from "react-dom";
 import Image from "next/image";
 import { generateCoverArtAction, recommendLicensingPriceAction, uploadTrackAction } from "@/app/actions/music";
 import { Button } from "@/components/ui/button";
@@ -83,9 +83,9 @@ function UploadButton() {
 }
 
 export default function UploadForm() {
-  const [coverArtState, coverArtFormAction] = useFormState(generateCoverArtAction, initialCoverArtState);
-  const [licensingState, licensingFormAction] = useFormState(recommendLicensingPriceAction, initialLicensingState);
-  const [uploadState, uploadFormAction] = useFormState(uploadTrackAction, initialUploadState);
+  const [coverArtState, coverArtFormAction] = useActionState(generateCoverArtAction, initialCoverArtState);
+  const [licensingState, licensingFormAction] = useActionState(recommendLicensingPriceAction, initialLicensingState);
+  const [uploadState, uploadFormAction] = useActionState(uploadTrackAction, initialUploadState);
   const { user } = useUser();
   
   const [pricingOption, setPricingOption] = useState("ai");
