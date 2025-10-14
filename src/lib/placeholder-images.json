@@ -1,6 +1,48 @@
 {
   "placeholderImages": [
     {
+      "id": "hero-1",
+      "description": "A cheering crowd at a music concert",
+      "imageUrl": "https://picsum.photos/seed/hero1/1920/1080",
+      "imageHint": "concert crowd"
+    },
+    {
+      "id": "hero-2",
+      "description": "Abstract visualization of sound waves",
+      "imageUrl": "https://picsum.photos/seed/hero2/1920/1080",
+      "imageHint": "abstract soundwave"
+    },
+    {
+      "id": "hero-3",
+      "description": "A music producer working at a mixing console",
+      "imageUrl": "https://picsum.photos/seed/hero3/1920/1080",
+      "imageHint": "audio production"
+    },
+    {
+      "id": "hero-4",
+      "description": "A guitarist performing on stage with dramatic lighting",
+      "imageUrl": "https://picsum.photos/seed/hero4/1920/1080",
+      "imageHint": "musician performance"
+    },
+    {
+      "id": "hero-5",
+      "description": "A close-up of a vinyl record playing on a turntable",
+      "imageUrl": "https://picsum.photos/seed/hero5/1920/1080",
+      "imageHint": "vinyl record"
+    },
+    {
+      "id": "hero-6",
+      "description": "A person listening to music with headphones in a city",
+      "imageUrl": "https://picsum.photos/seed/hero6/1920/1080",
+      "imageHint": "person headphones"
+    },
+    {
+      "id": "hero-7",
+      "description": "A futuristic cityscape with neon lights",
+      "imageUrl": "https://picsum.photos/seed/hero7/1920/1080",
+      "imageHint": "futuristic city"
+    },
+    {
       "id": "album-1",
       "description": "Abstract colorful waves",
       "imageUrl": "https://picsum.photos/seed/ab1/400/400",
