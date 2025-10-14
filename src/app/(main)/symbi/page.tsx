@@ -1,118 +1,201 @@
-'use client';
 
-import { useState, useActionState, useRef, useEffect } from 'react';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Loader2, Send } from "lucide-react";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { symbiChat } from '@/ai/flows/symbi-chat-flow';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 
-interface Message {
-  text: string;
-  isUser: boolean;
-}
-
-export default function SymbiPage() {
-  const [messages, setMessages] = useState<Message[]>([
-    { text: "Hello! I'm Symbi, your AI assistant. Ask me anything about the VNDR platform, music licensing, or how our AI tools can help you grow.", isUser: false }
-  ]);
-  const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || isLoading) return;
-
-    const userMessage: Message = { text: input, isUser: true };
-    setMessages(prev => [...prev, userMessage]);
-    setInput('');
-    setIsLoading(true);
-
-    try {
-      const response = await symbiChat(input);
-      const aiMessage: Message = { text: response, isUser: false };
-      setMessages(prev => [...prev, aiMessage]);
-    } catch (error) {
-      console.error("Symbi chat error:", error);
-      const errorMessage: Message = { text: "Sorry, I'm having trouble connecting right now. Please try again later.", isUser: false };
-      setMessages(prev => [...prev, errorMessage]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (scrollAreaRef.current) {
-        // A slight delay to allow the new message to render
-        setTimeout(() => {
-             if (scrollAreaRef.current) {
-                const innerDiv = scrollAreaRef.current.querySelector('div');
-                if (innerDiv) {
-                    innerDiv.scrollTop = innerDiv.scrollHeight;
-                }
-            }
-        }, 100);
-    }
-  }, [messages]);
-  
-  const symbiAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar-2');
-
+export default function SymbiKnowledgeBasePage() {
   return (
-    <div className="container mx-auto py-8 flex h-[calc(100vh-10rem)] justify-center items-center">
-      <Card className="w-full max-w-2xl h-full flex flex-col">
+    <div className="container mx-auto py-8 prose prose-invert max-w-4xl">
+      <Card>
         <CardHeader>
-          <CardTitle className="font-headline text-3xl">Symbi Chat</CardTitle>
+          <CardTitle className="font-headline text-3xl">
+            VNDR Music Platform: Comprehensive Knowledge Base
+          </CardTitle>
           <CardDescription>
-            Your AI assistant for all things VNDR. Ask me about features, royalties, or get career advice.
+            This document provides a complete overview of the features,
+            services, and philosophy of the VNDR music platform.
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex-1 flex flex-col gap-4">
-            <ScrollArea className="h-[400px] w-full p-4 border rounded-lg" ref={scrollAreaRef}>
-                <div className="space-y-4">
-                   {messages.map((message, index) => (
-                     <div key={index} className={`flex items-start gap-3 ${message.isUser ? 'justify-end' : ''}`}>
-                        {!message.isUser && (
-                            <Avatar>
-                                {symbiAvatar && <AvatarImage src={symbiAvatar.imageUrl} alt="Symbi" />}
-                                <AvatarFallback>AI</AvatarFallback>
-                            </Avatar>
-                        )}
-                        <div className={`p-3 rounded-lg max-w-sm ${message.isUser ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
-                            <p className="text-sm">{message.text}</p>
-                        </div>
-                        {message.isUser && (
-                             <Avatar>
-                                <AvatarFallback>You</AvatarFallback>
-                            </Avatar>
-                        )}
-                    </div>
-                   ))}
-                   {isLoading && !messages[messages.length - 1].isUser && (
-                       <div className="flex items-start gap-3">
-                           <Avatar>
-                                {symbiAvatar && <AvatarImage src={symbiAvatar.imageUrl} alt="Symbi" />}
-                                <AvatarFallback>AI</AvatarFallback>
-                            </Avatar>
-                            <div className="bg-muted p-3 rounded-lg max-w-xs flex items-center">
-                                <Loader2 className="h-5 w-5 animate-spin" />
-                            </div>
-                       </div>
-                   )}
-                </div>
-            </ScrollArea>
+        <CardContent className="space-y-6">
+          <section>
+            <h2 className="font-headline text-2xl">
+              1. Core Mission & Philosophy
+            </h2>
+            <p>
+              VNDR is a next-generation music platform designed to empower
+              independent artists. Our mission is to dismantle the opaque and
+              predatory practices of the traditional music industry by providing
+              transparent, AI-powered tools for distribution, monetization, and
+              career growth. We believe artists should have clear choices,
+              control over their work, and direct access to their earnings.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="font-headline text-2xl">
+              2. Services for Artists & Creators
+            </h2>
+
+            <h3 className="font-headline text-xl mt-4">
+              2.1 Music Distribution & Career Paths
+            </h3>
+            <p>
+              VNDR offers two distinct career paths to fit the needs of any
+              artist:
+            </p>
+            <ul>
+              <li>
+                <strong>Distribution Plan (90/10 Split):</strong> This plan is for
+                artists who want maximum control. Artists get unlimited free
+                distribution to over 150 platforms (including Spotify, Apple
+                Music, etc.) and keep 90% of all royalties. This is one of the
+                most generous splits in the industry.
+              </li>
+              <li>
+                <strong>Publishing Partnership (50/50 Split):</strong> For
+                artists seeking a dedicated partner, this plan turns VNDR into
+                their publisher. In exchange for a 50/50 publishing split, our
+                team and AI actively pitch the artist's music for high-value
+                sync licensing deals in film, TV, games, and advertisements.
+                The artist always retains 100% of their master rights.
+              </li>
+            </ul>
+
+            <h3 className="font-headline text-xl mt-4">
+              2.2 Monetization & Licensing
+            </h3>
+            <ul>
+              <li>
+                <strong>Direct Licensing Catalog:</strong> Artists can set a
+                licensing price (in VSD tokens) for any track in their catalog,
+                making it available for purchase by content creators,
+                filmmakers, and other users directly through the platform.
+              </li>
+              <li>
+                <strong>License Request Management:</strong> Artists have a
+                dashboard to review, approve, or reject all incoming licensing
+                requests for their music, giving them full control over how their
+                work is used.
+              </li>
+              <li>
+                <strong>Music Auctions (Coming Soon):</strong> A future feature
+                will allow artists to auction the rights to their music,
+                creating new revenue streams.
+              </li>
+            </ul>
+
+            <h3 className="font-headline text-xl mt-4">
+              2.3 VSD Token Economy
+            </h3>
+            <p>
+              The VSD token is the native currency of the VNDR ecosystem,
+              designed for transparency and utility.
+            </p>
+            <ul>
+              <li>
+                <strong>VSD Wallet:</strong> Every user has a built-in wallet
+                to store and manage their VSD token balance.
+              </li>
+              <li>
+                <strong>Daily Token Rewards:</strong> To encourage engagement
+                and reward community members, artists can claim 5 free VSD
+                tokens every day.
+              </li>
+              <li>
+                <strong>Utility & Governance:</strong> VSD tokens are used to
+                pay for premium AI services (like Legal Eagle) and will be used
+                in the future for bidding in auctions and other platform
+                governance features.
+              </li>
+              <li>
+                <strong>Transparent Royalties:</strong> The system is built to
+                provide a clear, verifiable ledger of all streams, sales, and
+                licensing deals, with instant royalty payouts to the artist's
+                VSD wallet.
+              </li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="font-headline text-2xl">
+              3. AI-Powered "VNDR Pro" Toolkit
+            </h2>
+            <p>
+              Our suite of generative AI and analytical tools gives artists the
+              power of a major label team, available 24/7.
+            </p>
+            <ul>
+              <li>
+                <strong>AI Cover Art Generation:</strong> Automatically
+                generate unique, high-quality cover art based on a track's
+                genre, title, and description.
+              </li>
+              <li>
+                <strong>AI Licensing Price Recommendation:</strong> An AI tool
+                that analyzes market data and track characteristics to suggest
+                a competitive licensing price in VSD tokens.
+              </li>
+              <li>
+                <strong>AI-Powered Music Recommendations:</strong> An intelligent
+                engine that helps listeners discover new music, getting artists'
+                tracks to the right ears.
+              </li>
+              <li>
+                <strong>Symbi AI Assistant:</strong> A general-purpose AI
+                chatbot (powered by this knowledge base) to help users navigate
+                the platform and understand its features.
+              </li>
+              <li>
+                <strong>Legal Eagle (Simulated Legal Adviser):</strong> A
+                specialized AI chatbot that answers general, educational
+                questions about entertainment law topics like copyright,
+                contracts, and publishing for a small VSD token fee.
+              </li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="font-headline text-2xl">
+              4. Platform Features & User Experience
+            </h2>
+            <ul>
+              <li>
+                <strong>Full User Authentication:</strong> Secure sign-up and
+                login system with email/password and Google social login.
+              </li>
+              <li>
+                <strong>Artist & User Profiles:</strong> Public profiles for
+                artists to showcase their work and for users to manage their
+                settings.
+              </li>
+              <li>
+                <strong>Global Music Player:</strong> A persistent, site-wide
+                audio player allows for continuous music discovery while browsing
+                the platform.
+              </li>
+              <li>
+                <strong>Interactive Onboarding Tour:</strong> A step-by-step
+                guided tour (powered by Shepherd.js) that introduces new users
+                to key features as they navigate the site for the first time.
+              </li>
+              <li>
+                <strong>Notification Management:</strong> Granular control over
+                in-app, email, and push notifications for various platform
+                events.
+              </li>
+              <li>
+                <strong>Muso.AI Partnership Integration:</strong> We leverage
+                Muso.AI's industry-leading data verification to vet tracks upon
+                upload, ensuring ownership and rights are clear before they
+                enter our licensing ecosystem.
+              </li>
+            </ul>
+          </section>
         </CardContent>
-        <CardFooter>
-            <form onSubmit={handleSubmit} className="w-full flex items-center gap-2">
-                <Input placeholder="Ask Symbi a question..." value={input} onChange={(e) => setInput(e.target.value)} disabled={isLoading} />
-                <Button type="submit" disabled={isLoading || !input.trim()}>
-                    {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                </Button>
-            </form>
-        </CardFooter>
       </Card>
     </div>
   );

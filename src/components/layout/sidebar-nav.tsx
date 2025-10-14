@@ -40,7 +40,6 @@ const authenticatedMenuItems = [
 
 const publicMenuItems = [
   { href: '/vsd-demo', icon: DollarSign, label: 'VSD Demo' },
-  { href: '/symbi', icon: BrainCircuit, label: 'Symbi' },
 ];
 
 
