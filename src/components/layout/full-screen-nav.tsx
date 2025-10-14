@@ -3,9 +3,10 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { X, Home, Upload, Library, FileText, Gavel, Scale, DollarSign } from 'lucide-react';
+import { X, Home, Upload, Library, FileText, Gavel, Scale, DollarSign, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useUser } from '@/firebase';
+import { useUser, useFirebase, useDoc, useMemoFirebase } from '@/firebase';
+import { doc } from 'firebase/firestore';
 
 const authenticatedMenuItems = [
   { href: '/dashboard', icon: Home, label: 'Dashboard' },
@@ -19,6 +20,9 @@ const authenticatedMenuItems = [
 const publicMenuItems = [
   { href: '/vsd-demo', icon: DollarSign, label: 'VSD Demo' },
 ];
+
+const adminMenuItem = { href: '/admin', icon: Shield, label: 'Admin' };
+
 
 const menuVariants = {
   hidden: {
@@ -61,7 +65,17 @@ interface FullScreenNavProps {
 
 export default function FullScreenNav({ isOpen, setIsOpen }: FullScreenNavProps) {
   const { user } = useUser();
-  const menuItems = user ? authenticatedMenuItems : publicMenuItems;
+  const { firestore } = useFirebase();
+
+  const adminRef = useMemoFirebase(() => (firestore && user ? doc(firestore, `roles_admin/${user.uid}`) : null), [firestore, user]);
+  const { data: adminDoc } = useDoc(adminRef);
+  const isAdmin = !!adminDoc;
+
+  let menuItems = user ? authenticatedMenuItems : publicMenuItems;
+  if(user && isAdmin) {
+    menuItems = [...menuItems, adminMenuItem];
+  }
+
 
   return (
     <AnimatePresence>
@@ -95,9 +109,10 @@ export default function FullScreenNav({ isOpen, setIsOpen }: FullScreenNavProps)
                   >
                     <Link
                       href={item.href}
-                      className="text-4xl font-headline font-bold text-muted-foreground transition-colors hover:text-foreground"
+                      className="text-4xl font-headline font-bold text-muted-foreground transition-colors hover:text-foreground flex items-center gap-4"
                       onClick={() => setIsOpen(false)}
                     >
+                      <item.icon className="h-8 w-8" />
                       {item.label}
                     </Link>
                   </motion.li>
