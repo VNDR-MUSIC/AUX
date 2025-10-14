@@ -100,7 +100,7 @@ export default function DashboardPage() {
           <div className="grid gap-2">
             <CardTitle className="font-headline">Welcome, {userData?.username || 'Artist'}!</CardTitle>
             <CardDescription>
-              Here&apos;s an overview of your music and performance.
+              This is your Artist Studio. Here's an overview of your music and performance.
             </CardDescription>
           </div>
           <Button asChild size="sm" className="ml-auto gap-1">
@@ -139,12 +139,12 @@ export default function DashboardPage() {
                     </TableCell>
                     <TableCell className="hidden sm:table-cell">{track.genre}</TableCell>
                     <TableCell className="hidden md:table-cell">{track.plays || 0}</TableCell>
-                    <TableCell className="text-right flex items-center justify-end gap-1 font-bold">
+                    <TableCell className="text-right">
                         {track.price > 0 ? (
-                            <>
+                            <div className="flex items-center justify-end gap-1 font-bold">
                                 <Icons.vsd className="h-4 w-4" />
                                 {track.price}
-                            </>
+                            </div>
                         ) : (
                            'N/A'
                         )}
@@ -157,7 +157,7 @@ export default function DashboardPage() {
             <div className="text-center py-12">
               <Music className="mx-auto h-12 w-12 text-muted-foreground" />
               <h3 className="mt-4 text-lg font-medium">No tracks uploaded yet</h3>
-              <p className="mt-1 text-sm text-muted-foreground">Start by uploading your first track.</p>
+              <p className="mt-1 text-sm text-muted-foreground">Start by uploading your first track to see your dashboard come to life.</p>
               <Button asChild size="sm" className="mt-4">
                 <Link href="/dashboard/upload">Upload Music</Link>
               </Button>
@@ -185,7 +185,7 @@ export default function DashboardPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="font-headline">AI Recommendations</CardTitle>
+            <CardTitle className="font-headline">AI-Powered Growth Tools</CardTitle>
           </CardHeader>
           <CardContent>
             <RecommendationsClient />

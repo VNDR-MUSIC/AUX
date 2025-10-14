@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Icons } from '@/components/icons';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Award, CalendarCheck, Check, Gift, Sparkles, Star, Waves } from 'lucide-react';
+import { Award, CalendarCheck, Check, Gift, Sparkles, Star, Waves, AlertTriangle } from 'lucide-react';
 import LandingPageHeader from '@/components/layout/landing-page-header';
 import Footer from '@/components/layout/footer';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,20 +25,20 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 const heroSlides = [
   {
     id: 'hero-1',
-    title: 'Your Music, Your Royalties, Your Future',
-    description: 'The ultimate platform for independent artists to distribute, license, and monetize their music transparently.',
+    title: 'Stop Giving Away Your Royalties.',
+    description: "You made the music. You deserve the profits. VNDR is the only platform that gives you 100% of your rights and the AI-powered tools to grow your career.",
     imageHint: 'musician stage'
   },
   {
     id: 'hero-2',
-    title: 'AI-Powered Promotion',
-    description: 'Reach new audiences with our intelligent promotion tools that get your music to the right ears.',
+    title: 'Your New A&R is an AI.',
+    description: 'Reach global audiences with intelligent promotion tools that get your music to the right ears, playlisters, and sync licensing opportunities.',
     imageHint: 'audio soundwave'
   },
   {
     id: 'hero-3',
-    title: 'Seamless Music Licensing',
-    description: 'Get your tracks in films, games, and ads. We handle the deals, you collect the royalties.',
+    title: 'License Your Music, Keep Your Masters.',
+    description: "Get your tracks in films, games, and ads without selling your soul. We handle the deals, you collect the royalties. It's that simple.",
     imageHint: 'audio production'
   },
 ];
@@ -46,23 +46,23 @@ const heroSlides = [
 const features = [
     {
         icon: <Waves className="h-10 w-10 text-primary" />,
-        title: "Free Global Distribution",
-        description: "Release your music on Spotify, Apple Music, and 150+ other platforms. You keep 100% of your rights, always.",
+        title: "Unlimited Free Distribution",
+        description: "Stop paying per release. Distribute unlimited tracks to Spotify, Apple Music, and 150+ other platforms, and keep 100% of your rights.",
     },
     {
         icon: <Sparkles className="h-10 w-10 text-primary" />,
         title: "AI-Powered Curation & Promo",
-        description: "Our intelligent engine gets your music to playlist curators and fans most likely to love it, amplifying your reach.",
+        description: "Our intelligent engine analyzes your music and gets it to playlist curators, influencers, and fans most likely to love it.",
     },
     {
         icon: <Award className="h-10 w-10 text-primary" />,
-        title: "Global Licensing Opportunities",
-        description: "Submit your music for use in films, games, and advertisements worldwide. Our team secures the placements for you.",
+        title: "Global Sync Licensing",
+        description: "Tired of dead-end submissions? Our AI finds sync opportunities in films, games, and ads that match your sound, and our team closes the deal.",
     },
     {
         icon: <Icons.vsd className="h-10 w-10 text-primary" />,
-        title: "Blockchain Royalty Payments",
-        description: "Using VSD tokens, we provide transparent, instant, and fair royalty payments directly to you.",
+        title: "Transparent Royalty Payments",
+        description: "No more black boxes or confusing statements. Our VSD token system provides a transparent, instant, and fair royalty ledger.",
     },
 ];
 
@@ -85,24 +85,28 @@ const testimonials = [
 
 const faqs = [
   {
-    question: "Do I keep the rights to my music?",
-    answer: "Yes, absolutely. You retain 100% of your copyright and ownership. We are a service provider and partner, not a publisher. Our agreement is a distribution and licensing representation agreement, not a rights transfer."
+    question: "Do I really keep 100% of my rights?",
+    answer: "Yes, absolutely. You retain 100% of your copyright and ownership of your master recordings. We are a service provider and partner, not a publisher. Our agreement is for distribution and licensing representation, never a rights transfer."
   },
   {
-      question: "How does the music distribution and royalty split work?",
-      answer: "Our Starter plan offers free music distribution to over 150 platforms. For this service, we operate on a 50/50 royalty split. You keep 50% of all royalties earned, and we take 50% commission. If you upgrade to our Pro plan, you get a much better rate, keeping 90% of your royalties."
+      question: "How can you offer unlimited distribution for free?",
+      answer: "Our Starter plan is designed to remove the financial barrier to entry for artists. We operate on a 90/10 royalty split for this plan—you keep 90%, we take 10% commission. This allows us to cover distribution costs while you get your music everywhere. For artists earning serious revenue, our AI Pro plan offers a 98/2 split for a small monthly fee."
   },
   {
-    question: "How does the blockchain royalty system work?",
-    answer: "We use VSD tokens to create a transparent ledger of all streams, sales, and licensing deals. When a royalty payment is due, it's converted to your preferred currency and transferred instantly. This eliminates delays and opaque accounting common in the industry."
+    question: "How does the VSD token and royalty system work?",
+    answer: "We use our VSD token to create a transparent, verifiable ledger of all streams, sales, and licensing deals. When a royalty payment is due, it's paid instantly into your VNDR wallet. You can then hold it, use it on the platform, or convert it to your local currency. This eliminates the delays and opaque accounting common in the traditional music industry."
   },
   {
+    question: "What are the AI-powered tools?",
+    answer: "Our AI Pro plan gives you access to the VNDR Music AI Ecosystem. This includes tools to generate unique cover art, write marketing copy and press releases, get pricing recommendations for licenses, forecast potential earnings, and even get strategic career advice. It's like having an entire professional team at your fingertips."
+  },
+   {
     question: "How do I get more VSD tokens?",
-    answer: "You receive free VSD tokens daily just for being a member! If you need more for transactions, you can purchase them directly from our official partner at VSD.network."
+    answer: "You receive free VSD tokens daily just for being an active member! If you need more for transactions like bidding on auctions or tipping other artists, you can purchase them directly through our secure portal or from our official partner exchange."
   },
   {
     question: "What are the requirements for submitting music?",
-    answer: "We accept high-quality audio files (WAV, FLAC) and require that you are the sole copyright holder of both the composition and the master recording. Your music will go through a brief quality review before being distributed."
+    answer: "We accept high-quality audio files (WAV, FLAC) and require that you are the sole copyright holder of both the composition and the master recording. All music goes through a brief quality review to ensure it meets the standards of streaming platforms."
   }
 ];
 
@@ -151,10 +155,10 @@ export default function Home() {
                             </p>
                             <div className="flex flex-wrap justify-center gap-4">
                             <Button asChild size="lg" className="font-bold">
-                                <Link href="/login">Sign Up & Claim Free Tokens</Link>
+                                <Link href="/login">Sign Up & Start for Free</Link>
                             </Button>
                             <Button asChild size="lg" variant="outline" className="font-bold bg-transparent text-white border-white hover:bg-white hover:text-primary">
-                                <Link href="#pricing">View Pricing</Link>
+                                <Link href="#pricing">See The Plans</Link>
                             </Button>
                             </div>
                         </div>
@@ -172,16 +176,16 @@ export default function Home() {
             <div className="container px-4 md:px-6">
                 <div className="text-center">
                     <Gift className="h-16 w-16 mx-auto mb-4" />
-                    <h2 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl">Get Rewarded Daily</h2>
+                    <h2 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl">Get Paid to Participate.</h2>
                     <p className="max-w-[700px] mx-auto mt-4 text-primary-foreground/80 md:text-xl">
-                        Sign up for free and receive complimentary VSD tokens every day. Learn how our token economy works and start building your wallet just by being part of the community.
+                        Sign up for free and receive complimentary <Icons.vsd className="inline h-5 w-5" /> tokens every day. Our token economy rewards artists just for being part of the community.
                     </p>
                     <div className="flex flex-wrap justify-center gap-4 mt-8">
                         <Button asChild size="lg" className="font-bold bg-white text-black hover:bg-gray-200">
                             <Link href="/login">Claim Your First Tokens</Link>
                         </Button>
-                        <Button asChild size="lg" variant="outline" className="font-bold bg-transparent text-white border-white hover:bg-white hover:text-primary">
-                            <a href="https://vsd.network" target="_blank" rel="noopener noreferrer">Buy VSD Tokens</a>
+                         <Button asChild size="lg" variant="outline" className="font-bold bg-transparent text-white border-white hover:bg-white hover:text-primary">
+                            <Link href="#features">Learn More</Link>
                         </Button>
                     </div>
                 </div>
@@ -193,9 +197,9 @@ export default function Home() {
         <section id="features" className="py-16 md:py-24 bg-secondary">
             <div className="container px-4 md:px-6">
                 <div className="text-center mb-12">
-                    <h2 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl">Built for the Independent Artist</h2>
+                    <h2 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl">The Old Music Industry is Broken. We're Building a Better One.</h2>
                     <p className="max-w-[700px] mx-auto mt-4 text-muted-foreground md:text-xl">
-                        VNDR provides the tools you need to succeed, while you keep control.
+                        VNDR gives independent artists the power of a major label, without the predatory contracts.
                     </p>
                 </div>
                 <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
@@ -207,6 +211,11 @@ export default function Home() {
                         </div>
                     ))}
                 </div>
+                 <div className="text-center mt-12">
+                    <Button asChild size="lg">
+                        <Link href="/login">Get Started & Upload Your Music</Link>
+                    </Button>
+                </div>
             </div>
         </section>
 
@@ -214,9 +223,9 @@ export default function Home() {
         <section id="pricing" className="py-16 md:py-24">
             <div className="container px-4 md:px-6">
                 <div className="text-center mb-12">
-                    <h2 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl text-primary">Simple, Transparent Pricing</h2>
+                    <h2 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl text-primary">Simple, Artist-First Pricing</h2>
                     <p className="max-w-[700px] mx-auto mt-4 text-muted-foreground md:text-xl">
-                        Choose the plan that's right for your journey. Cancel anytime.
+                        No hidden fees. No confusing contracts. Just powerful tools to grow your career.
                     </p>
                     <div className="flex items-center justify-center space-x-2 mt-6">
                       <Label htmlFor="billing-cycle">Monthly</Label>
@@ -229,51 +238,52 @@ export default function Home() {
                     <Card className="flex flex-col">
                         <CardHeader>
                             <CardTitle className="font-headline text-2xl">Starter</CardTitle>
-                            <CardDescription>For artists getting their music out there.</CardDescription>
+                            <CardDescription>For artists starting their journey.</CardDescription>
                             <div className="flex items-baseline gap-2">
-                                <span className="text-4xl font-bold font-headline">Free</span>
+                                <span className="text-4xl font-bold font-headline">Free Forever</span>
                             </div>
                         </CardHeader>
                         <CardContent className="flex-1 space-y-4">
-                             <p className="font-semibold text-primary flex items-center gap-2"><CalendarCheck className="h-5 w-5" /> Free VSD tokens daily!</p>
+                             <p className="font-semibold text-primary flex items-center gap-2"><CalendarCheck className="h-5 w-5" /> Free <Icons.vsd className="h-5 w-5" /> daily!</p>
                             <ul className="space-y-2 text-muted-foreground">
                                 <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Free unlimited distribution to 150+ platforms</li>
-                                <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>50/50 Royalty Split</li>
-                                <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Basic Analytics</li>
+                                <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>You Keep 90% of Royalties</li>
+                                <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Basic Analytics Dashboard</li>
                                 <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Monthly Royalty Payouts</li>
                             </ul>
                         </CardContent>
                         <CardFooter>
                             <Button className="w-full" asChild>
-                                <Link href="/login">Sign Up for Free</Link>
+                                <Link href="/login">Start for Free</Link>
                             </Button>
                         </CardFooter>
                     </Card>
-                    {/* Pro Plan */}
+                    {/* AI Pro Plan */}
                     <Card className="flex flex-col border-2 border-primary shadow-lg">
                         <CardHeader>
                             <div className="flex justify-between items-center">
-                                <CardTitle className="font-headline text-2xl">Pro</CardTitle>
+                                <CardTitle className="font-headline text-2xl">AI Pro</CardTitle>
                                 <div className="text-xs font-semibold bg-primary text-primary-foreground px-2 py-1 rounded-full">MOST POPULAR</div>
                             </div>
                             <CardDescription>For the serious artist building a career.</CardDescription>
                             <div className="flex items-baseline gap-2">
                                 <Icons.vsd className="h-8 w-8 text-primary" />
-                                <span className="text-4xl font-bold font-headline">190</span>
-                                <span className="text-lg font-normal text-muted-foreground">VSD/mo</span>
+                                <span className="text-4xl font-bold font-headline">250</span>
+                                <span className="text-lg font-normal text-muted-foreground">/mo</span>
                             </div>
                         </CardHeader>
                         <CardContent className="flex-1 space-y-4">
                             <ul className="space-y-2 text-muted-foreground">
                                 <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Everything in Starter, plus:</li>
-                                <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>90/10 Royalty Split</li>
+                                <li className="flex items-center font-bold text-foreground"><Check className="h-4 w-4 mr-2 text-primary"/>You Keep 98% of Royalties</li>
+                                <li className="flex items-center font-bold text-foreground"><Check className="h-4 w-4 mr-2 text-primary"/>Full VNDR AI Ecosystem Access</li>
                                 <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>AI-Powered Promotion Tools</li>
-                                <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Sync Licensing Submissions</li>
-                                <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Instant VSD Royalty Payouts</li>
+                                <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Automated Sync Licensing Submissions</li>
+                                <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Instant <Icons.vsd className="h-4 w-4 mx-1" /> Royalty Payouts</li>
                             </ul>
                         </CardContent>
                         <CardFooter>
-                            <Button className="w-full">Start Free Trial</Button>
+                            <Button className="w-full">Start 14-Day Free Trial</Button>
                         </CardFooter>
                     </Card>
                     {/* Label Plan */}
@@ -285,11 +295,11 @@ export default function Home() {
                         </CardHeader>
                         <CardContent className="flex-1 space-y-4">
                             <ul className="space-y-2 text-muted-foreground">
-                                <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Everything in Pro, plus:</li>
-                                <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Multi-Artist Management</li>
+                                <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Everything in AI Pro, plus:</li>
+                                <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Multi-Artist Management Seat</li>
                                 <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Dedicated Account Manager</li>
-                                <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Custom Royalty Splits</li>
-                                <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>API Access</li>
+                                <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Custom Royalty Splits & Contracts</li>
+                                <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Advanced API Access</li>
                             </ul>
                         </CardContent>
                         <CardFooter>
@@ -304,7 +314,7 @@ export default function Home() {
         <section className="py-16 md:py-24 bg-secondary">
           <div className="container px-4 md:px-6">
             <div className="text-center mb-12">
-              <h2 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl">Loved by Artists Like You</h2>
+              <h2 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl">Why Artists are Leaving Other Distributors for VNDR</h2>
             </div>
             <div className="grid gap-8 md:grid-cols-2">
               {testimonials.map((testimonial, index) => {
@@ -346,7 +356,7 @@ export default function Home() {
         <section className="py-16 md:py-24">
           <div className="container max-w-3xl px-4 md:px-6">
             <div className="text-center mb-12">
-              <h2 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl">Frequently Asked Questions</h2>
+              <h2 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl">Your Questions, Answered.</h2>
             </div>
             <Accordion type="single" collapsible className="w-full">
               {faqs.map((faq, index) => (
@@ -365,13 +375,13 @@ export default function Home() {
         <section className="py-16 md:py-24 bg-primary text-primary-foreground">
             <div className="container text-center">
                 <h2 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl">
-                   Ready to Take Control of Your Music Career?
+                   Ready to Own Your Music Career?
                 </h2>
                 <p className="max-w-[600px] mx-auto mt-4 mb-8 text-primary-foreground/80 md:text-xl">
-                    Join hundreds of independent artists who trust VNDR for distribution, licensing, and royalties.
+                    Join thousands of independent artists who trust VNDR for distribution, licensing, and fair royalties. Sign up in minutes.
                 </p>
                 <Button asChild size="lg" className="font-bold bg-white text-black hover:bg-gray-200">
-                    <Link href="/login">Sign Up & Claim Your Tokens</Link>
+                    <Link href="/login">Sign Up Free & Claim Your Tokens</Link>
                 </Button>
             </div>
         </section>
@@ -380,5 +390,3 @@ export default function Home() {
     </div>
   );
 }
-
-    

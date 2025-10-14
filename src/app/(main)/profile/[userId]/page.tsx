@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import TrackCard from '@/components/catalog/track-card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Mail, User as UserIcon, Trash2 } from 'lucide-react';
+import { Mail, User as UserIcon, Trash2, Edit } from 'lucide-react';
 import { deleteTrackAction } from '@/app/actions/music';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -116,7 +116,7 @@ export default function ProfilePage() {
           </div>
           {isOwnProfile && (
             <Button asChild variant="outline">
-              <a href="/dashboard/settings">Edit Profile</a>
+              <a href="/dashboard/settings"><Edit className="mr-2 h-4 w-4" /> Edit Profile</a>
             </Button>
           )}
         </div>

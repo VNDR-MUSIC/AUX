@@ -196,7 +196,7 @@ export default function UploadForm() {
                 <input type="hidden" name="trackTitle" form="upload-track-form" value={coverArtFormRef.current?.trackTitle.value} />
                 <input type="hidden" name="genre" form="upload-track-form" value={coverArtFormRef.current?.genre.value} />
                 <input type="hidden" name="description" form="upload-track-form" value={mainFormRef.current?.description.value} />
-                <input type="hidden" name="price" form="upload-track-form" value={finalPrice} />
+                <input type="hidden" name="price" form="upload-track-form" value={finalPrice || 0} />
                 <input type="hidden" name="coverArtDataUri" form="upload-track-form" value={coverArtState.coverArtDataUri || ""} />
                 <input type="hidden" name="artistId" form="upload-track-form" value={user?.uid || ''} />
                 <input type="hidden" name="artistName" form="upload-track-form" value={user?.displayName || user?.email?.split('@')[0] || ''} />
@@ -226,7 +226,7 @@ export default function UploadForm() {
                                 <Info className="h-4 w-4" />
                                 <AlertTitle className="flex items-center gap-2">
                                     <span>AI Price Suggestion:</span> 
-                                    <span className="font-bold flex items-center gap-1"><Icons.vsd className="h-4 w-4"/> {licensingState.recommendedPrice} VSD</span>
+                                    <span className="font-bold flex items-center gap-1"><Icons.vsd className="h-4 w-4"/> {licensingState.recommendedPrice}</span>
                                 </AlertTitle>
                                 <AlertDescription>
                                     {licensingState.justification}
@@ -238,7 +238,7 @@ export default function UploadForm() {
 
                 {pricingOption === 'manual' && (
                     <div className="grid gap-2">
-                        <Label htmlFor="manual-price">Licensing Price (VSD)</Label>
+                        <Label htmlFor="manual-price">Licensing Price (<Icons.vsd className="inline h-4 w-4"/>)</Label>
                         <div className="relative">
                             <Icons.vsd className="absolute left-2.5 top-2.5 h-5 w-5 text-muted-foreground" />
                             <Input id="manual-price" type="number" placeholder="e.g., 250" className="pl-9" value={manualPrice} onChange={(e) => setManualPrice(e.target.value)} />

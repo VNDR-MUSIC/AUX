@@ -26,7 +26,7 @@ function AuthSubmitButton({ isLogin }: { isLogin: boolean }) {
   const { pending } = useFormStatus();
   return (
     <Button type="submit" className="w-full" disabled={pending}>
-      {pending ? <Loader2 className="animate-spin" /> : (isLogin ? "Login" : "Create Account")}
+      {pending ? <Loader2 className="animate-spin" /> : (isLogin ? "Login to Your Studio" : "Create Your Free Account")}
     </Button>
   );
 }
@@ -59,7 +59,6 @@ export default function AuthForm() {
       if (signupState.user) {
         // After successful sign-up, Firebase onAuthStateChanged will trigger,
         // and the previous useEffect will handle the redirect.
-        // No need to redirect here explicitly.
       }
     }
   }, [signupState, toast]);
@@ -90,10 +89,10 @@ export default function AuthForm() {
       <CardHeader className="text-center">
         <Icons.logo className="mx-auto h-12 w-12 text-primary" />
         <CardTitle className="font-headline text-2xl font-bold">
-          Welcome to VNDR
+          Welcome to Your Artist Studio
         </CardTitle>
         <CardDescription>
-          Sign in or create an account to start your journey.
+          Sign in to manage your music, or sign up to claim your free tokens and start your journey.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -118,7 +117,7 @@ export default function AuthForm() {
                 <Input id="login-password" type="password" required value={password} onChange={e => setPassword(e.target.value)} />
               </div>
               <Button type="submit" className="w-full" disabled={isLoggingIn || isUserLoading}>
-                {isLoggingIn || isUserLoading ? <Loader2 className="animate-spin" /> : "Login"}
+                {isLoggingIn || isUserLoading ? <Loader2 className="animate-spin" /> : "Login to Your Studio"}
               </Button>
             </form>
           </TabsContent>
@@ -146,5 +145,3 @@ export default function AuthForm() {
     </Card>
   );
 }
-
-    
