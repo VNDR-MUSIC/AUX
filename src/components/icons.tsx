@@ -20,7 +20,7 @@ export const Icons = {
   ),
   vsd: (props: Omit<React.ComponentProps<typeof Image>, 'src' | 'alt'>) => (
      <Image
-      src="https://i.ibb.co/Kpg55Cc/Adobe-Express-20250422-1254090-1.png"
+      src="https://i.ibb.co/Kpg55CcY/Adobe-Express-20250422-1254090-1.png"
       alt="VSD Token"
       width={24}
       height={24}
