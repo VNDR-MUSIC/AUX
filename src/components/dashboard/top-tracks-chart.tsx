@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
@@ -16,22 +17,26 @@ import {
 } from "@/components/ui/chart";
 
 const chartData = [
-  { month: "January", track: 2810, track2: 2000 },
-  { month: "February", track: 2750, track2: 1800 },
-  { month: "March", track: 3200, track2: 2200 },
-  { month: "April", track: 3000, track2: 2500 },
-  { month: "May", track: 3500, track2: 2100 },
-  { month: "June", track: 3800, track2: 2800 },
+  { month: "January", track: 2810, track2: 2000, track3: 1500 },
+  { month: "February", track: 2750, track2: 1800, track3: 1600 },
+  { month: "March", track: 3200, track2: 2200, track3: 1800 },
+  { month: "April", track: 3000, track2: 2500, track3: 2000 },
+  { month: "May", track: 3500, track2: 2100, track3: 2200 },
+  { month: "June", track: 3800, track2: 2800, track3: 2500 },
 ];
 
 const chartConfig = {
   track: {
     label: "Midnight Bloom",
-    color: "hsl(var(--primary))",
+    color: "hsl(var(--chart-1))",
   },
   track2: {
     label: "Crystal Caverns",
-    color: "hsl(var(--accent))",
+    color: "hsl(var(--chart-2))",
+  },
+  track3: {
+    label: "Neon Drive",
+    color: "hsl(var(--chart-3))",
   }
 } satisfies ChartConfig;
 
@@ -51,6 +56,7 @@ export default function TopTracksChart() {
         <ChartTooltip content={<ChartTooltipContent />} />
         <Bar dataKey="track" fill="var(--color-track)" radius={4} />
         <Bar dataKey="track2" fill="var(--color-track2)" radius={4} />
+        <Bar dataKey="track3" fill="var(--color-track3)" radius={4} />
       </BarChart>
     </ChartContainer>
   );
