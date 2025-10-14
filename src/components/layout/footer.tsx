@@ -43,9 +43,6 @@ export default function Footer() {
             <div className="col-span-2 lg:col-span-1">
                 <Link href="/" className="flex items-center gap-2">
                     <Icons.logo className="h-8 w-8 text-primary" />
-                    <span className="font-headline text-2xl font-bold text-foreground">
-                        VNDR
-                    </span>
                 </Link>
                 <p className="mt-4 text-sm text-muted-foreground">The future of music licensing and streaming.</p>
             </div>
