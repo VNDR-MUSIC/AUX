@@ -88,7 +88,7 @@ export default function AuthForm() {
   return (
     <Card className="mx-auto max-w-sm w-full">
       <CardHeader className="text-center">
-        <div className="mx-auto h-12 w-12 relative">
+        <div className="mx-auto h-20 w-20 relative">
             <Icons.logo />
         </div>
         <CardTitle className="font-headline text-2xl font-bold">
