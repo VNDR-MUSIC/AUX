@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -94,7 +95,10 @@ export default function VsdDemoPage() {
                 Future Funksters
               </p>
             </div>
-            <Badge variant="secondary" className="text-lg">10 VSD</Badge>
+            <Badge variant="secondary" className="text-lg flex items-center gap-2">
+              <Icons.vsd className="h-4 w-4" />
+              <span>10 VSD</span>
+            </Badge>
           </div>
           <div className="font-code text-sm bg-muted p-4 rounded-md">
             <p className="font-bold text-muted-foreground">// Smart Contract Interaction Details</p>
