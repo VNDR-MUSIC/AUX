@@ -4,37 +4,37 @@
       "id": "hero-1",
       "description": "A cheering crowd at a music concert",
       "imageUrl": "https://picsum.photos/seed/hero1/1920/1080",
-      "imageHint": "synthwave concert"
+      "imageHint": "music concert"
     },
     {
       "id": "hero-2",
       "description": "Abstract visualization of sound waves",
       "imageUrl": "https://picsum.photos/seed/hero2/1920/1080",
-      "imageHint": "audio soundwave"
+      "imageHint": "soundwave abstract"
     },
     {
       "id": "hero-3",
       "description": "A music producer working at a mixing console",
       "imageUrl": "https://picsum.photos/seed/hero3/1920/1080",
-      "imageHint": "audio production"
+      "imageHint": "music production"
     },
     {
       "id": "hero-4",
       "description": "A guitarist performing on stage with dramatic lighting",
       "imageUrl": "https://picsum.photos/seed/hero4/1920/1080",
-      "imageHint": "musician performance"
+      "imageHint": "musician onstage"
     },
     {
       "id": "hero-5",
       "description": "A close-up of a vinyl record playing on a turntable",
       "imageUrl": "https://picsum.photos/seed/hero5/1920/1080",
-      "imageHint": "lofi vinyl"
+      "imageHint": "record player"
     },
     {
       "id": "hero-6",
       "description": "A person listening to music with headphones in a city",
       "imageUrl": "https://picsum.photos/seed/hero6/1920/1080",
-      "imageHint": "headphones city"
+      "imageHint": "headphones listening"
     },
     {
       "id": "hero-7",
@@ -52,19 +52,19 @@
       "id": "album-2",
       "description": "Synthwave sunset over a city",
       "imageUrl": "https://picsum.photos/seed/ab2/400/400",
-      "imageHint": "synthwave sunset"
+      "imageHint": "synthwave album"
     },
     {
       "id": "album-3",
       "description": "An acoustic guitar leaning against a rustic wall",
       "imageUrl": "https://picsum.photos/seed/ab3/400/400",
-      "imageHint": "ambient guitar"
+      "imageHint": "ambient album"
     },
     {
       "id": "album-4",
       "description": "A DJ setup with turntables and a mixer",
       "imageUrl": "https://picsum.photos/seed/ab4/400/400",
-      "imageHint": "DJ setup"
+      "imageHint": "dj turntables"
     },
     {
       "id": "album-5",
@@ -76,7 +76,7 @@
       "id": "album-6",
       "description": "Colorful hip hop graffiti on a brick wall",
       "imageUrl": "https://picsum.photos/seed/ab6/400/400",
-      "imageHint": "future funk"
+      "imageHint": "funk album"
     },
     {
       "id": "licensing-header",
@@ -94,37 +94,37 @@
       "id": "user-avatar-2",
       "description": "User avatar 2",
       "imageUrl": "https://picsum.photos/seed/u2/100/100",
-      "imageHint": "artist profile"
+      "imageHint": "producer profile"
     },
     {
       "id": "midnight-bloom",
       "description": "Midnight Bloom track image",
       "imageUrl": "https://picsum.photos/seed/track1/40/40",
-      "imageHint": "synthwave bloom"
+      "imageHint": "synthwave art"
     },
     {
       "id": "crystal-caverns",
       "description": "Crystal Caverns track image",
       "imageUrl": "https://picsum.photos/seed/track2/40/40",
-      "imageHint": "pixel cavern"
+      "imageHint": "pixel art"
     },
     {
       "id": "neon-drive",
       "description": "Neon Drive track image",
       "imageUrl": "https://picsum.photos/seed/track3/40/40",
-      "imageHint": "neon grid"
+      "imageHint": "future funk"
     },
     {
       "id": "lunar-tides",
       "description": "Lunar Tides track image",
       "imageUrl": "https://picsum.photos/seed/track4/40/40",
-      "imageHint": "cosmic ocean"
+      "imageHint": "cosmic art"
     },
     {
       "id": "streetlight-sonata",
       "description": "Streetlight Sonata track image",
       "imageUrl": "https://picsum.photos/seed/track5/40/40",
-      "imageHint": "urban echo"
+      "imageHint": "urban synth"
     }
   ]
 }
