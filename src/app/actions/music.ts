@@ -2,13 +2,14 @@
 
 import { z } from "zod";
 import { generateCoverArt } from "@/ai/flows/ai-cover-art-generation";
+import { recommendLicensingPrice } from "@/ai/flows/ai-licensing-price-recommendation";
 
-const schema = z.object({
+const coverArtSchema = z.object({
   trackTitle: z.string().min(1, "Track title is required."),
   genre: z.string().min(1, "Genre is required."),
 });
 
-type State = {
+type CoverArtState = {
   message?: string | null;
   coverArtDataUri?: string | null;
   errors?: {
@@ -18,11 +19,27 @@ type State = {
   }
 }
 
+const licensingPriceSchema = z.object({
+  genre: z.string().min(1, "Genre is required."),
+  description: z.string().optional(),
+});
+
+type LicensingPriceState = {
+    message?: string | null;
+    recommendedPrice?: number | null;
+    justification?: string | null;
+    errors?: {
+        genre?: string[];
+        _form?: string[];
+    }
+}
+
+
 export async function generateCoverArtAction(
-  prevState: State,
+  prevState: CoverArtState,
   formData: FormData
-): Promise<State> {
-  const validatedFields = schema.safeParse({
+): Promise<CoverArtState> {
+  const validatedFields = coverArtSchema.safeParse({
     trackTitle: formData.get("trackTitle"),
     genre: formData.get("genre"),
   });
@@ -55,4 +72,43 @@ export async function generateCoverArtAction(
         }
     }
   }
+}
+
+export async function recommendLicensingPriceAction(
+    prevState: LicensingPriceState,
+    formData: FormData
+): Promise<LicensingPriceState> {
+    const validatedFields = licensingPriceSchema.safeParse({
+        genre: formData.get("genre"),
+        description: formData.get("description"),
+    });
+
+    if (!validatedFields.success) {
+        return {
+            errors: validatedFields.error.flatten().fieldErrors,
+            message: "Genre is required to recommend a price.",
+        };
+    }
+
+    const { genre, description } = validatedFields.data;
+
+    try {
+        const result = await recommendLicensingPrice({ genre, description });
+        if (result.recommendedPrice && result.justification) {
+            return {
+                message: "AI price recommendation generated!",
+                recommendedPrice: result.recommendedPrice,
+                justification: result.justification,
+            }
+        }
+        throw new Error("Failed to get price recommendation from AI.");
+    } catch (error) {
+        console.error(error);
+        return {
+            message: "An error occurred while recommending a price.",
+            errors: {
+                _form: ["AI price recommendation failed. Please try again."],
+            }
+        }
+    }
 }
