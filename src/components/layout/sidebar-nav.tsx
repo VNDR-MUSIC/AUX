@@ -13,8 +13,10 @@ import {
   Gavel,
   BrainCircuit,
   Scale,
+  Shield,
 } from 'lucide-react';
-import { useUser } from '@/firebase';
+import { useUser, useFirebase, useDoc, useMemoFirebase } from '@/firebase';
+import { doc } from 'firebase/firestore';
 
 import {
   SidebarHeader,
@@ -42,12 +44,22 @@ const publicMenuItems = [
   { href: '/vsd-demo', icon: DollarSign, label: 'VSD Demo' },
 ];
 
+const adminMenuItem = { href: '/admin', icon: Shield, label: 'Admin' };
+
 
 export default function SidebarNav() {
   const pathname = usePathname();
   const { user, isUserLoading } = useUser();
+  const { firestore } = useFirebase();
+  
+  const adminRef = useMemoFirebase(() => (firestore && user ? doc(firestore, `roles_admin/${user.uid}`) : null), [firestore, user]);
+  const { data: adminDoc } = useDoc(adminRef);
+  const isAdmin = !!adminDoc;
 
-  const menuItems = user ? authenticatedMenuItems : publicMenuItems;
+  let menuItems = user ? authenticatedMenuItems : publicMenuItems;
+  if(user && isAdmin) {
+    menuItems = [...menuItems, adminMenuItem];
+  }
 
   return (
     <>
