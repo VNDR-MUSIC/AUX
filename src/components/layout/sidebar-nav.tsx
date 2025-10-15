@@ -15,8 +15,7 @@ import {
   Scale,
   Shield,
 } from 'lucide-react';
-import { useUser, useFirebase, useDoc, useMemoFirebase } from '@/firebase';
-import { doc } from 'firebase/firestore';
+import { useUser } from '@/firebase';
 
 import {
   SidebarHeader,
@@ -30,6 +29,7 @@ import {
 import { Icons } from '../icons';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '../ui/skeleton';
+import { useMemo } from 'react';
 
 const authenticatedMenuItems = [
   { href: '/dashboard', icon: Home, label: 'Dashboard' },
@@ -50,16 +50,15 @@ const adminMenuItem = { href: '/admin', icon: Shield, label: 'Admin' };
 export default function SidebarNav() {
   const pathname = usePathname();
   const { user, isUserLoading } = useUser();
-  const { firestore } = useFirebase();
-  
-  const adminRef = useMemoFirebase(() => (firestore && user ? doc(firestore, `roles_admin/${user.uid}`) : null), [firestore, user]);
-  const { data: adminDoc } = useDoc(adminRef);
-  const isAdmin = !!adminDoc;
+  const isAdmin = (user as any)?.customClaims?.admin === true;
 
-  let menuItems = user ? [...authenticatedMenuItems] : [...publicMenuItems];
-  if(user && isAdmin) {
-    menuItems.push(adminMenuItem);
-  }
+  const menuItems = useMemo(() => {
+    let items = user ? [...authenticatedMenuItems] : [...publicMenuItems];
+    if (user && isAdmin) {
+      items.push(adminMenuItem);
+    }
+    return items;
+  }, [user, isAdmin]);
 
   return (
     <>

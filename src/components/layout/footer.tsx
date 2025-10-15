@@ -3,11 +3,10 @@
 
 import Link from "next/link";
 import { Icons } from "../icons";
-import { useUser, useFirebase, useDoc, useMemoFirebase } from "@/firebase";
+import { useUser } from "@/firebase";
 import { useState } from "react";
 import Image from "next/image";
 import IVtvModal from "./ivtv-modal";
-import { doc } from "firebase/firestore";
 import NDRadioModal from "./nd-radio-modal";
 
 const socialLinks = [
@@ -34,13 +33,9 @@ const adminLink = { name: "Admin", href: "/admin" };
 
 export default function Footer() {
   const { user } = useUser();
-  const { firestore } = useFirebase();
   const [isIvtvModalOpen, setIsIvtvModalOpen] = useState(false);
   const [isNdRadioModalOpen, setIsNdRadioModalOpen] = useState(false);
-
-  const adminRef = useMemoFirebase(() => (firestore && user ? doc(firestore, `roles_admin/${user.uid}`) : null), [firestore, user]);
-  const { data: adminDoc } = useDoc(adminRef);
-  const isAdmin = !!adminDoc;
+  const isAdmin = (user as any)?.customClaims?.admin === true;
 
   let finalArtistLinks = [...artistLinks];
   if(user && isAdmin) {
@@ -91,15 +86,15 @@ export default function Footer() {
             
             <div>
                 <h3 className="font-semibold text-xl text-foreground">Our Subsidiaries & Partners</h3>
-                <div className="mt-4 flex flex-col items-start gap-4">
+                <div className="mt-4 grid grid-cols-3 gap-4 items-center">
                     <button onClick={() => setIsIvtvModalOpen(true)} className="cursor-pointer">
-                        <Image src="https://i.ibb.co/FqwXfkL9/Screenshot-20250914-224236-Facebook.jpg" alt="IVtv Logo" width={100} height={50} className="object-contain" />
+                        <Image src="https://i.ibb.co/FqwXfkL9/Screenshot-20250914-224236-Facebook.jpg" alt="IVtv Logo" width={50} height={50} className="object-contain" />
                     </button>
                     <button onClick={() => setIsNdRadioModalOpen(true)} className="cursor-pointer">
-                        <Image src="https://i.ibb.co/4wvZ1Mzq/ND-Radio-transparent.png" alt="ND Radio Logo" width={100} height={100} className="object-contain" />
+                        <Image src="https://i.ibb.co/4wvZ1Mzq/ND-Radio-transparent.png" alt="ND Radio Logo" width={50} height={50} className="object-contain" />
                     </button>
                     <Link href="https://indiemusic.university" target="_blank" rel="noopener noreferrer" className="cursor-pointer">
-                        <Image src="https://i.ibb.co/4gJqBfM/MIU-logo-wt.png" alt="MIU Logo" width={100} height={50} className="object-contain" />
+                        <Image src="https://i.ibb.co/4gJqBfM/MIU-logo-wt.png" alt="MIU Logo" width={50} height={50} className="object-contain" />
                     </Link>
                 </div>
             </div>

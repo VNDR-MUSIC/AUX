@@ -5,8 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { X, Home, Upload, Library, FileText, Gavel, Scale, DollarSign, Shield, BarChart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useUser, useFirebase, useDoc, useMemoFirebase } from '@/firebase';
-import { doc } from 'firebase/firestore';
+import { useUser } from '@/firebase';
+import { useMemo } from 'react';
 
 const authenticatedMenuItems = [
   { href: '/dashboard', icon: Home, label: 'Dashboard' },
@@ -23,7 +23,6 @@ const publicMenuItems = [
 ];
 
 const adminMenuItem = { href: '/admin', icon: Shield, label: 'Admin' };
-
 
 const menuVariants = {
   hidden: {
@@ -66,16 +65,18 @@ interface FullScreenNavProps {
 
 export default function FullScreenNav({ isOpen, setIsOpen }: FullScreenNavProps) {
   const { user } = useUser();
-  const { firestore } = useFirebase();
+  
+  // Custom claims are on the user object, but we need to cast to any to access them
+  // because the default User type doesn't include them.
+  const isAdmin = (user as any)?.customClaims?.admin === true;
 
-  const adminRef = useMemoFirebase(() => (firestore && user ? doc(firestore, `roles_admin/${user.uid}`) : null), [firestore, user]);
-  const { data: adminDoc } = useDoc(adminRef);
-  const isAdmin = !!adminDoc;
-
-  let menuItems = user ? [...authenticatedMenuItems] : [...publicMenuItems];
-  if(user && isAdmin) {
-    menuItems.push(adminMenuItem);
-  }
+  const menuItems = useMemo(() => {
+    let items = user ? [...authenticatedMenuItems] : [...publicMenuItems];
+    if (user && isAdmin) {
+      items.push(adminMenuItem);
+    }
+    return items;
+  }, [user, isAdmin]);
 
 
   return (

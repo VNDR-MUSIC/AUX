@@ -16,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { useFirebase, initiateEmailSignIn, useUser } from "@/firebase";
 import { Loader2 } from "lucide-react";
+import { getIdTokenResult } from "firebase/auth";
 
 const initialState = {
   message: null,
@@ -57,12 +58,15 @@ export default function AuthForm() {
         description: signupState.message,
         variant: signupState.errors ? "destructive" : "default",
       });
-      if (signupState.user) {
-        // After successful sign-up, Firebase onAuthStateChanged will trigger,
-        // and the previous useEffect will handle the redirect.
+      if (signupState.user && auth?.currentUser) {
+        // After successful sign-up, force a token refresh to get custom claims
+        auth.currentUser.getIdToken(true).then(() => {
+           // Firebase onAuthStateChanged will trigger with the new user object (and claims)
+           // and the previous useEffect will handle the redirect.
+        });
       }
     }
-  }, [signupState, toast]);
+  }, [signupState, toast, auth]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
