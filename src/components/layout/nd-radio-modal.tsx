@@ -350,7 +350,6 @@ export default function NDRadioModal({ isOpen, onClose }: NDRadioModalProps) {
             border-radius: 8px;
             border: 0px solid rgba(0, 0, 0, 0.8);
             padding: 15px;
-            margin: 0 auto;
             box-sizing: border-box;
             box-shadow: -2.82842712474619px 2.8284271247461903px 15px rgba(0, 0, 0, 0.2);
             color: #ffffff;
@@ -682,7 +681,6 @@ export default function NDRadioModal({ isOpen, onClose }: NDRadioModalProps) {
             aspect-ratio: 1;
             height: 300px;
             padding: 15px;
-            margin: 0 auto;
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -866,6 +864,12 @@ export default function NDRadioModal({ isOpen, onClose }: NDRadioModalProps) {
     `}</style>
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="bg-card text-card-foreground p-0 border-0 w-auto">
+        <DialogHeader className="p-6 pb-0">
+          <DialogTitle className="font-headline text-2xl">ND Radio</DialogTitle>
+          <DialogDescription>
+            Live stream from our partner radio station.
+          </DialogDescription>
+        </DialogHeader>
         <div id="radio-player" className="radio-player square" ref={containerRef}>
           <div className="album-artwork">
             <img className="artwork-image" src="" alt="Album Art" style={{ display: 'none' }} />
@@ -908,8 +912,8 @@ export default function NDRadioModal({ isOpen, onClose }: NDRadioModalProps) {
             </div>
           </div>
         </div>
-        <DialogFooter className="absolute bottom-4 right-4 sm:justify-between items-center gap-4">
-          <Button asChild>
+        <DialogFooter className="p-6 pt-0">
+          <Button asChild className="w-full">
             <Link href="https://indieradio.live" target="_blank" rel="noopener noreferrer">
               Submit Your Music
             </Link>

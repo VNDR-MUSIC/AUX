@@ -63,19 +63,6 @@ export default function Footer() {
                     </div>
                 </Link>
                 <p className="mt-4 text-sm text-muted-foreground">The future of music licensing and streaming.</p>
-                 <div className="mt-4">
-                    <div className="flex items-center gap-4">
-                        <button onClick={() => setIsIvtvModalOpen(true)} className="cursor-pointer">
-                            <Image src="https://i.ibb.co/FqwXfkL9/Screenshot-20250914-224236-Facebook.jpg" alt="IVtv Logo" width={75} height={50} />
-                        </button>
-                         <button onClick={() => setIsNdRadioModalOpen(true)} className="cursor-pointer">
-                            <Image src="https://i.ibb.co/4wvZ1Mzq/ND-Radio-transparent.png" alt="ND Radio Logo" width={180} height={100} className="object-contain" />
-                        </button>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-2">
-                        Video and audio streaming by our subsidiaries.
-                    </p>
-                </div>
             </div>
             
             {user && (
@@ -106,17 +93,16 @@ export default function Footer() {
                 </ul>
             </div>
             
-            <div>
-                <h3 className="font-semibold text-xl text-foreground">Legal</h3>
-                <ul className="mt-4 space-y-2">
-                    {legalLinks.map((link) => (
-                        <li key={link.name}>
-                            <Link href={link.href} className="text-lg text-muted-foreground hover:text-primary">
-                                {link.name}
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
+             <div>
+                <h3 className="font-semibold text-xl text-foreground">Our Subsidiaries</h3>
+                <div className="mt-4 flex flex-col items-start gap-4">
+                    <button onClick={() => setIsIvtvModalOpen(true)} className="cursor-pointer">
+                        <Image src="https://i.ibb.co/FqwXfkL9/Screenshot-20250914-224236-Facebook.jpg" alt="IVtv Logo" width={75} height={50} />
+                    </button>
+                    <button onClick={() => setIsNdRadioModalOpen(true)} className="cursor-pointer">
+                        <Image src="https://i.ibb.co/4wvZ1Mzq/ND-Radio-transparent.png" alt="ND Radio Logo" width={150} height={100} className="object-contain" />
+                    </button>
+                </div>
             </div>
 
             <div>
