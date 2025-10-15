@@ -8,9 +8,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
 import { Search, ShieldX } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+
+// Define a specific type for our track data
+interface Track extends DocumentData {
+  id: string;
+  title: string;
+  artistName: string;
+  genre: string;
+  plays: number;
+}
 
 export default function AdminPage() {
   const { user } = useUser();
@@ -23,11 +31,11 @@ export default function AdminPage() {
 
   // Data fetching
   const tracksQuery = useMemoFirebase(() => (firestore ? collection(firestore, 'tracks') : null), [firestore]);
-  const { data: tracks, isLoading: areTracksLoading } = useCollection<DocumentData>(tracksQuery);
+  // Use the specific Track type with the useCollection hook
+  const { data: tracks, isLoading: areTracksLoading } = useCollection<Track>(tracksQuery);
 
   // State for filters
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState('all');
   const [selectedGenre, setSelectedGenre] = useState('all');
 
   const genres = useMemo(() => {
@@ -46,13 +54,9 @@ export default function AdminPage() {
         );
       })
       .filter(track => {
-        if (selectedStatus === 'all') return true;
-        return selectedStatus === 'verified' ? track.musoVerified : !track.musoVerified;
-      })
-      .filter(track => {
         return selectedGenre === 'all' || track.genre === selectedGenre;
       });
-  }, [tracks, searchTerm, selectedStatus, selectedGenre]);
+  }, [tracks, searchTerm, selectedGenre]);
   
   const isLoading = isAdminLoading || areTracksLoading;
 
@@ -97,8 +101,8 @@ export default function AdminPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Muso.AI Track Management</CardTitle>
-          <CardDescription>View, search, and filter all tracks on the platform and their verification status.</CardDescription>
+          <CardTitle>Track Management</CardTitle>
+          <CardDescription>View, search, and filter all tracks on the platform.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col sm:flex-row items-center gap-4 mb-6 p-4 border rounded-lg bg-card">
@@ -113,16 +117,6 @@ export default function AdminPage() {
               />
             </div>
             <div className="flex items-center gap-4 w-full sm:w-auto">
-                <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-                    <SelectTrigger className="w-full sm:w-[180px]">
-                        <SelectValue placeholder="Filter by status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all">All Statuses</SelectItem>
-                        <SelectItem value="verified">Verified</SelectItem>
-                        <SelectItem value="not_verified">Not Verified</SelectItem>
-                    </SelectContent>
-                </Select>
                  <Select value={selectedGenre} onValueChange={setSelectedGenre}>
                     <SelectTrigger className="w-full sm:w-[180px]">
                         <SelectValue placeholder="Filter by genre" />
@@ -143,7 +137,7 @@ export default function AdminPage() {
                   <TableHead>Track</TableHead>
                   <TableHead>Artist</TableHead>
                   <TableHead>Genre</TableHead>
-                  <TableHead className="text-center">Muso.AI Verified</TableHead>
+                  <TableHead className="text-center">Plays</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -154,11 +148,7 @@ export default function AdminPage() {
                       <TableCell>{track.artistName}</TableCell>
                       <TableCell>{track.genre}</TableCell>
                       <TableCell className="text-center">
-                        {track.musoVerified ? (
-                          <Badge variant="default" className="bg-green-600">Verified</Badge>
-                        ) : (
-                          <Badge variant="secondary">Not Verified</Badge>
-                        )}
+                        {track.plays || 0}
                       </TableCell>
                     </TableRow>
                   ))

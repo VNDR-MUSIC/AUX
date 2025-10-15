@@ -195,12 +195,6 @@ export default function SymbiKnowledgeBasePage() {
                 in-app, email, and push notifications for various platform
                 events.
               </li>
-              <li>
-                <strong>Muso.AI Partnership Integration:</strong> We leverage
-                Muso.AI's industry-leading data verification to vet tracks upon
-                upload, ensuring ownership and rights are clear before they
-                enter our licensing ecosystem.
-              </li>
             </ul>
           </section>
         </CardContent>
