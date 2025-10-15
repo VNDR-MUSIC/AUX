@@ -3,11 +3,12 @@
 
 import Link from "next/link";
 import { Icons } from "../icons";
-import { useUser } from "@/firebase";
+import { useUser, useFirebase, useDoc, useMemoFirebase } from "@/firebase";
 import { useContext, useState } from "react";
 import { FirebaseContext } from "@/firebase/provider";
 import Image from "next/image";
 import IVtvModal from "./ivtv-modal";
+import { doc } from "firebase/firestore";
 
 const socialLinks = [
     { name: "Twitter", href: "#" },
@@ -32,12 +33,24 @@ const artistLinks = [
     { name: "Licensing", href: "/dashboard/licensing" },
 ];
 
+const adminLink = { name: "Admin", href: "/admin" };
+
+
 export default function Footer() {
   const context = useContext(FirebaseContext);
   // Only call useUser if the context is available
-  const user = context ? useUser().user : null;
+  const { user } = context ? useUser() : { user: null };
+  const { firestore } = context ? useFirebase() : { firestore: null };
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const adminRef = useMemoFirebase(() => (firestore && user ? doc(firestore, `roles_admin/${user.uid}`) : null), [firestore, user]);
+  const { data: adminDoc } = useDoc(adminRef);
+  const isAdmin = !!adminDoc;
+
+  let finalArtistLinks = [...artistLinks];
+  if(user && isAdmin) {
+    finalArtistLinks.push(adminLink);
+  }
 
   return (
     <>
@@ -65,7 +78,7 @@ export default function Footer() {
               <div>
                   <h3 className="font-semibold text-xl text-foreground">For Artists</h3>
                   <ul className="mt-4 space-y-2">
-                      {artistLinks.map((link) => (
+                      {finalArtistLinks.map((link) => (
                           <li key={link.name}>
                               <Link href={link.href} className="text-lg text-muted-foreground hover:text-primary">
                                   {link.name}

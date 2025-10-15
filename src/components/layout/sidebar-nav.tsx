@@ -56,9 +56,9 @@ export default function SidebarNav() {
   const { data: adminDoc } = useDoc(adminRef);
   const isAdmin = !!adminDoc;
 
-  let menuItems = user ? authenticatedMenuItems : publicMenuItems;
+  let menuItems = user ? [...authenticatedMenuItems] : [...publicMenuItems];
   if(user && isAdmin) {
-    menuItems = [...menuItems, adminMenuItem];
+    menuItems.push(adminMenuItem);
   }
 
   return (
