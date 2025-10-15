@@ -5,7 +5,6 @@ import Link from "next/link";
 import { Icons } from "../icons";
 import { useUser, useFirebase, useDoc, useMemoFirebase } from "@/firebase";
 import { useContext, useState } from "react";
-import { FirebaseContext } from "@/firebase/provider";
 import Image from "next/image";
 import IVtvModal from "./ivtv-modal";
 import { doc } from "firebase/firestore";
@@ -37,10 +36,8 @@ const adminLink = { name: "Admin", href: "/admin" };
 
 
 export default function Footer() {
-  const context = useContext(FirebaseContext);
-  // Only call useUser if the context is available
-  const { user } = context ? useUser() : { user: null };
-  const { firestore } = context ? useFirebase() : { firestore: null };
+  const { user } = useUser();
+  const { firestore } = useFirebase();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const adminRef = useMemoFirebase(() => (firestore && user ? doc(firestore, `roles_admin/${user.uid}`) : null), [firestore, user]);

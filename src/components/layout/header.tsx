@@ -22,12 +22,11 @@ import { Skeleton } from "../ui/skeleton";
 import FullScreenNav from "./full-screen-nav";
 import { Icons } from "../icons";
 
-export default function Header() {
+export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
   const { user, isUserLoading } = useUser();
   const { auth } = useFirebase();
   const router = useRouter();
   const { toast } = useToast();
-  const [isNavOpen, setIsNavOpen] = useState(false);
 
   const handleLogout = async () => {
     if (!auth) return;
@@ -94,7 +93,7 @@ export default function Header() {
     <>
       <header className="flex h-14 items-center gap-4 border-b bg-background/80 backdrop-blur-lg px-4 lg:h-[60px] lg:px-6 sticky top-0 z-40">
         <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" onClick={() => setIsNavOpen(true)}>
+            <Button variant="ghost" size="icon" onClick={onMenuClick}>
                 <Menu />
                 <span className="sr-only">Open Menu</span>
             </Button>
@@ -120,7 +119,6 @@ export default function Header() {
         </div>
         {renderUserMenu()}
       </header>
-      <FullScreenNav isOpen={isNavOpen} setIsOpen={setIsNavOpen} />
     </>
   );
 }
