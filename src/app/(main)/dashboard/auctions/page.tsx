@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Gavel } from "lucide-react";
 import { useOnboarding } from "@/hooks/use-onboarding";
+import Link from "next/link";
 
 export default function AuctionsPage() {
   useOnboarding('auctions');
@@ -30,7 +31,8 @@ export default function AuctionsPage() {
           <CardTitle>Coming Soon!</CardTitle>
           <CardDescription>
             Our auction house is currently under construction. Soon you&apos;ll be able to
-            participate in exciting auctions for music rights using your VSD tokens.
+            participate in exciting auctions for music rights using your VSD tokens. 
+            Check out our <Link href="/roadmap" className="text-primary underline">public roadmap</Link> to see what&apos;s next.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center justify-center text-center py-16">

@@ -25,6 +25,7 @@ const companyLinks = [
     { name: "About", href: "#" },
     { name: "Blog", href: "#" },
     { name: "Careers", href: "#" },
+    { name: "Roadmap", href: "/roadmap" },
 ];
 
 const artistLinks = [
@@ -100,7 +101,7 @@ export default function Footer() {
                         <Image src="https://i.ibb.co/FqwXfkL9/Screenshot-20250914-224236-Facebook.jpg" alt="IVtv Logo" width={75} height={50} />
                     </button>
                     <button onClick={() => setIsNdRadioModalOpen(true)} className="cursor-pointer">
-                        <Image src="https://i.ibb.co/4wvZ1Mzq/ND-Radio-transparent.png" alt="ND Radio Logo" width={150} height={100} />
+                        <Image src="https://i.ibb.co/4wvZ1Mzq/ND-Radio-transparent.png" alt="ND Radio Logo" width={150} height={100} className="object-contain" />
                     </button>
                     <Link href="https://indiemusic.university" target="_blank" rel="noopener noreferrer" className="cursor-pointer">
                         <Image src="https://i.ibb.co/4gJqBfM/MIU-logo-wt.png" alt="MIU Logo" width={100} height={50} />

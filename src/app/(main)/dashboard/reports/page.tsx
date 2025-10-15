@@ -32,7 +32,8 @@ export default function ReportsPage() {
         <CardHeader>
           <CardTitle>Generate Performance Report</CardTitle>
           <CardDescription>
-            Get a comprehensive PDF report on your catalog's streams, listeners, and revenue.
+            Get a comprehensive PDF report on your catalog's streams, listeners, and revenue. 
+            This feature is in development, see our <Link href="/roadmap" className="text-primary underline">public roadmap</Link> for updates.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center justify-center text-center py-16">
