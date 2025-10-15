@@ -6,11 +6,10 @@ import { FirebaseClientProvider } from "@/firebase";
 import React, { useState } from "react";
 import FullScreenNav from "@/components/layout/full-screen-nav";
 
-export default function MainLayout({ children }: { children: React.ReactNode }) {
+function MainLayoutContent({ children }: { children: React.ReactNode }) {
   const [isNavOpen, setIsNavOpen] = useState(false);
   
   return (
-    <FirebaseClientProvider>
       <div className="flex flex-col min-h-screen">
           <Header onMenuClick={() => setIsNavOpen(true)} />
           <FullScreenNav isOpen={isNavOpen} setIsOpen={setIsNavOpen} />
@@ -18,6 +17,14 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
           <Footer />
         <MusicPlayer />
       </div>
+  );
+}
+
+
+export default function MainLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <FirebaseClientProvider>
+      <MainLayoutContent>{children}</MainLayoutContent>
     </FirebaseClientProvider>
   );
 }

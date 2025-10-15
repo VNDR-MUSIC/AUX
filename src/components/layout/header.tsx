@@ -1,7 +1,6 @@
 
 'use client';
 
-import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CircleUser, LogIn, Menu, Search } from "lucide-react";
@@ -19,7 +18,6 @@ import { useUser, useFirebase } from "@/firebase";
 import { signOut } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "../ui/skeleton";
-import FullScreenNav from "./full-screen-nav";
 import { Icons } from "../icons";
 
 export default function Header({ onMenuClick }: { onMenuClick: () => void }) {

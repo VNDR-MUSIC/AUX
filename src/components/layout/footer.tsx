@@ -4,7 +4,7 @@
 import Link from "next/link";
 import { Icons } from "../icons";
 import { useUser, useFirebase, useDoc, useMemoFirebase } from "@/firebase";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import IVtvModal from "./ivtv-modal";
 import { doc } from "firebase/firestore";
