@@ -32,7 +32,7 @@ const adminLink = { name: "Admin", href: "/admin" };
 
 
 export default function Footer() {
-  const { user } = useUser();
+  const { user, isUserLoading } = useUser();
   const [isIvtvModalOpen, setIsIvtvModalOpen] = useState(false);
   const [isNdRadioModalOpen, setIsNdRadioModalOpen] = useState(false);
   const isAdmin = (user as any)?.customClaims?.admin === true;
@@ -56,7 +56,7 @@ export default function Footer() {
                 <p className="mt-4 text-sm text-muted-foreground">The future of music licensing and streaming.</p>
             </div>
             
-            {user && (
+            {!isUserLoading && user && (
               <div>
                   <h3 className="font-semibold text-foreground">For Artists</h3>
                   <ul className="mt-4 space-y-2">

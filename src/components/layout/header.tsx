@@ -47,7 +47,7 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
 
   const renderUserMenu = () => {
     if (isUserLoading) {
-      return <Skeleton className="h-8 w-8 rounded-full" />;
+      return <Skeleton className="h-8 w-20 rounded-md" />;
     }
 
     if (user) {
@@ -95,7 +95,7 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
                 <Menu />
                 <span className="sr-only">Open Menu</span>
             </Button>
-            <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2 group justify-center">
+            <Link href={!isUserLoading && user ? "/dashboard" : "/"} className="flex items-center gap-2 group justify-center">
               <div
                 className='h-20 w-40 relative'
               >
