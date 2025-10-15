@@ -16,11 +16,6 @@ const socialLinks = [
     { name: "Facebook", href: "#" },
 ];
 
-const legalLinks = [
-    { name: "Privacy Policy", href: "#" },
-    { name: "Terms of Service", href: "#" },
-];
-
 const companyLinks = [
     { name: "About", href: "#" },
     { name: "Blog", href: "#" },
