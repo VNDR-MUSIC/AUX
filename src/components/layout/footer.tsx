@@ -58,11 +58,11 @@ export default function Footer() {
             
             {user && (
               <div>
-                  <h3 className="font-semibold text-xl text-foreground">For Artists</h3>
+                  <h3 className="font-semibold text-foreground">For Artists</h3>
                   <ul className="mt-4 space-y-2">
                       {finalArtistLinks.map((link) => (
                           <li key={link.name}>
-                              <Link href={link.href} className="text-lg text-muted-foreground hover:text-primary">
+                              <Link href={link.href} className="text-sm text-muted-foreground hover:text-primary">
                                   {link.name}
                               </Link>
                           </li>
@@ -72,11 +72,11 @@ export default function Footer() {
             )}
 
             <div>
-                <h3 className="font-semibold text-xl text-foreground">Company</h3>
+                <h3 className="font-semibold text-foreground">Company</h3>
                 <ul className="mt-4 space-y-2">
                     {companyLinks.map((link) => (
                         <li key={link.name}>
-                            <Link href={link.href} className="text-lg text-muted-foreground hover:text-primary">
+                            <Link href={link.href} className="text-sm text-muted-foreground hover:text-primary">
                                 {link.name}
                             </Link>
                         </li>
@@ -85,26 +85,26 @@ export default function Footer() {
             </div>
             
             <div>
-                <h3 className="font-semibold text-xl text-foreground">Our Subsidiaries & Partners</h3>
+                <h3 className="font-semibold text-foreground">Our Subsidiaries & Partners</h3>
                 <div className="mt-4 grid grid-cols-2 gap-4 items-center">
                     <button onClick={() => setIsIvtvModalOpen(true)} className="cursor-pointer">
                         <Image src="https://i.ibb.co/FqwXfkL9/Screenshot-20250914-224236-Facebook.jpg" alt="IVtv Logo" width={50} height={50} className="object-contain" />
                     </button>
                     <button onClick={() => setIsNdRadioModalOpen(true)} className="cursor-pointer">
-                        <Image src="https://i.ibb.co/4wvZ1Mzq/ND-Radio-transparent.png" alt="ND Radio Logo" width={100} height={100} className="object-contain" />
+                        <Image src="https://i.ibb.co/4wvZ1Mzq/ND-Radio-transparent.png" alt="ND Radio Logo" width={100} height={50} className="object-contain" />
                     </button>
-                    <Link href="https://indiemusic.university" target="_blank" rel="noopener noreferrer" className="cursor-pointer">
+                    <Link href="https://indiemusic.university" target="_blank" rel="noopener noreferrer" className="cursor-pointer col-start-1">
                         <Image src="https://i.ibb.co/4gJqBfM/MIU-logo-wt.png" alt="MIU Logo" width={50} height={50} className="object-contain" />
                     </Link>
                 </div>
             </div>
 
             <div>
-                <h3 className="font-semibold text-xl text-foreground">Connect</h3>
+                <h3 className="font-semibold text-foreground">Connect</h3>
                 <ul className="mt-4 space-y-2">
                     {socialLinks.map((link) => (
                         <li key={link.name}>
-                            <Link href={link.href} className="text-lg text-muted-foreground hover:text-primary">
+                            <Link href={link.href} className="text-sm text-muted-foreground hover:text-primary">
                                 {link.name}
                             </Link>
                         </li>
