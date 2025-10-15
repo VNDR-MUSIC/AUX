@@ -1,7 +1,8 @@
 
 "use client";
 
-import { useActionState, useFormStatus } from "react-dom";
+import { useActionState, useEffect, useRef, useState } from "react";
+import { useFormStatus } from "react-dom";
 import Image from "next/image";
 import { generateCoverArtAction, recommendLicensingPriceAction, uploadTrackAction } from "@/app/actions/music";
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Info, Loader2, Wand2, UploadCloud } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import {
   Select,
@@ -293,5 +293,3 @@ export default function UploadForm() {
     </>
   );
 }
-
-    
