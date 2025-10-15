@@ -1,8 +1,7 @@
 
 "use client";
 
-import { useActionState } from "react";
-import { useFormStatus } from "react-dom";
+import { useActionState, useFormStatus } from "react-dom";
 import Image from "next/image";
 import { generateCoverArtAction, recommendLicensingPriceAction, uploadTrackAction } from "@/app/actions/music";
 import { Button } from "@/components/ui/button";
@@ -93,8 +92,10 @@ export default function UploadForm() {
   const [manualPrice, setManualPrice] = useState("");
   const { toast } = useToast();
 
-  const coverArtFormRef = useRef<HTMLFormElement>(null);
-  const licensingFormRef = useRef<HTMLFormElement>(null);
+  const [trackTitle, setTrackTitle] = useState("");
+  const [genre, setGenre] = useState("");
+  const [description, setDescription] = useState("");
+
   const mainFormRef = useRef<HTMLFormElement>(null);
 
 
@@ -133,7 +134,10 @@ export default function UploadForm() {
         });
         if (!uploadState.errors) {
             mainFormRef.current?.reset();
-            // Consider redirecting or further actions
+            setTrackTitle("");
+            setGenre("");
+            setDescription("");
+            setManualPrice("");
         }
     }
   }, [uploadState, toast]);
@@ -147,8 +151,14 @@ export default function UploadForm() {
   return (
     <>
       {/* These forms are used to trigger specific server actions without submitting the main form and are placed outside the main form to prevent nesting errors. */}
-      <form ref={coverArtFormRef} id="cover-art-form" action={coverArtFormAction} className="hidden"></form>
-      <form ref={licensingFormRef} id="licensing-price-form" action={licensingFormAction} className="hidden"></form>
+      <form id="cover-art-form" action={coverArtFormAction} className="hidden">
+        <input type="hidden" name="trackTitle" value={trackTitle} />
+        <input type="hidden" name="genre" value={genre} />
+      </form>
+      <form id="licensing-price-form" action={licensingFormAction} className="hidden">
+        <input type="hidden" name="genre" value={genre} />
+        <input type="hidden" name="description" value={description} />
+      </form>
     
       <div className="grid md:grid-cols-3 gap-8">
         <div className="md:col-span-2">
@@ -156,7 +166,7 @@ export default function UploadForm() {
           <form id="upload-track-form" action={uploadFormAction} ref={mainFormRef} className="space-y-6">
             <div className="grid gap-2">
               <Label htmlFor="trackTitle">Track Title</Label>
-              <Input id="trackTitle" name="trackTitle" placeholder="e.g., Midnight Bloom" required form="cover-art-form" />
+              <Input id="trackTitle" name="trackTitle" placeholder="e.g., Midnight Bloom" required value={trackTitle} onChange={(e) => setTrackTitle(e.target.value)} />
               {coverArtState.errors?.trackTitle && <p className="text-sm text-destructive">{coverArtState.errors.trackTitle[0]}</p>}
             </div>
 
@@ -167,13 +177,7 @@ export default function UploadForm() {
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="genre">Genre</Label>
-                <Select name="genre" required onValueChange={(value) => {
-                  // Sync genre value for all forms
-                  const coverArtGenre = coverArtFormRef.current?.elements.namedItem('genre') as HTMLInputElement | null;
-                  if (coverArtGenre) coverArtGenre.value = value;
-                  const licensingGenre = licensingFormRef.current?.elements.namedItem('genre') as HTMLInputElement | null;
-                  if (licensingGenre) licensingGenre.value = value;
-                }}>
+                <Select name="genre" required value={genre} onValueChange={setGenre}>
                   <SelectTrigger id="genre">
                     <SelectValue placeholder="Select a genre"/>
                   </SelectTrigger>
@@ -191,20 +195,17 @@ export default function UploadForm() {
 
             <div className="grid gap-2">
               <Label htmlFor="description">Description (Optional)</Label>
-              <Textarea id="description" name="description" placeholder="Add a short description about your track. This helps the AI generate better cover art and pricing." onBlur={(e) => {
-                const licensingDescription = licensingFormRef.current?.elements.namedItem('description') as HTMLInputElement | null;
-                if (licensingDescription) licensingDescription.value = e.target.value;
-              }}/>
+              <Textarea id="description" name="description" placeholder="Add a short description about your track. This helps the AI generate better cover art and pricing." value={description} onChange={(e) => setDescription(e.target.value)} />
             </div>
             
             {/* Hidden inputs to pass all data to the final upload action */}
-            <input type="hidden" name="trackTitle" form="upload-track-form" value={coverArtFormRef.current?.trackTitle.value} />
-            <input type="hidden" name="genre" form="upload-track-form" value={coverArtFormRef.current?.genre.value} />
-            <input type="hidden" name="description" form="upload-track-form" value={mainFormRef.current?.description.value} />
-            <input type="hidden" name="price" form="upload-track-form" value={finalPrice || 0} />
-            <input type="hidden" name="coverArtDataUri" form="upload-track-form" value={coverArtState.coverArtDataUri || ""} />
-            <input type="hidden" name="artistId" form="upload-track-form" value={user?.uid || ''} />
-            <input type="hidden" name="artistName" form="upload-track-form" value={mainFormRef.current?.artistName.value || ''} />
+            <input type="hidden" name="trackTitle" value={trackTitle} />
+            <input type="hidden" name="genre" value={genre} />
+            <input type="hidden" name="description" value={description} />
+            <input type="hidden" name="price" value={finalPrice || 0} />
+            <input type="hidden" name="coverArtDataUri" value={coverArtState.coverArtDataUri || ""} />
+            <input type="hidden" name="artistId" value={user?.uid || ''} />
+            <input type="hidden" name="artistName" value={mainFormRef.current?.artistName.value || ''} />
           </form>
           
           {/* Standalone UI components, not part of the main form submission */}
@@ -292,3 +293,5 @@ export default function UploadForm() {
     </>
   );
 }
+
+    
