@@ -69,7 +69,7 @@ export default function Footer() {
                             <Image src="https://i.ibb.co/FqwXfkL9/Screenshot-20250914-224236-Facebook.jpg" alt="IVtv Logo" width={75} height={50} />
                         </button>
                          <button onClick={() => setIsNdRadioModalOpen(true)} className="cursor-pointer">
-                            <Image src="https://i.ibb.co/4wvZ1Mzq/ND-Radio-transparent.png" alt="ND Radio Logo" width={90} height={50} />
+                            <Image src="https://i.ibb.co/4wvZ1Mzq/ND-Radio-transparent.png" alt="ND Radio Logo" width={180} height={100} className="object-contain" />
                         </button>
                     </div>
                     <p className="text-xs text-muted-foreground mt-2">
