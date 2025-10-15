@@ -66,7 +66,7 @@ export default function Footer() {
                  <div className="mt-4">
                     <div className="flex items-center gap-4">
                         <button onClick={() => setIsIvtvModalOpen(true)} className="cursor-pointer">
-                            <Image src="https://i.ibb.co/FqwXfkL9/Screenshot-20250914-224236-Facebook.jpg" alt="IVtv Logo" width={100} height={50} />
+                            <Image src="https://i.ibb.co/FqwXfkL9/Screenshot-20250914-224236-Facebook.jpg" alt="IVtv Logo" width={75} height={50} />
                         </button>
                          <button onClick={() => setIsNdRadioModalOpen(true)} className="cursor-pointer">
                             <Image src="https://i.ibb.co/4wvZ1Mzq/ND-Radio-transparent.png" alt="ND Radio Logo" width={75} height={50} className="object-contain"/>

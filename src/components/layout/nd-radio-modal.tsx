@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useRef } from 'react';
@@ -326,7 +327,9 @@ export default function NDRadioModal({ isOpen, onClose }: NDRadioModalProps) {
 
       return () => {
         playerRef.current?.cleanup();
-        document.head.removeChild(fontAwesome);
+        if (fontAwesome.parentNode) {
+            document.head.removeChild(fontAwesome);
+        }
       };
     }
   }, [isOpen]);
@@ -347,7 +350,7 @@ export default function NDRadioModal({ isOpen, onClose }: NDRadioModalProps) {
             border-radius: 8px;
             border: 0px solid rgba(0, 0, 0, 0.8);
             padding: 15px;
-            margin: 10px auto;
+            margin: 0 auto;
             box-sizing: border-box;
             box-shadow: -2.82842712474619px 2.8284271247461903px 15px rgba(0, 0, 0, 0.2);
             color: #ffffff;
@@ -679,7 +682,7 @@ export default function NDRadioModal({ isOpen, onClose }: NDRadioModalProps) {
             aspect-ratio: 1;
             height: 300px;
             padding: 15px;
-            margin: 10px auto;
+            margin: 0 auto;
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -862,8 +865,8 @@ export default function NDRadioModal({ isOpen, onClose }: NDRadioModalProps) {
         }
     `}</style>
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md bg-card text-card-foreground p-0 border-0">
-        <div id="radio-player" className="radio-player square m-0" ref={containerRef}>
+      <DialogContent className="bg-card text-card-foreground p-0 border-0 w-auto">
+        <div id="radio-player" className="radio-player square" ref={containerRef}>
           <div className="album-artwork">
             <img className="artwork-image" src="" alt="Album Art" style={{ display: 'none' }} />
             <div className="artwork-placeholder">ALBUM ARTWORK AREA</div>
