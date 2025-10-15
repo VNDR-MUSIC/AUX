@@ -1,3 +1,4 @@
+
 'use client';
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
@@ -12,7 +13,7 @@ function MainLayoutContent({ children }: { children: React.ReactNode }) {
   return (
       <div className="flex flex-col min-h-screen">
           <Header onMenuClick={() => setIsNavOpen(true)} />
-          <FullScreenNav isOpen={isNavOpen} setIsOpen={setIsOpen} />
+          <FullScreenNav isOpen={isNavOpen} setIsOpen={setIsNavOpen} />
           <main className="flex-1 p-4 md:p-6">{children}</main>
           <Footer />
         <MusicPlayer />
