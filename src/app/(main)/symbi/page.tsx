@@ -152,10 +152,13 @@ export default function SymbiKnowledgeBasePage() {
               <li>
                 <strong>Legal Eagle (Simulated Legal Adviser):</strong> A
                 specialized AI chatbot that answers general, educational
--                questions about entertainment law topics like copyright,
--                contracts, and publishing for a small VSD token fee.
-+                questions about entertainment law topics like copyright,
-+                contracts, and publishing for a small VSD token fee.
+                questions about entertainment law topics like copyright,
+                contracts, and publishing for a small VSD token fee.
+              </li>
+               <li>
+                <strong>Advanced Analytics Reports:</strong> For a small VSD token fee,
+                artists can generate in-depth analytical reports about their
+                track performance, listener demographics, and royalty trends.
               </li>
             </ul>
           </section>

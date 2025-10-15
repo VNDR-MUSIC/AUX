@@ -3,7 +3,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { X, Home, Upload, Library, FileText, Gavel, Scale, DollarSign, Shield } from 'lucide-react';
+import { X, Home, Upload, Library, FileText, Gavel, Scale, DollarSign, Shield, BarChart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useUser, useFirebase, useDoc, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
@@ -14,6 +14,7 @@ const authenticatedMenuItems = [
   { href: '/dashboard/catalog', icon: Library, label: 'Catalog' },
   { href: '/dashboard/licensing', icon: FileText, label: 'Licensing' },
   { href: '/dashboard/auctions', icon: Gavel, label: 'Auctions' },
+  { href: '/dashboard/reports', icon: BarChart, label: 'Reports' },
   { href: '/dashboard/legal-eagle', icon: Scale, label: 'Legal Eagle' },
 ];
 
