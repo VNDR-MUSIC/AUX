@@ -8,6 +8,7 @@ import { useState } from "react";
 import Image from "next/image";
 import IVtvModal from "./ivtv-modal";
 import { doc } from "firebase/firestore";
+import NDRadioModal from "./nd-radio-modal";
 
 const socialLinks = [
     { name: "Twitter", href: "#" },
@@ -38,7 +39,8 @@ const adminLink = { name: "Admin", href: "/admin" };
 export default function Footer() {
   const { user } = useUser();
   const { firestore } = useFirebase();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isIvtvModalOpen, setIsIvtvModalOpen] = useState(false);
+  const [isNdRadioModalOpen, setIsNdRadioModalOpen] = useState(false);
 
   const adminRef = useMemoFirebase(() => (firestore && user ? doc(firestore, `roles_admin/${user.uid}`) : null), [firestore, user]);
   const { data: adminDoc } = useDoc(adminRef);
@@ -62,11 +64,16 @@ export default function Footer() {
                 </Link>
                 <p className="mt-4 text-sm text-muted-foreground">The future of music licensing and streaming.</p>
                  <div className="mt-4">
-                    <button onClick={() => setIsModalOpen(true)} className="cursor-pointer">
-                        <Image src="https://i.ibb.co/FqwXfkL9/Screenshot-20250914-224236-Facebook.jpg" alt="IVtv Logo" width={100} height={50} />
-                    </button>
+                    <div className="flex items-center gap-4">
+                        <button onClick={() => setIsIvtvModalOpen(true)} className="cursor-pointer">
+                            <Image src="https://i.ibb.co/FqwXfkL9/Screenshot-20250914-224236-Facebook.jpg" alt="IVtv Logo" width={100} height={50} />
+                        </button>
+                         <button onClick={() => setIsNdRadioModalOpen(true)} className="cursor-pointer">
+                            <Image src="https://i.ibb.co/4wvZ1Mzq/ND-Radio-transparent.png" alt="ND Radio Logo" width={75} height={50} className="object-contain"/>
+                        </button>
+                    </div>
                     <p className="text-xs text-muted-foreground mt-2">
-                        Video streaming by our subsidiary, IVtv (Indie Videos TV).
+                        Video and audio streaming by our subsidiaries.
                     </p>
                 </div>
             </div>
@@ -130,7 +137,8 @@ export default function Footer() {
         </div>
       </div>
     </footer>
-    <IVtvModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+    <IVtvModal isOpen={isIvtvModalOpen} onClose={() => setIsIvtvModalOpen(false)} />
+    <NDRadioModal isOpen={isNdRadioModalOpen} onClose={() => setIsNdRadioModalOpen(false)} />
     </>
   );
 }
