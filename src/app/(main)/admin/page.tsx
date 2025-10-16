@@ -10,15 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Search, ShieldX } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
-
-// Define a specific type for our track data
-interface Track extends DocumentData {
-  id: string;
-  title: string;
-  artistName: string;
-  genre: string;
-  plays: number;
-}
+import { Track } from '@/store/music-player-store';
 
 export default function AdminPage() {
   const { user } = useUser();
@@ -31,7 +23,6 @@ export default function AdminPage() {
 
   // Data fetching
   const tracksQuery = useMemoFirebase(() => (firestore ? collection(firestore, 'tracks') : null), [firestore]);
-  // Use the specific Track type with the useCollection hook
   const { data: tracks, isLoading: areTracksLoading } = useCollection<Track>(tracksQuery);
 
   // State for filters
@@ -40,7 +31,7 @@ export default function AdminPage() {
 
   const genres = useMemo(() => {
     if (!tracks) return [];
-    const allGenres = tracks.map(track => track.genre).filter(Boolean);
+    const allGenres = tracks.map(track => track.genre).filter(Boolean) as string[];
     return ['all', ...Array.from(new Set(allGenres))];
   }, [tracks]);
 
@@ -70,10 +61,9 @@ export default function AdminPage() {
                     <Skeleton className="h-4 w-96" />
                 </CardHeader>
                 <CardContent>
-                    <div className="flex gap-4 mb-4">
+                    <div className="flex flex-col sm:flex-row gap-4 mb-4">
                         <Skeleton className="h-10 flex-1" />
-                        <Skeleton className="h-10 w-48" />
-                        <Skeleton className="h-10 w-48" />
+                        <Skeleton className="h-10 w-full sm:w-48" />
                     </div>
                     <Skeleton className="h-64 w-full" />
                 </CardContent>
@@ -95,7 +85,7 @@ export default function AdminPage() {
   return (
     <div className="container mx-auto py-8">
       <div className="mb-8">
-        <h1 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl">Admin Dashboard</h1>
+        <h1 className="font-headline text-3xl sm:text-4xl font-bold tracking-tighter md:text-5xl">Admin Dashboard</h1>
         <p className="mt-2 text-muted-foreground">Platform oversight and data management.</p>
       </div>
 
@@ -130,7 +120,7 @@ export default function AdminPage() {
             </div>
           </div>
           
-          <div className="border rounded-md">
+          <div className="border rounded-md overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>

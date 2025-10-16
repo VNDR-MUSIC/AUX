@@ -110,16 +110,16 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
-      <Card className="xl:col-span-2 backdrop-blur-lg bg-card/40">
-        <CardHeader className="flex flex-row items-center">
-          <div className="grid gap-2">
-            <CardTitle className="font-headline">Welcome, {userData?.username || 'Artist'}!</CardTitle>
+    <div className="grid auto-rows-min gap-4 sm:gap-6 md:gap-8">
+      <Card className="lg:col-span-2 backdrop-blur-lg bg-card/40">
+        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <div className="grid gap-2 flex-1">
+            <CardTitle className="font-headline text-2xl sm:text-3xl">Welcome, {userData?.username || 'Artist'}!</CardTitle>
             <CardDescription>
               This is your Artist Studio. Here's an overview of your music and performance.
             </CardDescription>
           </div>
-          <Button asChild size="sm" className="ml-auto gap-1">
+          <Button asChild size="sm" className="ml-auto gap-1 w-full sm:w-auto">
             <Link href="/dashboard/upload">
               Upload Music
               <PlusCircle className="h-4 w-4" />
@@ -128,47 +128,49 @@ export default function DashboardPage() {
         </CardHeader>
         <CardContent>
           {artistTracks && artistTracks.length > 0 ? (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Your Tracks</TableHead>
-                  <TableHead className="hidden sm:table-cell">Genre</TableHead>
-                  <TableHead className="hidden md:table-cell">Plays</TableHead>
-                  <TableHead className="text-right">Price</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {artistTracks.map((track) => (
-                  <TableRow key={track.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                          <Image
-                            alt={track.title}
-                            className="aspect-square rounded-md object-cover"
-                            height="40"
-                            width="40"
-                            src={track.coverArtUrl || 'https://picsum.photos/seed/placeholder/40/40'}
-                            data-ai-hint="album art"
-                          />
-                        <div className="font-medium">{track.title}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden sm:table-cell">{track.genre}</TableCell>
-                    <TableCell className="hidden md:table-cell">{track.plays || 0}</TableCell>
-                    <TableCell className="text-right">
-                        {track.price > 0 ? (
-                            <div className="flex items-center justify-end gap-1 font-bold">
-                                <Link href="https://vsd.network" target="_blank" rel="noopener noreferrer"><Icons.vsd className="h-4 w-4"/></Link>
-                                {track.price}
-                            </div>
-                        ) : (
-                           'N/A'
-                        )}
-                    </TableCell>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Your Tracks</TableHead>
+                    <TableHead className="hidden sm:table-cell">Genre</TableHead>
+                    <TableHead className="hidden md:table-cell text-center">Plays</TableHead>
+                    <TableHead className="text-right">Price</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {artistTracks.map((track) => (
+                    <TableRow key={track.id}>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                            <Image
+                              alt={track.title}
+                              className="aspect-square rounded-md object-cover"
+                              height="40"
+                              width="40"
+                              src={track.coverArtUrl || 'https://picsum.photos/seed/placeholder/40/40'}
+                              data-ai-hint="album art"
+                            />
+                          <div className="font-medium truncate max-w-32 sm:max-w-none">{track.title}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="hidden sm:table-cell">{track.genre}</TableCell>
+                      <TableCell className="hidden md:table-cell text-center">{track.plays || 0}</TableCell>
+                      <TableCell className="text-right">
+                          {track.price > 0 ? (
+                              <div className="flex items-center justify-end gap-1 font-bold">
+                                  <Link href="https://vsd.network" target="_blank" rel="noopener noreferrer"><Icons.vsd className="h-4 w-4"/></Link>
+                                  {track.price}
+                              </div>
+                          ) : (
+                             'N/A'
+                          )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           ) : (
             <div className="text-center py-12">
               <Music className="mx-auto h-12 w-12 text-muted-foreground" />
@@ -182,14 +184,14 @@ export default function DashboardPage() {
         </CardContent>
       </Card>
 
-      <div className="grid auto-rows-min gap-4 md:gap-8">
+      <div className="grid auto-rows-min gap-4 md:gap-8 md:grid-cols-2 lg:grid-cols-1">
         <Card className="backdrop-blur-lg bg-card/40">
             <CardHeader>
-                <CardTitle className="font-headline flex items-center justify-between">VSD Token Wallet</CardTitle>
+                <CardTitle className="font-headline flex items-center justify-between text-2xl">VSD Token Wallet</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-                <div className="flex items-center justify-center gap-4 text-4xl font-bold font-headline">
-                    <Link href="https://vsd.network" target="_blank" rel="noopener noreferrer"><Icons.vsd className="h-8 w-8" /></Link>
+                <div className="flex items-center justify-center gap-4 text-3xl sm:text-4xl font-bold font-headline">
+                    <Link href="https://vsd.network" target="_blank" rel="noopener noreferrer"><Icons.vsd className="h-7 w-7 sm:h-8 sm:w-8" /></Link>
                     <span>{userData?.vsdBalance || 0}</span>
                 </div>
                 <Button className="w-full" onClick={handleClaimTokens} disabled={!canClaimTokens}>
@@ -201,7 +203,7 @@ export default function DashboardPage() {
 
         <Card className="backdrop-blur-lg bg-card/40">
           <CardHeader>
-            <CardTitle className="font-headline">AI-Powered Growth Tools</CardTitle>
+            <CardTitle className="font-headline text-2xl">AI-Powered Growth Tools</CardTitle>
           </CardHeader>
           <CardContent>
             <RecommendationsClient />
@@ -209,12 +211,12 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      <Card className="xl:col-span-3 backdrop-blur-lg bg-card/40">
+      <Card className="lg:col-span-3 backdrop-blur-lg bg-card/40">
         <CardHeader>
-          <CardTitle className="font-headline">Top Tracks Performance</CardTitle>
+          <CardTitle className="font-headline text-2xl sm:text-3xl">Top Tracks Performance</CardTitle>
           <CardDescription>An overview of the most popular tracks on the platform this month.</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="h-[250px] sm:h-[300px]">
           <TopTracksChart data={allTracks || []} />
         </CardContent>
       </Card>

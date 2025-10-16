@@ -29,15 +29,15 @@ export default function TopTracksChart({ data }: TopTracksChartProps) {
   
   if (data.length === 0) {
     return (
-      <div className="flex items-center justify-center h-48 text-muted-foreground">
+      <div className="flex items-center justify-center h-full text-muted-foreground">
         No track data available to display chart.
       </div>
     );
   }
 
   return (
-    <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
-      <BarChart accessibilityLayer data={chartData} layout="vertical">
+    <ChartContainer config={chartConfig} className="min-h-[200px] w-full h-full">
+      <BarChart accessibilityLayer data={chartData} layout="vertical" margin={{ left: 10, right: 10 }}>
         <defs>
             <linearGradient id="colorSoundwave" x1="0" y1="0" x2="1" y2="0">
                 <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8}/>
@@ -52,6 +52,8 @@ export default function TopTracksChart({ data }: TopTracksChartProps) {
           tickLine={false}
           tickMargin={10}
           axisLine={false}
+          tick={{ fontSize: 12 }}
+          interval={0}
         />
         <XAxis type="number" hide />
         <ChartTooltip cursor={{ fill: "hsl(var(--muted)/0.5)"}} content={<ChartTooltipContent />} />

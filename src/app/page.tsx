@@ -124,7 +124,7 @@ function Home() {
             <main className="flex-1 flex items-center justify-center">
                 <div className="space-y-4 w-full container">
                     <Skeleton className="h-[80vh] w-full" />
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <Skeleton className="h-32 w-full" />
                         <Skeleton className="h-32 w-full" />
                     </div>
@@ -140,7 +140,7 @@ function Home() {
       <LandingPageHeader />
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="relative h-[70vh] md:h-[90vh] w-full flex flex-col items-center justify-center p-0 overflow-hidden">
+        <section className="relative h-[80vh] md:h-screen w-full flex flex-col items-center justify-center p-0 overflow-hidden">
             <Carousel
                 className="w-full h-full"
                 opts={{
@@ -168,21 +168,21 @@ function Home() {
                         />
                         )}
                         <div className="absolute inset-0 bg-black/60 z-10" />
-                        <div className="relative z-20 container h-full flex flex-col items-center justify-center gap-6 text-center text-white">
-                            <div className="relative w-80 h-80 text-primary drop-shadow-lg">
+                        <div className="relative z-20 container h-full flex flex-col items-center justify-center gap-6 text-center text-white px-4">
+                            <div className="relative w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 text-primary drop-shadow-lg">
                                 <Icons.logo />
                             </div>
-                            <h1 className="font-headline text-5xl font-bold tracking-tighter sm:text-6xl md:text-7xl lg:text-8xl drop-shadow-xl">
+                            <h1 className="font-headline text-4xl sm:text-5xl md:text-6xl font-bold tracking-tighter drop-shadow-xl">
                                 {slide.title}
                             </h1>
-                            <p className="max-w-[700px] text-lg text-neutral-200 md:text-xl drop-shadow-lg">
+                            <p className="max-w-[700px] text-base sm:text-lg text-neutral-200 md:text-xl drop-shadow-lg">
                                 {slide.description}
                             </p>
-                            <div className="flex flex-wrap justify-center gap-4">
-                            <Button asChild size="lg" className="font-bold">
+                            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full">
+                            <Button asChild size="lg" className="font-bold w-full sm:w-auto">
                                 <Link href="/login">Get Started Free</Link>
                             </Button>
-                            <Button asChild size="lg" variant="outline" className="font-bold bg-transparent text-white border-white hover:bg-white hover:text-primary">
+                            <Button asChild size="lg" variant="outline" className="font-bold bg-transparent text-white border-white hover:bg-white hover:text-primary w-full sm:w-auto">
                                 <Link href="#pricing">See The Plans</Link>
                             </Button>
                             </div>
@@ -201,15 +201,15 @@ function Home() {
             <div className="container px-4 md:px-6">
                 <div className="text-center">
                     <Gift className="h-16 w-16 mx-auto mb-4" />
-                    <h2 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl">Get Paid to Participate.</h2>
-                    <p className="max-w-[700px] mx-auto mt-4 text-primary-foreground/80 md:text-xl">
+                    <h2 className="font-headline text-3xl sm:text-4xl font-bold tracking-tighter">Get Paid to Participate.</h2>
+                    <p className="max-w-[700px] mx-auto mt-4 text-primary-foreground/80 md:text-lg">
                         Sign up for free and receive complimentary <Link href="https://vsd.network" target="_blank" rel="noopener noreferrer" className="inline-block"><Icons.vsd className="inline h-5 w-5" /></Link> tokens every day. Our token economy rewards artists just for being part of the community.
                     </p>
-                    <div className="flex flex-wrap justify-center gap-4 mt-8">
-                        <Button asChild size="lg" className="font-bold bg-white text-black hover:bg-gray-200">
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
+                        <Button asChild size="lg" className="font-bold bg-white text-black hover:bg-gray-200 w-full sm:w-auto">
                             <Link href="/login">Claim Your First Tokens</Link>
                         </Button>
-                         <Button asChild size="lg" variant="outline" className="font-bold bg-transparent text-white border-white hover:bg-white hover:text-primary">
+                         <Button asChild size="lg" variant="outline" className="font-bold bg-transparent text-white border-white hover:bg-white hover:text-primary w-full sm:w-auto">
                             <Link href="#features">Learn More</Link>
                         </Button>
                     </div>
@@ -222,8 +222,8 @@ function Home() {
         <section id="features" className="py-16 md:py-24 bg-secondary">
             <div className="container px-4 md:px-6">
                 <div className="text-center mb-12">
-                    <h2 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl">The Old Music Industry is Broken. We're Building a Better One.</h2>
-                    <p className="max-w-[700px] mx-auto mt-4 text-muted-foreground md:text-xl">
+                    <h2 className="font-headline text-3xl sm:text-4xl font-bold tracking-tighter">The Old Music Industry is Broken. We're Building a Better One.</h2>
+                    <p className="max-w-[700px] mx-auto mt-4 text-muted-foreground md:text-lg">
                         VNDR gives independent artists the power of a major label, without the predatory contracts.
                     </p>
                 </div>
@@ -231,8 +231,8 @@ function Home() {
                     {features.map((feature, index) => (
                         <div key={index} className="flex flex-col items-center text-center p-6 bg-card rounded-lg shadow-md border">
                             {feature.icon}
-                            <h3 className="font-headline text-2xl font-semibold mt-4 mb-2">{feature.title}</h3>
-                            <p className="text-muted-foreground">{feature.description}</p>
+                            <h3 className="font-headline text-xl font-semibold mt-4 mb-2">{feature.title}</h3>
+                            <p className="text-muted-foreground text-sm">{feature.description}</p>
                         </div>
                     ))}
                 </div>
@@ -248,8 +248,8 @@ function Home() {
         <section id="pricing" className="py-16 md:py-24">
             <div className="container px-4 md:px-6">
                 <div className="text-center mb-12">
-                    <h2 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl text-primary">Choose Your Path</h2>
-                    <p className="max-w-[700px] mx-auto mt-4 text-muted-foreground md:text-xl">
+                    <h2 className="font-headline text-3xl sm:text-4xl font-bold tracking-tighter text-primary">Choose Your Path</h2>
+                    <p className="max-w-[700px] mx-auto mt-4 text-muted-foreground md:text-lg">
                         Whether you need a powerful distributor or a dedicated publishing partner, we have a plan for you.
                     </p>
                     <div className="flex items-center justify-center space-x-2 mt-6">
@@ -262,16 +262,16 @@ function Home() {
                     {/* Distribution Plan */}
                     <Card className="flex flex-col">
                         <CardHeader>
-                            <CardTitle className="font-headline text-2xl flex items-center gap-2"><GitBranch /> Distribution</CardTitle>
+                            <CardTitle className="font-headline text-xl flex items-center gap-2"><GitBranch /> Distribution</CardTitle>
                             <CardDescription>For artists who want maximum control and the highest royalty share.</CardDescription>
-                            <div className="flex items-baseline gap-2">
-                                <span className="text-4xl font-bold font-headline">Free</span>
-                                <span className="text-lg font-normal text-muted-foreground">to start</span>
+                            <div className="flex items-baseline gap-2 pt-2">
+                                <span className="text-3xl font-bold font-headline">Free</span>
+                                <span className="text-base font-normal text-muted-foreground">to start</span>
                             </div>
                         </CardHeader>
-                        <CardContent className="flex-1 space-y-4">
+                        <CardContent className="flex-1 space-y-3">
                             <p className="font-semibold text-primary">You Keep 90% of Royalties</p>
-                            <ul className="space-y-2 text-muted-foreground">
+                            <ul className="space-y-2 text-muted-foreground text-sm">
                                 <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Free unlimited distribution</li>
                                 <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Basic Analytics Dashboard</li>
                                 <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Monthly Royalty Payouts</li>
@@ -288,18 +288,18 @@ function Home() {
                     <Card className="flex flex-col border-2 border-primary shadow-lg">
                         <CardHeader>
                             <div className="flex justify-between items-center">
-                                <CardTitle className="font-headline text-2xl flex items-center gap-2"><Users /> Publishing</CardTitle>
+                                <CardTitle className="font-headline text-xl flex items-center gap-2"><Users /> Publishing</CardTitle>
                                 <div className="text-xs font-semibold bg-primary text-primary-foreground px-2 py-1 rounded-full">MOST POPULAR</div>
                             </div>
                             <CardDescription>For artists seeking a true partner to grow their career and income.</CardDescription>
-                             <div className="flex items-baseline gap-2">
-                                <span className="text-4xl font-bold font-headline">50/50</span>
-                                <span className="text-lg font-normal text-muted-foreground">Publishing Split</span>
+                             <div className="flex items-baseline gap-2 pt-2">
+                                <span className="text-3xl font-bold font-headline">50/50</span>
+                                <span className="text-base font-normal text-muted-foreground">Publishing Split</span>
                             </div>
                         </CardHeader>
-                        <CardContent className="flex-1 space-y-4">
+                        <CardContent className="flex-1 space-y-3">
                              <p className="font-semibold text-primary">A True Partnership</p>
-                            <ul className="space-y-2 text-muted-foreground">
+                            <ul className="space-y-2 text-muted-foreground text-sm">
                                 <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>All Distribution features, plus:</li>
                                 <li className="flex items-center font-bold text-foreground"><Check className="h-4 w-4 mr-2 text-primary"/>Active Sync Licensing Pitches</li>
                                 <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Global Royalty Collection</li>
@@ -314,17 +314,17 @@ function Home() {
                     {/* AI Pro Plan */}
                     <Card className="flex flex-col">
                         <CardHeader>
-                            <CardTitle className="font-headline text-2xl flex items-center gap-2"><Sparkles /> AI Pro</CardTitle>
+                            <CardTitle className="font-headline text-xl flex items-center gap-2"><Sparkles /> AI Pro</CardTitle>
                             <CardDescription>Supercharge either plan with our full suite of AI tools.</CardDescription>
-                            <div className="flex items-baseline gap-2">
-                                <Link href="https://vsd.network" target="_blank" rel="noopener noreferrer"><Icons.vsd className="h-8 w-8 text-primary" /></Link>
-                                <span className="text-4xl font-bold font-headline">250</span>
-                                <span className="text-lg font-normal text-muted-foreground">/mo</span>
+                            <div className="flex items-baseline gap-2 pt-2">
+                                <Link href="https://vsd.network" target="_blank" rel="noopener noreferrer"><Icons.vsd className="h-6 w-6 sm:h-8 sm:w-8 text-primary" /></Link>
+                                <span className="text-3xl font-bold font-headline">250</span>
+                                <span className="text-base font-normal text-muted-foreground">/mo</span>
                             </div>
                         </CardHeader>
-                        <CardContent className="flex-1 space-y-4">
+                        <CardContent className="flex-1 space-y-3">
                             <p className="font-semibold text-primary">An Add-on for Any Plan</p>
-                            <ul className="space-y-2 text-muted-foreground">
+                            <ul className="space-y-2 text-muted-foreground text-sm">
                                 <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>AI-Generated Cover Art</li>
                                 <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>AI-Generated Marketing Copy</li>
                                 <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>AI Royalty Forecasting</li>
@@ -343,7 +343,7 @@ function Home() {
         <section className="py-16 md:py-24 bg-secondary">
           <div className="container px-4 md:px-6">
             <div className="text-center mb-12">
-              <h2 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl">Why Artists are Leaving Other Distributors for VNDR</h2>
+              <h2 className="font-headline text-3xl sm:text-4xl font-bold tracking-tighter">Why Artists are Leaving Other Distributors for VNDR</h2>
             </div>
             <div className="grid gap-8 md:grid-cols-2">
               {testimonials.map((testimonial, index) => {
@@ -385,12 +385,12 @@ function Home() {
         <section className="py-16 md:py-24">
           <div className="container max-w-3xl px-4 md:px-6">
             <div className="text-center mb-12">
-              <h2 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl">Your Questions, Answered.</h2>
+              <h2 className="font-headline text-3xl sm:text-4xl font-bold tracking-tighter">Your Questions, Answered.</h2>
             </div>
             <Accordion type="single" collapsible className="w-full">
               {faqs.map((faq, index) => (
                 <AccordionItem key={index} value={`item-${index}`}>
-                  <AccordionTrigger className="text-lg font-semibold text-left">{faq.question}</AccordionTrigger>
+                  <AccordionTrigger className="text-base sm:text-lg font-semibold text-left">{faq.question}</AccordionTrigger>
                   <AccordionContent className="text-muted-foreground">
                     {faq.answer}
                   </AccordionContent>
@@ -402,11 +402,11 @@ function Home() {
         
         {/* Final CTA Section */}
         <section className="py-16 md:py-24 bg-primary text-primary-foreground">
-            <div className="container text-center">
-                <h2 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl">
+            <div className="container text-center px-4">
+                <h2 className="font-headline text-3xl sm:text-4xl font-bold tracking-tighter">
                    Ready to Own Your Music Career?
                 </h2>
-                <p className="max-w-[600px] mx-auto mt-4 mb-8 text-primary-foreground/80 md:text-xl">
+                <p className="max-w-[600px] mx-auto mt-4 mb-8 text-primary-foreground/80 md:text-lg">
                     Join thousands of independent artists who trust VNDR for distribution, licensing, and fair royalties. Sign up in minutes.
                 </p>
                 <Button asChild size="lg" className="font-bold bg-white text-black hover:bg-gray-200">
@@ -427,4 +427,3 @@ export default function HomePageWrapper() {
     </FirebaseClientProvider>
   )
 }
-

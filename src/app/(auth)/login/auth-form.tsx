@@ -92,13 +92,13 @@ export default function AuthForm() {
   return (
     <Card className="mx-auto max-w-sm w-full">
       <CardHeader className="text-center">
-        <div className="mx-auto h-56 w-56 relative">
+        <div className="mx-auto h-40 w-40 sm:h-56 sm:w-56 relative">
             <Icons.logo />
         </div>
-        <CardTitle className="font-headline text-2xl font-bold">
+        <CardTitle className="font-headline text-xl sm:text-2xl font-bold">
           Welcome to Your Artist Studio
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-sm">
           Sign in to manage your music, or sign up to claim your free tokens and start your journey.
         </CardDescription>
       </CardHeader>
