@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useCollection, useFirebase, useMemoFirebase } from '@/firebase';
 import { collection, DocumentData } from 'firebase/firestore';
 import { Input } from '@/components/ui/input';
@@ -19,19 +19,33 @@ import { Skeleton } from '@/components/ui/skeleton';
 import TrackCard from '@/components/catalog/track-card';
 import { Track } from '@/store/music-player-store';
 import { useOnboarding } from '@/hooks/use-onboarding';
-
-const genres = ["Synthwave", "Lofi Hip-Hop", "Future Funk", "Ambient", "Electronic", "All"];
+import { useSearchParams } from 'next/navigation';
 
 export default function CatalogPage() {
   const { firestore } = useFirebase();
+  const searchParams = useSearchParams();
   const tracksQuery = useMemoFirebase(() => firestore ? collection(firestore, 'tracks') : null, [firestore]);
   const { data: tracks, isLoading } = useCollection<DocumentData>(tracksQuery);
 
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
   const [selectedGenre, setSelectedGenre] = useState('All');
   const [showLicensedOnly, setShowLicensedOnly] = useState(false);
 
   useOnboarding('catalog');
+
+  const genres = useMemo(() => {
+    if (!tracks) return [];
+    const allGenres = tracks.map(track => track.genre).filter(Boolean);
+    return ['All', ...Array.from(new Set(allGenres))];
+  }, [tracks]);
+
+  useEffect(() => {
+    // Sync search term with URL query param
+    const query = searchParams.get('q');
+    if (query !== null) {
+      setSearchTerm(query);
+    }
+  }, [searchParams]);
 
   const filteredTracks = useMemo(() => {
     return tracks

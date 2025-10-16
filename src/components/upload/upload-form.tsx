@@ -138,6 +138,7 @@ export default function UploadForm() {
             setGenre("");
             setDescription("");
             setManualPrice("");
+            // Clear other states as well for a full form reset
         }
     }
   }, [uploadState, toast]);
@@ -147,6 +148,8 @@ export default function UploadForm() {
   const finalPrice = pricingOption === 'ai' 
     ? licensingState.recommendedPrice
     : (manualPrice ? parseFloat(manualPrice) : undefined);
+    
+  const artistName = user?.displayName || user?.email?.split('@')[0] || '';
 
   return (
     <>
@@ -173,7 +176,7 @@ export default function UploadForm() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="artistName">Artist Name</Label>
-                <Input id="artistName" name="artistName" placeholder="e.g., Synthwave Samurai" defaultValue={user?.displayName || user?.email?.split('@')[0] || ''} />
+                <Input id="artistName" name="artistName" placeholder="e.g., Synthwave Samurai" defaultValue={artistName} />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="genre">Genre</Label>
@@ -205,7 +208,7 @@ export default function UploadForm() {
             <input type="hidden" name="price" value={finalPrice || 0} />
             <input type="hidden" name="coverArtDataUri" value={coverArtState.coverArtDataUri || ""} />
             <input type="hidden" name="artistId" value={user?.uid || ''} />
-            <input type="hidden" name="artistName" value={mainFormRef.current?.artistName.value || ''} />
+            <input type="hidden" name="artistName" value={artistName} />
           </form>
           
           {/* Standalone UI components, not part of the main form submission */}

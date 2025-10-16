@@ -16,7 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { useFirebase, initiateEmailSignIn, useUser } from "@/firebase";
 import { Loader2 } from "lucide-react";
-import { getIdTokenResult } from "firebase/auth";
+import { GoogleAuthProvider, signInWithRedirect } from "firebase/auth";
 
 const initialState = {
   message: null,
@@ -43,6 +43,7 @@ export default function AuthForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   useEffect(() => {
     // If user is already logged in, redirect to dashboard
@@ -88,6 +89,26 @@ export default function AuthForm() {
     }, 2000);
   };
 
+  const handleGoogleLogin = async () => {
+    if (!auth) return;
+    setIsGoogleLoading(true);
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithRedirect(auth, provider);
+      // The user will be redirected to Google's sign-in page.
+      // After successful sign-in, they will be redirected back to the app.
+      // The onAuthStateChanged listener will then handle the user session and redirect to the dashboard.
+    } catch (error) {
+      console.error("Google sign-in error:", error);
+      toast({
+        title: "Google Login Failed",
+        description: "Could not sign in with Google. Please try again.",
+        variant: "destructive",
+      });
+      setIsGoogleLoading(false);
+    }
+  };
+
 
   return (
     <Card className="mx-auto max-w-sm w-full">
@@ -115,12 +136,7 @@ export default function AuthForm() {
                 <Input id="login-email" type="email" placeholder="m@example.com" required value={email} onChange={e => setEmail(e.target.value)} />
               </div>
               <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="login-password">Password</Label>
-                  <Link href="#" className="ml-auto inline-block text-sm underline">
-                    Forgot your password?
-                  </Link>
-                </div>
+                <Label htmlFor="login-password">Password</Label>
                 <Input id="login-password" type="password" required value={password} onChange={e => setPassword(e.target.value)} />
               </div>
               <Button type="submit" className="w-full" disabled={isLoggingIn || isUserLoading}>
@@ -145,9 +161,9 @@ export default function AuthForm() {
             </form>
           </TabsContent>
         </Tabs>
-         <Button variant="outline" className="w-full mt-4">
-            Login with Google
-          </Button>
+        <Button variant="outline" className="w-full mt-4" onClick={handleGoogleLogin} disabled={isGoogleLoading || isUserLoading}>
+            {isGoogleLoading ? <Loader2 className="animate-spin" /> : 'Login with Google'}
+        </Button>
       </CardContent>
     </Card>
   );

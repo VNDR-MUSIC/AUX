@@ -59,7 +59,7 @@ const tourSteps: Record<OnboardingStep, Shepherd.Step.StepOptions[]> = {
       id: 'upload-ai-art',
       title: 'AI Cover Art',
       text: 'No cover art? No problem. Once you fill in the title and genre, click here to generate unique, AI-powered cover art for your track.',
-      attachTo: { element: '#cover-art-form button', on: 'left' },
+      attachTo: { element: 'form#cover-art-form button', on: 'left' },
       buttons: [
         { text: 'Back', action: () => Shepherd.activeTour?.back(), secondary: true },
         { text: 'Next', action: () => Shepherd.activeTour?.next() },
@@ -95,31 +95,13 @@ const tourSteps: Record<OnboardingStep, Shepherd.Step.StepOptions[]> = {
     }
   ],
    auctions: [
-     {
-      id: 'auctions-soon',
-      title: 'The Auction House',
-      text: "This feature is coming soon! You'll be able to auction the rights to your music or bid on tracks from other artists using your VSD tokens.",
-      attachTo: { element: 'h1', on: 'bottom' },
-       buttons: [{ text: 'Sounds Good!', action: () => Shepherd.activeTour?.complete() }],
-    }
+     // This tour is intentionally empty.
   ],
   legalEagle: [
-     {
-      id: 'legal-eagle-intro',
-      title: 'Simulated Legal Advice',
-      text: 'This is Legal Eagle, your AI-powered simulated entertainment law adviser. Ask general questions about contracts, copyright, and more. Remember, this is for educational purposes only!',
-      attachTo: { element: 'h1 + p', on: 'bottom' },
-       buttons: [{ text: 'I Understand', action: () => Shepherd.activeTour?.complete() }],
-    }
+     // This tour is intentionally empty.
   ],
   settings: [
-     {
-      id: 'settings-notifications',
-      title: 'Manage Your Settings',
-      text: 'Control your account details and choose exactly how you want to be notified about platform activity.',
-      attachTo: { element: 'h1', on: 'bottom' },
-      buttons: [{ text: 'Got it!', action: () => Shepherd.activeTour?.complete() }],
-    }
+     // This tour is intentionally empty.
   ],
 };
 
@@ -132,6 +114,13 @@ export function useOnboarding(step: OnboardingStep) {
   useEffect(() => {
     if (userData && user && userData.onboardingCompleted && userData.onboardingCompleted[step] === false) {
       
+      const stepsForTour = tourSteps[step];
+      if (stepsForTour.length === 0) {
+        // If there are no steps, just mark as complete and do nothing.
+        completeOnboardingStepAction(user.uid, step);
+        return;
+      }
+
       const tour = new Shepherd.Tour({
         useModalOverlay: true,
         defaultStepOptions: {
@@ -140,7 +129,7 @@ export function useOnboarding(step: OnboardingStep) {
         },
       });
 
-      tour.addSteps(tourSteps[step]);
+      tour.addSteps(stepsForTour);
       
       tour.on('complete', () => {
         completeOnboardingStepAction(user.uid, step);

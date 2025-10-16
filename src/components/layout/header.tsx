@@ -19,12 +19,14 @@ import { signOut } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "../ui/skeleton";
 import { Icons } from "../icons";
+import { FormEvent, useState } from "react";
 
 export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
   const { user, isUserLoading } = useUser();
   const { auth } = useFirebase();
   const router = useRouter();
   const { toast } = useToast();
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleLogout = async () => {
     if (!auth) return;
@@ -42,6 +44,15 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
         description: "An error occurred while logging out.",
         variant: "destructive",
       });
+    }
+  };
+
+  const handleSearch = (e: FormEvent) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      router.push(`/dashboard/catalog?q=${encodeURIComponent(searchTerm)}`);
+    } else {
+      router.push('/dashboard/catalog');
     }
   };
 
@@ -104,13 +115,15 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
             </Link>
         </div>
         <div className="w-full flex-1">
-          <form>
+          <form onSubmit={handleSearch}>
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
                 placeholder="Search artists, tracks, albums..."
                 className="w-full appearance-none bg-transparent pl-8 shadow-none md:w-2/3 lg:w-1/3"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
           </form>

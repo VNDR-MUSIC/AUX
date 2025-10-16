@@ -1,5 +1,6 @@
 
 
+
 "use server";
 
 import { z } from "zod";
@@ -196,7 +197,8 @@ export async function uploadTrackAction(
         const { db } = await getFirebaseAdmin();
         const tracksCollection = collection(db, "tracks");
         
-        const trackUrl = "https://firebasestorage.googleapis.com/v0/b/your-project-id.appspot.com/o/example-track.mp3?alt=media";
+        // Using a real, publicly accessible MP3 file for demo purposes.
+        const trackUrl = "https://storage.googleapis.com/studiopublic/vndr/synthwave-track.mp3";
         
         await addDoc(tracksCollection, {
             title: trackTitle,
