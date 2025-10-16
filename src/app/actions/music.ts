@@ -1,6 +1,4 @@
 
-
-
 "use server";
 
 import { z } from "zod";
@@ -9,6 +7,8 @@ import { recommendLicensingPrice } from "@/ai/flows/ai-licensing-price-recommend
 import { getFirebaseAdmin } from "@/firebase/admin";
 import { collection, addDoc, serverTimestamp, doc, deleteDoc, updateDoc, query, where, getDocs, increment } from "firebase/firestore";
 import { revalidatePath } from "next/cache";
+import { createVsdTransaction } from "./vsd-transaction";
+import { generateReport } from "@/ai/flows/generate-report-flow";
 
 
 const coverArtSchema = z.object({
@@ -193,11 +193,9 @@ export async function uploadTrackAction(
     const { trackTitle, artistId, artistName, genre, description, coverArtDataUri } = validatedFields.data;
 
     try {
-        // Step 1: Save to Firestore
         const { db } = await getFirebaseAdmin();
         const tracksCollection = collection(db, "tracks");
         
-        // Using a real, publicly accessible MP3 file for demo purposes.
         const trackUrl = "https://storage.googleapis.com/studiopublic/vndr/synthwave-track.mp3";
         
         await addDoc(tracksCollection, {
@@ -250,7 +248,6 @@ export async function submitLicenseRequestAction(
     try {
         const { db } = await getFirebaseAdmin();
 
-        // Find the track and artist to link the request
         const tracksRef = collection(db, "tracks");
         const q = query(tracksRef, where("title", "==", trackTitle), where("artistName", "==", artistName));
         const querySnapshot = await getDocs(q);
@@ -271,8 +268,8 @@ export async function submitLicenseRequestAction(
             trackId,
             artistId,
             requestorId,
-            trackTitle, // Denormalize for easier display
-            artistName, // Denormalize for easier display
+            trackTitle,
+            artistName, 
             usageType,
             projectDescription: description,
             requestorName: fullName,
@@ -357,5 +354,60 @@ export async function trackPlays(trackId: string) {
   } catch (error) {
     console.error('Error incrementing track plays:', error);
     return { error: 'Failed to update play count.' };
+  }
+}
+
+export async function generateReportAction(userId: string): Promise<{ success: boolean; message?: string; report?: string }> {
+  if (!userId) {
+    return { success: false, message: "User not found." };
+  }
+
+  try {
+    // 1. Deduct VSD token
+    const transactionResult = await createVsdTransaction({
+      userId,
+      amount: -25, // Report cost
+      type: 'service_fee',
+      details: 'AI performance report generation',
+    });
+
+    if (!transactionResult.success) {
+      return { success: false, message: transactionResult.message };
+    }
+
+    // 2. Fetch artist's tracks
+    const { db } = await getFirebaseAdmin();
+    const tracksRef = collection(db, "tracks");
+    const q = query(tracksRef, where("artistId", "==", userId));
+    const querySnapshot = await getDocs(q);
+    
+    if (querySnapshot.empty) {
+      // Refund the VSD token if no tracks are found
+      await createVsdTransaction({
+          userId,
+          amount: 25,
+          type: 'deposit',
+          details: 'Refund for report generation (no tracks found)',
+      });
+      return { success: false, message: "You don't have any tracks to generate a report for." };
+    }
+
+    const tracks = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    // 3. Call the Genkit flow
+    const report = await generateReport({ tracks });
+
+    return { success: true, report: report.report };
+  } catch (error) {
+    console.error('Error generating report:', error);
+    const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred.";
+    // Attempt to refund on failure
+     await createVsdTransaction({
+        userId,
+        amount: 25,
+        type: 'deposit',
+        details: 'Refund for failed report generation',
+    });
+    return { success: false, message: `Report generation failed and your VSD has been refunded. Reason: ${errorMessage}` };
   }
 }

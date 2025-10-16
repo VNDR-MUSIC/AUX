@@ -1,6 +1,7 @@
 
 'use client';
 
+import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,14 +11,55 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { BarChart, FileText, Download } from "lucide-react";
-import { useOnboarding } from "@/hooks/use-onboarding";
+import { FileText, Download, Loader2 } from "lucide-react";
 import { Icons } from "@/components/icons";
 import Link from "next/link";
+import { useUser, useDoc, useMemoFirebase } from '@/firebase';
+import { doc } from 'firebase/firestore';
+import { useFirebase } from '@/firebase/provider';
+import { generateReportAction } from '@/app/actions/music';
+import { useToast } from '@/hooks/use-toast';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 export default function ReportsPage() {
-  // Although we don't have onboarding for this page yet, 
-  // you can add 'reports' to useOnboarding if you create a tour for it.
+  const { user } = useUser();
+  const { firestore } = useFirebase();
+  const { toast } = useToast();
+
+  const userRef = useMemoFirebase(() => (firestore && user ? doc(firestore, 'users', user.uid) : null), [firestore, user]);
+  const { data: userData } = useDoc(userRef);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [report, setReport] = useState<string | null>(null);
+
+  const handleGenerateReport = async () => {
+    if (!user) return;
+    setIsLoading(true);
+    setReport(null);
+    try {
+      const result = await generateReportAction(user.uid);
+      if (result.success && result.report) {
+        setReport(result.report);
+        toast({
+          title: "Report Generated!",
+          description: "25 VSD tokens have been deducted from your account.",
+        });
+      } else {
+        throw new Error(result.message || "Failed to generate report.");
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: errorMessage,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const canGenerate = userData && userData.vsdBalance >= 25;
 
   return (
     <div className="container mx-auto py-8">
@@ -32,15 +74,14 @@ export default function ReportsPage() {
         <CardHeader>
           <CardTitle>Generate Performance Report</CardTitle>
           <CardDescription>
-            Get a comprehensive PDF report on your catalog's streams, listeners, and revenue. 
-            This feature is in development, see our <Link href="/roadmap" className="text-primary underline">public roadmap</Link> for updates.
+            Our AI engine will analyze your entire catalog's performance, including streams, listener engagement, and potential licensing value to generate a comprehensive report.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center justify-center text-center py-16">
           <FileText className="h-24 w-24 text-muted-foreground/50 mb-6" />
           <p className="text-lg font-semibold">Unlock Actionable Insights</p>
           <p className="text-muted-foreground mt-2 max-w-md">
-            Our AI-powered reporting engine analyzes your data to provide you with trends, demographic information, and revenue projections.
+            Understand your audience, identify your top-performing tracks, and get strategic recommendations to grow your career.
           </p>
            <div className="mt-4 text-sm text-muted-foreground flex items-center gap-2">
                 Report generation costs 
@@ -50,13 +91,36 @@ export default function ReportsPage() {
                  VSD Lite tokens.
             </div>
         </CardContent>
-        <CardFooter className="justify-center">
-            <Button disabled>
+        <CardFooter className="flex-col items-center justify-center gap-4">
+            <Button onClick={handleGenerateReport} disabled={isLoading || !canGenerate}>
+              {isLoading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
                 <Download className="mr-2 h-4 w-4" />
-                Generate & Download Report (Coming Soon)
+              )}
+              {isLoading ? 'Generating Report...' : 'Generate Report'}
             </Button>
+            {!isLoading && !canGenerate && user && (
+              <p className="text-sm text-destructive">You need at least 25 VSD to generate a report. Your balance is {userData?.vsdBalance || 0}.</p>
+            )}
         </CardFooter>
       </Card>
+      
+      {report && (
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle className="font-headline text-2xl">Your Performance Report</CardTitle>
+          </CardHeader>
+          <CardContent>
+             <Alert>
+                <AlertTitle>Generated by VNDR AI</AlertTitle>
+                <AlertDescription className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
+                  {report}
+                </AlertDescription>
+              </Alert>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
