@@ -105,6 +105,26 @@ export default function AuthForm() {
     }
   };
 
+  const handleWalletLogin = () => {
+    // 'window' is a browser-specific object.
+    // Check if a Web3 wallet (like MetaMask) has injected the ethereum provider.
+    if (typeof (window as any).ethereum === 'undefined') {
+      toast({
+        title: "No Web3 Wallet Detected",
+        description: "Please install a wallet like MetaMask to use this feature.",
+        variant: "default"
+      });
+    } else {
+      toast({
+        title: "Coming Soon!",
+        description: "Web3 wallet login is under development.",
+        variant: "default"
+      });
+      // In the future, you would initiate the wallet connection here, e.g.:
+      // (window as any).ethereum.request({ method: 'eth_requestAccounts' });
+    }
+  };
+
 
   return (
     <Card className="mx-auto max-w-sm w-full">
@@ -172,7 +192,7 @@ export default function AuthForm() {
                 {isGoogleLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 126 21.2 177 56.5L357 150c-24.3-23.4-58.3-37-99-37-73 0-132.3 59.3-132.3 132.3s59.3 132.3 132.3 132.3c76.5 0 119.5-52.2 123.3-78.2h-123.3v-63h240.2c2.4 12.6 3.8 26.3 3.8 40.8z"></path></svg>}
                 Google
             </Button>
-            <Button variant="outline" className="w-full" disabled>
+            <Button variant="outline" className="w-full" onClick={handleWalletLogin}>
                 <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="wallet" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M461.2 128.4L282.8 12.8c-12.6-9.1-29-9.1-41.6 0L28.8 128.4c-12.6 9.1-12.6 29 0 38.2L124 224v176c0 13.3 10.7 24 24 24h192c13.3 0 24-10.7 24-24V224l95.2-57.4c12.6-9.1 12.6-29 0-38.2zM256 320c-35.3 0-64-28.7-64-64s28.7-64 64-64 64 28.7 64 64-28.7 64-64 64z"></path></svg>
                 Wallet
             </Button>
