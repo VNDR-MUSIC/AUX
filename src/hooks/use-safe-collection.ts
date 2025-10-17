@@ -18,6 +18,7 @@ export function useSafeCollection<T>(collectionPath: string | null, filters?: Re
       return;
     }
 
+    // A public path doesn't need to wait for the user to load
     const isPublicPath = collectionPath === 'works' && !filters;
     if (!isPublicPath && isUserLoading) {
       setIsLoading(true);
@@ -50,6 +51,7 @@ export function useSafeCollection<T>(collectionPath: string | null, filters?: Re
     } finally {
       setIsLoading(false);
     }
+  // We stringify filters to ensure the useCallback hook properly detects changes in filter objects.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [collectionPath, user, isUserLoading, JSON.stringify(filters)]);
 
