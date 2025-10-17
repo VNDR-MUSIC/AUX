@@ -17,16 +17,16 @@
     --secondary-foreground: 210 20% 98%;
     --muted: 215 27.9% 16.9%;
     --muted-foreground: 217.9 10.6% 64.9%;
-    --accent: 300 80% 60%; /* Magenta, less pink */
+    --accent: 285 80% 60%; /* Purple-ish Pink */
     --accent-foreground: 0 0% 0%;
     --destructive: 0 100% 50%; /* Red */
     --destructive-foreground: 210 20% 98%;
     --border: 215 27.9% 16.9%;
     --input: 215 27.9% 16.9%;
-    --ring: 300 80% 60%; /* Magenta for rings */
+    --ring: 285 80% 60%; /* Ring matches new accent */
     --radius: 0.5rem;
     --chart-1: 277 76% 53%; /* Purple */
-    --chart-2: 300 80% 60%; /* Magenta */
+    --chart-2: 285 80% 60%; /* New Accent */
     --chart-3: 0 100% 50%; /* Red */
     --chart-4: 215 27.9% 16.9%;
     --chart-5: 210 20% 98%;
@@ -39,7 +39,7 @@
     --sidebar-accent: 215 27.9% 16.9%;
     --sidebar-accent-foreground: 210 20% 98%;
     --sidebar-border: 215 27.9% 16.9%;
-    --sidebar-ring: 300 80% 60%;
+    --sidebar-ring: 285 80% 60%;
   }
 
   .dark {
@@ -55,15 +55,15 @@
     --secondary-foreground: 210 20% 98%;
     --muted: 215 27.9% 16.9%;
     --muted-foreground: 217.9 10.6% 64.9%;
-    --accent: 300 80% 60%; /* Magenta, less pink */
+    --accent: 285 80% 60%; /* Purple-ish Pink */
     --accent-foreground: 0 0% 0%;
     --destructive: 0 100% 50%; /* Red */
     --destructive-foreground: 210 20% 98%;
     --border: 215 27.9% 16.9%;
     --input: 215 27.9% 16.9%;
-    --ring: 300 80% 60%; /* Magenta for rings */
+    --ring: 285 80% 60%; /* Ring matches new accent */
     --chart-1: 277 76% 53%; /* Purple */
-    --chart-2: 300 80% 60%; /* Magenta */
+    --chart-2: 285 80% 60%; /* New Accent */
     --chart-3: 0 100% 50%; /* Red */
     --chart-4: 215 27.9% 16.9%;
     --chart-5: 210 20% 98%;
@@ -76,7 +76,7 @@
     --sidebar-accent: 215 27.9% 16.9%;
     --sidebar-accent-foreground: 210 20% 98%;
     --sidebar-border: 215 27.9% 16.9%;
-    --sidebar-ring: 300 80% 60%;
+    --sidebar-ring: 285 80% 60%;
   }
 }
 
