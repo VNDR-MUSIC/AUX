@@ -23,11 +23,14 @@ export default function MiuSlideOut() {
       <AnimatePresence>
         {!isOpen && (
           <motion.div
-            initial={{ x: -80, rotate: 0 }}
+            onClick={() => setIsOpen(true)}
+            className="fixed top-1/2 -translate-y-1/2 left-0 z-40 h-32 w-16 cursor-pointer group"
+            aria-label="Open Music Industry University panel"
+            initial={{ x: 0 }}
+            exit={{ x: -80 }}
             animate={{
               rotate: [0, -5, 5, -5, 0],
             }}
-            exit={{ x: -80 }}
             transition={{
               rotate: {
                 duration: 5,
@@ -36,9 +39,6 @@ export default function MiuSlideOut() {
                 repeatType: 'loop',
               },
             }}
-            onClick={() => setIsOpen(true)}
-            className="fixed top-1/2 -translate-y-1/2 left-0 z-40 h-32 w-24 cursor-pointer group"
-            aria-label="Open Music Industry University panel"
           >
             <div className="relative w-full h-full flex items-center justify-end">
               <div className="relative w-20 h-20 transition-transform duration-300 group-hover:scale-105">
