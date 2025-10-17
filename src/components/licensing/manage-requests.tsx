@@ -1,7 +1,6 @@
 
 'use client';
 
-import { useCollection } from '@/firebase';
 import { Timestamp } from 'firebase/firestore';
 import {
   Table,
@@ -18,11 +17,12 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { approveLicenseRequestAction, rejectLicenseRequestAction } from '@/app/actions/music';
 import { useToast } from '@/hooks/use-toast';
 import { Check, X } from 'lucide-react';
+import { useSafeCollection } from '@/hooks/use-safe-collection';
 
 export default function ManageLicenseRequests() {
   const { toast } = useToast();
 
-  const { data: requests, isLoading } = useCollection('license_requests');
+  const { data: requests, isLoading } = useSafeCollection('license_requests');
 
   const handleApprove = async (id: string) => {
     const result = await approveLicenseRequestAction(id);
@@ -42,8 +42,10 @@ export default function ManageLicenseRequests() {
     });
   };
   
-  const formatDate = (timestamp: Timestamp | Date) => {
-      const date = timestamp instanceof Timestamp ? timestamp.toDate() : timestamp;
+  const formatDate = (timestamp: Timestamp | Date | any) => {
+      // The data from the safe collection hook is JSON, so the timestamp will be a string
+      if (!timestamp) return 'N/A';
+      const date = new Date(timestamp.seconds ? timestamp.toDate() : timestamp);
       return date.toLocaleDateString();
   }
 
@@ -95,7 +97,7 @@ export default function ManageLicenseRequests() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {requests.map(request => (
+              {requests.map((request: any) => (
                 <TableRow key={request.id}>
                   <TableCell className="font-medium">{request.trackTitle}</TableCell>
                   <TableCell>{request.requestorName}</TableCell>
