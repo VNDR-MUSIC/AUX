@@ -8,14 +8,14 @@ import { fetchCollectionAction } from '@/app/actions/fetch-collection';
 // The hook now accepts an optional filters object.
 export function useSafeCollection<T>(collectionPath: string | null, filters?: Record<string, any>) {
   const { user } = useUser();
-  const [data, setData] = useState<T[]>([]);
+  const [data, setData] = useState<T[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // Do not fetch if the path is null (e.g. waiting for dependencies)
     if (!collectionPath) {
-      setData([]);
+      setData(null);
       setIsLoading(false);
       return;
     }
@@ -26,7 +26,7 @@ export function useSafeCollection<T>(collectionPath: string | null, filters?: Re
     if (!isPublicPath && !user) {
       // If it's a protected path and we don't have a user, wait.
       // If data is already there from a previous user, clear it.
-      if (data.length > 0) setData([]);
+      if (data) setData(null);
       setIsLoading(true); // Remain in loading state until user is available
       return;
     }
@@ -38,13 +38,15 @@ export function useSafeCollection<T>(collectionPath: string | null, filters?: Re
         const result = await fetchCollectionAction({ collectionPath, filters });
         
         if (result.error) {
-            throw new Error(result.error);
+            // The server action now returns a structured error
+            throw new Error(result.details || result.error);
         }
 
         setData(result.data as T[]);
-      } catch (err) {
-        setError(err);
-        console.error(`Error fetching collection '${collectionPath}':`, err);
+      } catch (err: any) {
+        console.error(`🔥 useSafeCollection Error on '${collectionPath}':`, err);
+        setError(err.message || "An unexpected error occurred.");
+        setData(null);
       } finally {
         setIsLoading(false);
       }

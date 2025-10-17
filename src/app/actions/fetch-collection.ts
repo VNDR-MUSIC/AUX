@@ -2,10 +2,8 @@
 'use server';
 
 import { getFirebaseAdmin } from '@/firebase/admin';
-import { headers } from 'next/headers';
-import { getAuth } from 'firebase-admin/auth';
-import { CollectionReference, Timestamp } from 'firebase-admin/firestore';
 import { cookies } from 'next/headers';
+import { CollectionReference, Timestamp } from 'firebase-admin/firestore';
 
 // This function recursively serializes data, converting Timestamps and other non-JSON-friendly types.
 const serializeData = (data: any): any => {
@@ -25,6 +23,7 @@ const serializeData = (data: any): any => {
         return data.map(serializeData);
     }
 
+    // This handles nested objects
     const serialized: { [key: string]: any } = {};
     for (const key in data) {
         if (Object.prototype.hasOwnProperty.call(data, key)) {
@@ -46,44 +45,43 @@ export async function fetchCollectionAction({ collectionPath, filters }: { colle
   try {
     const cookieStore = cookies();
     const idToken = cookieStore.get('firebaseIdToken')?.value;
-    const { db } = await getFirebaseAdmin();
+    const { db, auth: adminAuth } = await getFirebaseAdmin();
 
-    // Public, unauthenticated access is allowed ONLY for the 'works' collection without filters.
+    // Public, unauthenticated access for 'works' collection
     if (collectionPath === 'works' && !filters && !idToken) {
       const publicWorksSnap = await db.collection(collectionPath).get();
       const publicWorks = publicWorksSnap.docs.map(serializeDoc);
       return { data: publicWorks };
     }
 
+    // Authenticated access for all other collections
     if (!idToken) {
-      return { error: 'Unauthorized: A valid user token is required for this request.' };
+      return { error: 'Unauthorized: User token is required for this request.' };
     }
-
-    const { auth: adminAuth } = await getFirebaseAdmin();
+    
     const decodedToken = await adminAuth.verifyIdToken(idToken);
-    
-    if (!decodedToken) {
-        return { error: 'Unauthorized: Invalid token.' };
-    }
-    
     const uid = decodedToken.uid;
     const isAdmin = decodedToken.admin === true;
     
     let query: CollectionReference | FirebaseFirestore.Query = db.collection(collectionPath);
     
+    // Apply security rules logic server-side
     if (!isAdmin) {
         if (collectionPath === 'license_requests') {
+             // For license requests, fetch all and then filter for artist OR requestor
              const snap = await query.get();
              const docs = snap.docs
                 .map(serializeDoc)
                 .filter((doc: any) => doc.artistId === uid || doc.requestorId === uid);
              return { data: docs };
+        } else {
+             // For most collections, filter by ownership
+            const ownerField = collectionPath === 'works' ? 'artistId' : 'userId';
+            query = query.where(ownerField, '==', uid);
         }
-
-        const ownerField = collectionPath === 'works' ? 'artistId' : 'userId';
-        query = query.where(ownerField, '==', uid);
     }
     
+    // Apply additional filters from the client
     if (filters) {
       for (const key in filters) {
         if (Object.prototype.hasOwnProperty.call(filters, key)) {
@@ -100,8 +98,8 @@ export async function fetchCollectionAction({ collectionPath, filters }: { colle
 
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "An unknown server error occurred.";
-    console.error(`[Server Action fetchCollection] Error:`, errorMessage);
-    // Ensure that even in case of an error, a serializable object is returned.
+    console.error(`[Server Action Error] Path: ${collectionPath}`, errorMessage);
+    // CRITICAL: Always return a serializable JSON object, even on failure.
     return { error: "Internal Server Error", details: errorMessage };
   }
 }
