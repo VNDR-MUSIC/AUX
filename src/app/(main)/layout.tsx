@@ -7,13 +7,17 @@ import { Sidebar, SidebarProvider } from "@/components/ui/sidebar";
 import SidebarNav from "@/components/layout/sidebar-nav";
 import SymbiChatWidget from "@/components/symbi/symbi-chat-widget";
 import SessionRewindTracker from "@/components/session-rewind-tracker";
+import SessionRewind from "@/components/session-rewind";
+import VideoBackground from "@/components/layout/video-background";
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
     <FirebaseClientProvider>
         <SidebarProvider>
             <div className="flex flex-col min-h-screen max-w-full overflow-x-hidden">
-                <div className="flex flex-1">
+                <VideoBackground />
+                <SessionRewind />
+                <div className="flex flex-1 relative z-10">
                     <Sidebar>
                         <SidebarNav />
                     </Sidebar>
