@@ -7,23 +7,40 @@ import { getAuth } from 'firebase-admin/auth';
 import { CollectionReference, Timestamp } from 'firebase-admin/firestore';
 import { cookies } from 'next/headers';
 
-// This function serializes data, converting Timestamps to ISO strings.
-const serializeData = (doc: FirebaseFirestore.DocumentData) => {
-    const data = doc.data();
-    const serialized: {[key: string]: any} = { id: doc.id };
+// This function recursively serializes data, converting Timestamps and other non-JSON-friendly types.
+const serializeData = (data: any): any => {
+    if (data === null || data === undefined || typeof data !== 'object') {
+        return data;
+    }
+
+    if (data instanceof Timestamp) {
+        return data.toDate().toISOString();
+    }
+    
+    if (data instanceof Date) {
+        return data.toISOString();
+    }
+
+    if (Array.isArray(data)) {
+        return data.map(serializeData);
+    }
+
+    const serialized: { [key: string]: any } = {};
     for (const key in data) {
         if (Object.prototype.hasOwnProperty.call(data, key)) {
-            const value = data[key];
-            if (value instanceof Timestamp) {
-                // Convert Firestore Timestamps to ISO strings
-                serialized[key] = value.toDate().toISOString();
-            } else {
-                serialized[key] = value;
-            }
+            serialized[key] = serializeData(data[key]);
         }
     }
     return serialized;
-}
+};
+
+const serializeDoc = (doc: FirebaseFirestore.DocumentData) => {
+    return {
+        id: doc.id,
+        ...serializeData(doc.data()),
+    };
+};
+
 
 export async function fetchCollectionAction({ collectionPath, filters }: { collectionPath: string, filters?: Record<string, any> }) {
   try {
@@ -34,7 +51,7 @@ export async function fetchCollectionAction({ collectionPath, filters }: { colle
     // Public, unauthenticated access is allowed ONLY for the 'works' collection without filters.
     if (collectionPath === 'works' && !filters && !idToken) {
       const publicWorksSnap = await db.collection(collectionPath).get();
-      const publicWorks = publicWorksSnap.docs.map(serializeData);
+      const publicWorks = publicWorksSnap.docs.map(serializeDoc);
       return { data: publicWorks };
     }
 
@@ -58,7 +75,7 @@ export async function fetchCollectionAction({ collectionPath, filters }: { colle
         if (collectionPath === 'license_requests') {
              const snap = await query.get();
              const docs = snap.docs
-                .map(serializeData)
+                .map(serializeDoc)
                 .filter((doc: any) => doc.artistId === uid || doc.requestorId === uid);
              return { data: docs };
         }
@@ -77,7 +94,7 @@ export async function fetchCollectionAction({ collectionPath, filters }: { colle
     }
 
     const snap = await query.get();
-    const docs = snap.docs.map(serializeData);
+    const docs = snap.docs.map(serializeDoc);
 
     return { data: docs };
 
@@ -88,4 +105,3 @@ export async function fetchCollectionAction({ collectionPath, filters }: { colle
     return { error: "Internal Server Error", details: errorMessage };
   }
 }
-
