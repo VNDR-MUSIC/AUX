@@ -7,20 +7,13 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Check, Clock, DraftingCompass } from 'lucide-react';
+import { Check, Clock, DraftingCompass, BarChart } from 'lucide-react';
 
 const roadmapFeatures = [
   {
-    title: 'Music Auctions Platform',
+    title: 'Music Auctions Platform (Audio.Exchange)',
     status: 'In Development',
     description: 'A full-featured auction house for artists to buy and sell music rights using VSD tokens. Includes bidding, escrow, and smart contract integration.',
-    icon: <DraftingCompass className="h-6 w-6 text-primary" />,
-    statusColor: 'bg-yellow-500',
-  },
-  {
-    title: 'AI-Powered Reporting Engine',
-    status: 'In Development',
-    description: 'Generate in-depth PDF reports on your catalog\'s performance, including stream analysis, listener demographics, and revenue projections for a VSD token fee.',
     icon: <DraftingCompass className="h-6 w-6 text-primary" />,
     statusColor: 'bg-yellow-500',
   },
@@ -30,6 +23,13 @@ const roadmapFeatures = [
     description: 'A suite of tools to assist in the creative process, including lyric suggestions, melody generation, and chord progression analysis.',
     icon: <Clock className="h-6 w-6 text-primary" />,
     statusColor: 'bg-blue-500',
+  },
+  {
+    title: 'AI-Powered Reporting Engine',
+    status: 'Launched',
+    description: 'Generate in-depth PDF reports on your catalog\'s performance, including stream analysis, listener demographics, and revenue projections for a VSD token fee.',
+    icon: <BarChart className="h-6 w-6 text-primary" />,
+    statusColor: 'bg-green-600',
   },
   {
     title: 'Expanded Distribution Network',
