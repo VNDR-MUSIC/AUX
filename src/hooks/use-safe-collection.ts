@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -11,9 +12,21 @@ export function useSafeCollection<T>(collectionPath: string | null, filters?: Re
   const [error, setError] = useState<any>(null);
 
   useEffect(() => {
-    if (!user || !collectionPath) {
+    // Do not fetch if the path is null (e.g. waiting for dependencies)
+    if (!collectionPath) {
       setData([]);
       setIsLoading(false);
+      return;
+    }
+
+    // For public collections that don't need a user, we can fetch immediately.
+    // For protected collections, we must wait for the user object.
+    const isPublicPath = collectionPath === 'works' && !filters;
+    if (!isPublicPath && !user) {
+      // If it's a protected path and we don't have a user, wait.
+      // If data is already there from a previous user, clear it.
+      if (data.length > 0) setData([]);
+      setIsLoading(true); // Remain in loading state until user is available
       return;
     }
 
@@ -21,14 +34,15 @@ export function useSafeCollection<T>(collectionPath: string | null, filters?: Re
       setIsLoading(true);
       setError(null);
       try {
-        const idToken = await user.getIdToken();
+        const idToken = user ? await user.getIdToken() : null;
+        const headers: HeadersInit = { 'Content-Type': 'application/json' };
+        if (idToken) {
+            headers['Authorization'] = `Bearer ${idToken}`;
+        }
+        
         const response = await fetch('/api/fetchCollection', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${idToken}`,
-            },
-            // Pass filters in the body
+            headers: headers,
             body: JSON.stringify({ collectionPath, filters }),
         });
 

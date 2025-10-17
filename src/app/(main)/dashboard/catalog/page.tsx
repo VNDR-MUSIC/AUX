@@ -23,10 +23,11 @@ export default function CatalogPage() {
   const { user } = useUser();
   const searchParams = useSearchParams();
   
-  // Use the new, secure hook which automatically filters by user ID.
+  // Use the safe hook. It will automatically filter by user ID because
+  // the server-side API knows to apply the `artistId` filter for the 'works' collection.
   const { data: works, isLoading } = useSafeCollection<Track>(
-    'works',
-    { artistId: user?.uid }
+    user ? 'works' : null, // Only fetch if user is logged in
+    user ? { artistId: user.uid } : undefined
   );
 
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
@@ -48,6 +49,7 @@ export default function CatalogPage() {
   }, [searchParams]);
 
   const filteredWorks = useMemo(() => {
+    if (!works) return [];
     return works
       ?.filter(work => {
         const term = searchTerm.toLowerCase();

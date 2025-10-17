@@ -21,7 +21,8 @@ import { useSearchParams } from 'next/navigation';
 export default function CatalogPage() {
   const searchParams = useSearchParams();
   
-  // Fetch all works from the public catalog.
+  // Fetch all works from the public catalog using the new safe hook.
+  // No user is required for this public page.
   const { data: works, isLoading } = useSafeCollection<Track>('works');
 
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
