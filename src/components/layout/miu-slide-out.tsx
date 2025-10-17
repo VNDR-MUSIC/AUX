@@ -6,7 +6,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { GraduationCap, X } from 'lucide-react';
+import { GraduationCap, X, BookOpen, ShieldCheck, Cpu, Network } from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const panelVariants = {
   hidden: { x: '-100%' },
@@ -18,11 +20,10 @@ export default function MiuSlideOut() {
 
   return (
     <>
-      {/* Clickable Logo Tab - always visible when panel is closed */}
       <AnimatePresence>
         {!isOpen && (
           <motion.div
-            initial={{ x: -48, rotate: 0 }}
+            initial={{ x: -80, rotate: 0 }}
             animate={{
               rotate: [0, -5, 5, -5, 0],
             }}
@@ -53,7 +54,6 @@ export default function MiuSlideOut() {
         )}
       </AnimatePresence>
 
-      {/* Slide-out Content Panel */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -62,32 +62,21 @@ export default function MiuSlideOut() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            {/* Backdrop */}
             <div
               className="absolute inset-0 bg-black/60 backdrop-blur-sm"
               onClick={() => setIsOpen(false)}
             />
 
-            {/* Content */}
             <motion.div
-              className="fixed top-0 left-0 h-full w-72 bg-card border-r border-border shadow-2xl flex flex-col p-6"
+              className="fixed top-0 left-0 h-full w-full max-w-sm bg-card border-r border-border shadow-2xl flex flex-col"
               variants={panelVariants}
               initial="hidden"
               animate="visible"
               exit="hidden"
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             >
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={() => setIsOpen(false)} 
-                className="absolute top-4 right-4"
-              >
-                <X className="h-5 w-5" />
-              </Button>
-              
-              <div className="flex flex-col items-center text-center mt-8">
-                <div className="relative h-32 w-64 mb-4">
+              <div className="flex items-center justify-between p-4 border-b">
+                 <div className="relative h-16 w-32">
                   <Image 
                     src="https://i.ibb.co/4gJqBfM8/MIU-logo-wt.png" 
                     alt="MIU Logo" 
@@ -95,14 +84,81 @@ export default function MiuSlideOut() {
                     className="object-contain" 
                   />
                 </div>
-                <h3 className="font-headline text-lg font-semibold">Music Industry University</h3>
-                <p className="text-sm text-muted-foreground mt-2 mb-6">
-                  Master the business of music with courses and resources from industry experts.
-                </p>
-                <Button asChild size="sm" className="w-full">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => setIsOpen(false)} 
+                >
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
+
+              <ScrollArea className="flex-1">
+                <div className="p-6 text-sm">
+                  <h3 className="font-headline text-lg font-semibold">Music Industry University</h3>
+                  <p className="text-primary font-semibold text-sm">"An Unfair Advantage in the Music Industry."</p>
+                  <p className="text-muted-foreground mt-2 mb-6">
+                    An accredited, multi-disciplinary university for the modern artist, empowering you to build, own, and control your empire.
+                  </p>
+
+                  <Accordion type="single" collapsible defaultValue="item-1">
+                    <AccordionItem value="item-1">
+                      <AccordionTrigger className="font-semibold text-base">
+                        <div className="flex items-center gap-2">
+                            <BookOpen className="h-4 w-4"/> Foundational Mastery
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="space-y-4">
+                        <p>The year-long syllabus, "Operation: Deconstructing the Machine," starts with mastering ownership, protection, and hidden revenue streams.</p>
+                        <div>
+                          <h4 className="font-bold">Operation: The Artist's Code</h4>
+                          <p className="text-muted-foreground">Master financial literacy, build discipline, and develop a growth mindset.</p>
+                        </div>
+                        <div>
+                          <h4 className="font-bold">Operation: Paper Trail</h4>
+                          <p className="text-muted-foreground">Protect your IP with timestamps, chain of custody, and blockchain registration.</p>
+                        </div>
+                         <div>
+                          <h4 className="font-bold">Operation: Monetize the Shadows</h4>
+                          <p className="text-muted-foreground">Learn direct sync licensing and YouTube monetization without middlemen.</p>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+
+                    <AccordionItem value="item-2">
+                       <AccordionTrigger className="font-semibold text-base">
+                         <div className="flex items-center gap-2">
+                            <Cpu className="h-4 w-4"/> AI-Powered Tools
+                        </div>
+                       </AccordionTrigger>
+                      <AccordionContent>
+                        <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+                            <li><span className="font-semibold text-foreground">Contract Analysis:</span> Deconstruct legal jargon and find predatory clauses.</li>
+                            <li><span className="font-semibold text-foreground">Revenue Diversification:</span> Build multiple income streams beyond streaming.</li>
+                            <li><span className="font-semibold text-foreground">Social Media Analysis:</span> Predict post impact and align with your brand.</li>
+                        </ul>
+                      </AccordionContent>
+                    </AccordionItem>
+                    
+                    <AccordionItem value="item-3" className="border-b-0">
+                       <AccordionTrigger className="font-semibold text-base">
+                        <div className="flex items-center gap-2">
+                            <Network className="h-4 w-4"/> Exclusive Network & D2C
+                        </div>
+                       </AccordionTrigger>
+                      <AccordionContent>
+                         <p className="text-muted-foreground">Gain access to a vetted community of artists and pros, and master Direct-to-Consumer (D2C) sales to bypass traditional gatekeepers.</p>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </div>
+              </ScrollArea>
+              
+              <div className="p-6 mt-auto border-t">
+                 <Button asChild size="lg" className="w-full">
                   <Link href="https://musicindustry.university" target="_blank" rel="noopener noreferrer" onClick={() => setIsOpen(false)}>
                     <GraduationCap className="mr-2 h-4 w-4" />
-                    Explore Courses
+                    Explore the Full Curriculum
                   </Link>
                 </Button>
               </div>
