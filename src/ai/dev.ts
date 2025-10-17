@@ -9,8 +9,10 @@ import '@/ai/flows/symbi-chat-flow.ts';
 import '@/ai/flows/legal-eagle-flow.ts';
 import '@/ai/flows/generate-report-flow.ts';
 import '@/ai/flows/radiolize-polling-flow.ts';
+import '@/ai/flows/tts-flow.ts';
 import '@/ai/tools/get-knowledge-base-tool.ts';
 import '@/ai/tools/register-work-with-pro-tool.ts';
 import '@/ai/tools/update-license-request-status-tool.ts';
 import '@/ai/tools/post-to-social-media-tool.ts';
+
 
