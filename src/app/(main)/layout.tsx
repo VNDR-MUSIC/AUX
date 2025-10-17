@@ -21,7 +21,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                     <Sidebar>
                         <SidebarNav />
                     </Sidebar>
-                    <main className="flex-1 p-4 md:p-6 lg:p-8 bg-background/80 backdrop-blur-lg rounded-tl-lg">
+                    <main className="flex-1 p-4 md:p-6 lg:p-8 bg-background/70 backdrop-blur-lg rounded-tl-lg">
                         {children}
                     </main>
                 </div>
