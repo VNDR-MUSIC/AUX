@@ -59,7 +59,7 @@ const tourSteps: Record<OnboardingStep, Shepherd.Step.StepOptions[]> = {
       id: 'upload-ai-art',
       title: 'AI Cover Art',
       text: 'No cover art? No problem. Once you fill in the title and genre, click here to generate unique, AI-powered cover art for your track.',
-      attachTo: { element: 'form#cover-art-form button', on: 'left' },
+      attachTo: { element: 'form#cover-art-form + button', on: 'left' },
       buttons: [
         { text: 'Back', action: () => Shepherd.activeTour?.back(), secondary: true },
         { text: 'Next', action: () => Shepherd.activeTour?.next() },
