@@ -68,8 +68,8 @@ export default function DashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
-        <Card className="xl:col-span-2 backdrop-blur-lg bg-card/40">
+      <div className="grid auto-rows-min gap-4 sm:gap-6 md:gap-8">
+        <Card className="lg:col-span-2 backdrop-blur-lg bg-card/40">
           <CardHeader>
             <Skeleton className="h-8 w-48" />
             <Skeleton className="h-4 w-64" />
@@ -86,7 +86,7 @@ export default function DashboardPage() {
             </div>
           </CardContent>
         </Card>
-        <div className="space-y-8">
+        <div className="grid auto-rows-min gap-4 md:gap-8 md:grid-cols-2 lg:grid-cols-1">
             <Card className="backdrop-blur-lg bg-card/40">
                 <CardHeader><Skeleton className="h-8 w-32" /></CardHeader>
                 <CardContent><Skeleton className="h-10 w-full" /></CardContent>
@@ -96,7 +96,7 @@ export default function DashboardPage() {
                 <CardContent><Skeleton className="h-10 w-full" /></CardContent>
             </Card>
         </div>
-         <Card className="xl:col-span-3 backdrop-blur-lg bg-card/40">
+         <Card className="lg:col-span-3 backdrop-blur-lg bg-card/40">
             <CardHeader>
                 <Skeleton className="h-8 w-1/2" />
                 <Skeleton className="h-4 w-3/4" />
