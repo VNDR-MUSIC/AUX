@@ -1,8 +1,8 @@
 
 'use client';
 
-import { useUser, useFirebase, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, orderBy, Timestamp, where } from 'firebase/firestore';
+import { useUser, useCollection } from '@/firebase';
+import { query, orderBy, Timestamp } from 'firebase/firestore';
 import {
   Card,
   CardContent,
@@ -25,6 +25,8 @@ import { Icons } from '@/components/icons';
 import { useDoc } from '@/firebase/firestore/use-doc';
 import { doc } from 'firebase/firestore';
 import { Separator } from '@/components/ui/separator';
+import { useMemo } from 'react';
+import { useFirebase } from '@/firebase/provider';
 
 type Transaction = {
   id: string;
@@ -38,25 +40,18 @@ export default function WalletPage() {
   const { user } = useUser();
   const { firestore } = useFirebase();
 
-  const userDocRef = useMemoFirebase(
+  const userDocRef = useMemo(
     () => (firestore && user ? doc(firestore, 'users', user.uid) : null),
     [firestore, user]
   );
   const { data: userData, isLoading: isUserDocLoading } = useDoc(userDocRef);
 
-  // The useCollection hook now automatically applies where('userId', '==', user.uid)
-  // We only need to specify the collection and ordering.
-  const transactionsQuery = useMemoFirebase(
-    () =>
-      firestore && user
-        ? query(
-            collection(firestore, 'vsd_transactions'),
-            orderBy('transactionDate', 'desc')
-          )
-        : null,
-    [firestore, user]
-  );
-  const { data: transactions, isLoading: areTransactionsLoading } = useCollection<Transaction>(transactionsQuery);
+  // The new useCollection hook takes the collection path and an optional query builder.
+  const queryBuilder = useMemo(() => {
+    return (q: Query) => query(q, orderBy('transactionDate', 'desc'));
+  }, []);
+  
+  const { data: transactions, isLoading: areTransactionsLoading } = useCollection<Transaction>('vsd_transactions', queryBuilder);
 
   const isLoading = isUserDocLoading || areTransactionsLoading;
 

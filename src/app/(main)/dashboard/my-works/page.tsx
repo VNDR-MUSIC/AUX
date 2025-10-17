@@ -1,9 +1,8 @@
 
 'use client';
 
-import { useUser, useCollection, useMemoFirebase } from '@/firebase';
-import { useFirebase } from '@/firebase/provider';
-import { collection, query, orderBy } from 'firebase/firestore';
+import { useUser, useCollection } from '@/firebase';
+import { query, orderBy } from 'firebase/firestore';
 import {
   Card,
   CardContent,
@@ -33,6 +32,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Track } from '@/store/music-player-store';
+import { useMemo } from 'react';
 
 type Work = Track & {
   status?: string;
@@ -42,22 +42,13 @@ type Work = Track & {
 
 export default function MyWorksPage() {
   const { user } = useUser();
-  const { firestore } = useFirebase();
 
-  // The useCollection hook now automatically applies the where('artistId', '==', user.uid) filter.
-  // We only need to specify the collection and ordering.
-  const worksQuery = useMemoFirebase(
-    () =>
-      firestore && user?.uid
-        ? query(
-            collection(firestore, 'works'),
-            orderBy('uploadDate', 'desc')
-          )
-        : null,
-    [firestore, user?.uid]
-  );
+  // The new useCollection hook takes the collection path and an optional query builder.
+  const queryBuilder = useMemo(() => {
+    return (q: Query) => query(q, orderBy('uploadDate', 'desc'));
+  }, []);
 
-  const { data: works, isLoading } = useCollection<Work>(worksQuery);
+  const { data: works, isLoading } = useCollection<Work>('works', queryBuilder);
 
   const getStatusBadge = (work: Work) => {
     if (work.status === 'processing') {

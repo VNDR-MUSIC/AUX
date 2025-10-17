@@ -1,16 +1,16 @@
 
 'use client';
 
-import { useUser, useCollection, useMemoFirebase } from "@/firebase";
+import { useUser, useCollection } from "@/firebase";
 import { useOnboarding } from "@/hooks/use-onboarding";
 import DashboardStats from '@/components/dashboard/dashboard-stats';
 import ActionCards from '@/components/dashboard/action-cards';
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Upload, Music } from "lucide-react";
+import { Upload } from "lucide-react";
 import { useDoc } from "@/firebase";
-import { doc, collection, query, where, orderBy, limit } from "firebase/firestore";
+import { doc, query } from "firebase/firestore";
 import { useFirebase } from "@/firebase/provider";
 import RecentWorks from "@/components/dashboard/recent-works";
 import {
@@ -70,21 +70,10 @@ export default function DashboardPage() {
   const { firestore } = useFirebase();
   useOnboarding('dashboard');
 
-  const userDocRef = useMemoFirebase(() => (firestore && user ? doc(firestore, 'users', user.uid) : null), [firestore, user]);
+  const userDocRef = useMemo(() => (firestore && user ? doc(firestore, 'users', user.uid) : null), [firestore, user]);
   const { data: userData, isLoading: isUserDocLoading } = useDoc(userDocRef);
 
-  const worksQuery = useMemoFirebase(() => {
-    // THIS IS THE CRITICAL FIX: Do not create the query until user.uid is definitively available.
-    if (!firestore || !user?.uid) {
-      return null;
-    }
-    return query(
-      collection(firestore, 'works'),
-      where('artistId', '==', user.uid)
-    );
-  }, [firestore, user?.uid]); // Depend specifically on user.uid
-
-  const { data: allWorks, isLoading: areWorksLoading } = useCollection<Track>(worksQuery);
+  const { data: allWorks, isLoading: areWorksLoading } = useCollection<Track>('works');
   
   const recentWorks = useMemo(() => allWorks?.sort((a, b) => (b.uploadDate as any) - (a.uploadDate as any)).slice(0, 5) || [], [allWorks]);
   const topWorks = useMemo(() => allWorks?.sort((a, b) => (b.plays || 0) - (a.plays || 0)) || [], [allWorks]);

@@ -7,7 +7,6 @@ import {
   DocumentData,
   FirestoreError,
   QuerySnapshot,
-  CollectionReference,
   collection,
   query,
   where,
@@ -29,28 +28,26 @@ export interface UseCollectionResult<T> {
   error: FirestoreError | Error | null; // Error object, or null.
 }
 
+// Maps collection names to the field that stores the owner's ID.
 const SECURED_COLLECTIONS: Record<string, string> = {
-    'works': 'artistId',
-    'vsd_transactions': 'userId',
-    'license_requests': 'artistId',
+    works: 'artistId',
+    vsd_transactions: 'userId',
+    license_requests: 'artistId',
 };
-
 
 /**
  * A hook to securely subscribe to a Firestore collection in real-time.
  * It automatically applies security filters based on the user's role (admin vs. regular user)
  * for collections defined in `SECURED_COLLECTIONS`.
  *
- * IMPORTANT! YOU MUST MEMOIZE the inputted memoizedTargetRefOrQuery or BAD THINGS WILL HAPPEN.
- * Use useMemoFirebase to memoize it.
- *
  * @template T Optional type for document data. Defaults to any.
- * @param {CollectionReference<DocumentData> | Query<DocumentData> | null | undefined} originalQuery -
- * The original Firestore CollectionReference or Query. Hook execution waits if null/undefined.
+ * @param {string | null} collectionPath - The path to the Firestore collection (e.g., 'works').
+ * @param {((q: Query) => Query) | null} [queryBuilder] - An optional function to add more query constraints (e.g., orderBy, limit).
  * @returns {UseCollectionResult<T>} Object with data, isLoading, error.
  */
 export function useCollection<T = any>(
-  originalQuery: ((CollectionReference<DocumentData> | Query<DocumentData>) & { __memo?: boolean }) | null | undefined
+  collectionPath: string | null,
+  queryBuilder?: ((q: Query) => Query) | null
 ): UseCollectionResult<T> {
   type ResultItemType = WithId<T>;
   type StateDataType = ResultItemType[] | null;
@@ -63,25 +60,31 @@ export function useCollection<T = any>(
   const isAdmin = (user as any)?.customClaims?.admin === true;
 
   useEffect(() => {
-    if (!originalQuery || !firestore || !user) {
+    // Wait until all dependencies are available.
+    if (!firestore || !user || !collectionPath) {
       setData(null);
       setIsLoading(false);
       setError(null);
       return;
     }
 
-    let finalQuery: Query<DocumentData> = originalQuery;
-    // THIS IS THE DEFINITIVE FIX: Use the internal `_path` property which is reliable.
-    const collectionPath = (originalQuery as any)._path?.segments[0] ?? '';
+    setIsLoading(true);
+    setError(null);
+    
+    // Start with the base collection reference.
+    let finalQuery: Query<DocumentData> = collection(firestore, collectionPath);
+
     const ownerField = SECURED_COLLECTIONS[collectionPath];
 
     // If it's a secured collection and the user is NOT an admin, apply the security filter.
     if (ownerField && !isAdmin) {
-        finalQuery = query(originalQuery, where(ownerField, '==', user.uid));
+        finalQuery = query(finalQuery, where(ownerField, '==', user.uid));
     }
-
-    setIsLoading(true);
-    setError(null);
+    
+    // Apply any additional query constraints provided by the caller.
+    if (queryBuilder) {
+      finalQuery = queryBuilder(finalQuery);
+    }
 
     const unsubscribe = onSnapshot(
       finalQuery,
@@ -97,7 +100,7 @@ export function useCollection<T = any>(
       (err: FirestoreError) => {
         const contextualError = new FirestorePermissionError({
           operation: 'list',
-          path: (finalQuery as any)._query?.path.segments.join('/') || collectionPath,
+          path: collectionPath,
         });
 
         setError(contextualError);
@@ -109,11 +112,7 @@ export function useCollection<T = any>(
     );
 
     return () => unsubscribe();
-  }, [originalQuery, firestore, user, isAdmin]);
-
-  if (originalQuery && !originalQuery.__memo) {
-    throw new Error('A Firestore query was not properly memoized using useMemoFirebase. This will cause infinite loops.');
-  }
+  }, [collectionPath, firestore, user, isAdmin, queryBuilder]); // `queryBuilder` should be stable (memoized) if it's not a static function.
 
   return { data, isLoading, error };
 }

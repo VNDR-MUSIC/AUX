@@ -3,8 +3,8 @@
 
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
-import { useDoc, useCollection, useMemoFirebase, useUser } from '@/firebase';
-import { doc, collection, query, where } from 'firebase/firestore';
+import { useDoc, useCollection, useUser } from '@/firebase';
+import { doc, query, where } from 'firebase/firestore';
 import { useFirebase } from '@/firebase';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -25,6 +25,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { useMemo } from 'react';
 
 
 export default function ProfilePage() {
@@ -33,22 +34,22 @@ export default function ProfilePage() {
   const { user: currentUser } = useUser();
   const { toast } = useToast();
 
-  const userRef = useMemoFirebase(
+  const userRef = useMemo(
     () => (firestore && userId ? doc(firestore, 'users', userId as string) : null),
     [firestore, userId]
   );
   const { data: user, isLoading: isUserLoading } = useDoc(userRef);
 
-  const worksQuery = useMemoFirebase(
-    () =>
-      firestore && userId
-        ? query(collection(firestore, 'works'), where('artistId', '==', userId))
-        : null,
-    [firestore, userId]
-  );
-  const { data: works, isLoading: areWorksLoading } = useCollection(worksQuery);
+  // The new hook automatically filters by artistId if the user is not an admin.
+  // For a public profile page, we need to manually construct the query to show
+  // another user's works.
+  const queryBuilder = useMemo(() => {
+    return (q: Query) => query(q, where('artistId', '==', userId as string));
+  }, [userId]);
+
+  const { data: works, isLoading: areWorksLoading } = useCollection('works', queryBuilder);
   
-  const adminRef = useMemoFirebase(() => (firestore && currentUser ? doc(firestore, `roles_admin/${currentUser.uid}`) : null), [firestore, currentUser]);
+  const adminRef = useMemo(() => (firestore && currentUser ? doc(firestore, `roles_admin/${currentUser.uid}`) : null), [firestore, currentUser]);
   const { data: adminDoc } = useDoc(adminRef);
   const isAdmin = !!adminDoc;
 

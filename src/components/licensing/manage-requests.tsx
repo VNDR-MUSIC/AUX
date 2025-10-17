@@ -1,8 +1,8 @@
 
 'use client';
 
-import { useUser, useFirebase, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, where, Timestamp } from 'firebase/firestore';
+import { useCollection } from '@/firebase';
+import { Timestamp } from 'firebase/firestore';
 import {
   Table,
   TableBody,
@@ -20,19 +20,9 @@ import { useToast } from '@/hooks/use-toast';
 import { Check, X } from 'lucide-react';
 
 export default function ManageLicenseRequests() {
-  const { user } = useUser();
-  const { firestore } = useFirebase();
   const { toast } = useToast();
 
-  const requestsQuery = useMemoFirebase(
-    () =>
-      firestore && user
-        ? query(collection(firestore, 'license_requests'), where('artistId', '==', user.uid))
-        : null,
-    [firestore, user]
-  );
-
-  const { data: requests, isLoading } = useCollection(requestsQuery);
+  const { data: requests, isLoading } = useCollection('license_requests');
 
   const handleApprove = async (id: string) => {
     const result = await approveLicenseRequestAction(id);
