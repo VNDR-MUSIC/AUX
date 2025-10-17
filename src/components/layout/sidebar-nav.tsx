@@ -15,9 +15,7 @@ import {
   Settings,
   Users,
 } from 'lucide-react';
-import { useDoc, useUser } from '@/firebase';
-import { doc } from 'firebase/firestore';
-
+import { useUser } from '@/firebase';
 import {
   SidebarHeader,
   SidebarMenu,
@@ -42,7 +40,7 @@ import {
 import { Button } from '../ui/button';
 import { Avatar, AvatarFallback } from '../ui/avatar';
 import { signOut } from 'firebase/auth';
-import { useFirebase, useMemoFirebase } from '@/firebase/provider';
+import { useFirebase } from '@/firebase/provider';
 import { useToast } from '@/hooks/use-toast';
 
 
@@ -67,22 +65,24 @@ const adminMenuItem = { href: '/admin', icon: Shield, label: 'Admin' };
 export default function SidebarNav() {
   const pathname = usePathname();
   const { user, isUserLoading } = useUser();
-  const { auth, firestore } = useFirebase();
+  const { auth } = useFirebase();
   const router = useRouter();
   const { toast } = useToast();
 
-  const adminRef = useMemoFirebase(() => (firestore && user ? doc(firestore, `roles_admin/${user.uid}`) : null), [firestore, user]);
-  const { data: adminDoc, isLoading: isAdminLoading } = useDoc(adminRef);
-  const isAdmin = !!adminDoc;
+  // DEFINITIVE FIX: Rely on the custom claim attached to the user token.
+  // The 'roles_admin' collection is protected by rules that only allow admins to read it,
+  // so a client-side check will always fail for a user who doesn't already know they're an admin.
+  // The custom claim is the secure way for the client to be aware of the user's role.
+  const isAdmin = (user as any)?.customClaims?.admin === true;
 
   const menuItems = useMemo(() => {
-    if (isUserLoading || isAdminLoading) return [];
+    if (isUserLoading) return [];
     let items = user ? [...authenticatedMenuItems] : [...publicMenuItems];
     if (user && isAdmin) {
       items.push(adminMenuItem);
     }
     return items;
-  }, [user, isAdmin, isUserLoading, isAdminLoading]);
+  }, [user, isAdmin, isUserLoading]);
 
   const handleLogout = async () => {
     if (!auth) return;
@@ -117,7 +117,7 @@ export default function SidebarNav() {
         </Link>
       </SidebarHeader>
       <SidebarContent>
-        {isUserLoading || isAdminLoading ? (
+        {isUserLoading ? (
             <div className='p-2 space-y-2'>
                 <Skeleton className="h-8 w-full" />
                 <Skeleton className="h-8 w-full" />
@@ -131,8 +131,12 @@ export default function SidebarNav() {
                     <SidebarMenuButton
                     asChild
                     isActive={
+                        // Handle special case for root dashboard route
+                        item.href === '/dashboard' ? pathname === item.href :
+                        // Handle case for base / route
                         item.href === '/' ? pathname === item.href :
-                        item.href === '/dashboard' ? pathname === item.href : pathname.startsWith(item.href)
+                        // Default case for all other routes
+                        pathname.startsWith(item.href)
                     }
                     tooltip={{ children: item.label }}
                     >
