@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -27,19 +28,22 @@ export function useSafeCollection<T>(collectionPath: string | null, filters?: Re
     setError(null);
     
     try {
+      // The action now returns a Next.js Response object
       const response = await fetchCollectionAction({ collectionPath, filters });
       
-      // The response is now a Next.js Response object, so we parse its JSON body.
+      // We must parse its JSON body to get our structured data
       const result = await response.json();
 
       if (result.success) {
         setData(result.data as T[]);
       } else {
+        // Handle the structured error from safeServerAction
         console.error(`🔥 useSafeCollection Error on '${collectionPath}':`, result.error);
         setError(result.error || "An unexpected server error occurred.");
         setData(null);
       }
     } catch (e: any) {
+        // This catches network errors or if response.json() fails
         console.error(`🔥 useSafeCollection Hard Fail on '${collectionPath}':`, e);
         setError("Failed to communicate with the server. Please check your network connection.");
         setData(null);

@@ -1,40 +1,7 @@
+
 "use server";
 import { NextResponse } from "next/server";
-import { Timestamp, GeoPoint, DocumentReference } from "firebase-admin/firestore";
-
-/**
- * Recursively serialize Firestore data to JSON-safe values.
- * Handles:
- * - Timestamp -> ISO string
- * - GeoPoint -> { lat, lng }
- * - DocumentReference -> path string
- * - Arrays, nested objects
- * - null and undefined
- * - Any unknown types -> string
- */
-export function serializeFirestoreData(data: any): any {
-  if (data === undefined) return null; // avoid undefined
-  if (data === null) return null;
-  if (data instanceof Timestamp) return data.toDate().toISOString();
-  if (data instanceof GeoPoint) return { lat: data.latitude, lng: data.longitude };
-  if (data instanceof DocumentReference) return data.path;
-  if (Array.isArray(data)) return data.map(serializeFirestoreData);
-  if (data && typeof data === "object") {
-    const serialized: Record<string, any> = {};
-    for (const key in data) {
-      if (Object.prototype.hasOwnProperty.call(data, key)) {
-          serialized[key] = serializeFirestoreData(data[key]);
-      }
-    }
-    return serialized;
-  }
-  
-  // Handle primitives and other types
-  if (typeof data === "function") return `[Function: ${data.name || "anonymous"}]`;
-  if (typeof data === "symbol") return data.toString();
-  
-  return data;
-}
+import { serializeFirestoreData } from "@/lib/serialization";
 
 
 /**
@@ -45,12 +12,13 @@ export function serializeFirestoreData(data: any): any {
 export async function safeServerAction(action: () => Promise<any>) {
   try {
     const result = await action();
-    const serializedResult = serializeFirestoreData(result);
-    return NextResponse.json({ success: true, data: serializedResult });
+    // The result from the action is serialized here before being sent to the client.
+    return NextResponse.json({ success: true, data: serializeFirestoreData(result) });
   } catch (error: any) {
     console.error("🔥 Server Action Error:", error);
+    // If any error occurs, it's caught and a standardized error response is returned.
     return NextResponse.json(
-      { success: false, error: "Internal Server Error", details: error.message },
+      { success: false, error: error.message || "Internal Server Error" },
       { status: 500 }
     );
   }
