@@ -74,6 +74,7 @@ const symbiChatFlow = ai.defineFlow(
   async (input) => {
     // 2. Invoke the pre-defined prompt with the user's question and history.
     // The AI will decide if it needs to call any tools.
+    // The input to the prompt MUST match its defined input schema.
     const { output } = await symbiPrompt({
       history: input.history || [],
       question: input.question,
