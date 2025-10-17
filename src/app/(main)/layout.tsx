@@ -8,6 +8,7 @@ import SymbiChatWidget from "@/components/symbi/symbi-chat-widget";
 import SessionRewindTracker from "@/components/session-rewind-tracker";
 import SessionRewind from "@/components/session-rewind";
 import VideoBackground from "@/components/layout/video-background";
+import MiuSlideOut from "@/components/layout/miu-slide-out";
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -16,11 +17,12 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
             <div className="flex flex-col min-h-screen max-w-full overflow-x-hidden">
                 <VideoBackground />
                 <SessionRewind />
+                <MiuSlideOut />
                 <div className="flex flex-1 relative z-10">
                     <Sidebar>
                         <SidebarNav />
                     </Sidebar>
-                    <main className="flex-1 p-4 md:p-6 lg:p-8 bg-background/70 rounded-tl-lg">
+                    <main className="flex-1 p-4 md:p-6 lg:p-8 bg-card rounded-tl-lg">
                         {children}
                     </main>
                 </div>
