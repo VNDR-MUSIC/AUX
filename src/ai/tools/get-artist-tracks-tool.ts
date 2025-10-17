@@ -7,7 +7,7 @@
 
 import {ai} from '@/ai/genkit';
 import {getFirebaseAdmin} from '@/firebase/admin';
-import {collection, query, where, getDocs} from 'firebase/firestore';
+import {collection, query, where, getDocs, Timestamp} from 'firebase/firestore';
 import {z} from 'zod';
 
 // Input schema for the tool - no longer needs artistId here
@@ -18,6 +18,7 @@ const TrackSchema = z.object({
   id: z.string(),
   title: z.string(),
   genre: z.string(),
+  uploadDate: z.string(),
   plays: z.number().optional(),
   price: z.number().optional(),
 });
@@ -51,10 +52,15 @@ export const getArtistTracks = ai.defineTool(
       
       const tracks = querySnapshot.docs.map(doc => {
         const data = doc.data();
+        const uploadDate = data.uploadDate;
+        // Convert timestamp to ISO string
+        const dateString = uploadDate instanceof Timestamp ? uploadDate.toDate().toISOString() : new Date().toISOString();
+
         return {
           id: doc.id,
           title: data.title || '',
           genre: data.genre || '',
+          uploadDate: dateString,
           plays: data.plays || 0,
           price: data.price || 0,
         };

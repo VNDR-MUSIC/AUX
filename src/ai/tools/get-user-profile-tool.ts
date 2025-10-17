@@ -7,7 +7,7 @@
 
 import {ai} from '@/ai/genkit';
 import {getFirebaseAdmin} from '@/firebase/admin';
-import {doc, getDoc, collection, query, where, getDocs, orderBy, limit} from 'firebase/firestore';
+import {doc, getDoc, collection, query, where, getDocs, orderBy, limit, Timestamp} from 'firebase/firestore';
 import {z} from 'zod';
 
 // Input schema for the tool - no longer needs userId
@@ -59,23 +59,26 @@ export const getUserProfile = ai.defineTool(
 
       // 2. Fetch recent transactions securely
       const transRef = collection(db, 'vsd_transactions');
-      // THIS IS THE DEFINITIVE FIX: Added the where() clause and removed orderBy() to prevent index issues.
       const q = query(
           transRef, 
           where('userId', '==', userId),
+          orderBy('transactionDate', 'desc'),
           limit(5)
         );
       
       const transSnapshot = await getDocs(q);
       const recentTransactions = transSnapshot.docs.map(doc => {
           const data = doc.data();
+          const dateValue = data.transactionDate;
+          // THIS IS THE CRITICAL FIX: Convert Firestore Timestamp to ISO string for consistent serialization
+          const dateString = dateValue instanceof Timestamp ? dateValue.toDate().toISOString() : new Date(dateValue).toISOString();
+
           return {
               id: doc.id,
               amount: data.amount,
               type: data.type,
               details: data.details,
-              // Convert Firestore Timestamp to ISO string for consistent serialization
-              date: data.transactionDate.toDate().toISOString(),
+              date: dateString,
           };
       });
 
