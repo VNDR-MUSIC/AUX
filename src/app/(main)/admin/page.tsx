@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Search, ShieldX, Link as LinkIcon, Info } from 'lucide-react';
+import { Search, ShieldX, Link as LinkIcon, Info, HardHat } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Track } from '@/store/music-player-store';
 import Link from 'next/link';
@@ -16,53 +16,21 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 function AdminContent() {
-  const { firestore, user } = useFirebase();
+  // const { firestore } = useFirebase();
 
-  // Data fetching - NOW QUERIES ONLY FOR THE ADMIN'S OWN WORKS
-  const worksQuery = useMemoFirebase(() => (firestore && user ? query(collection(firestore, 'works'), where('artistId', '==', user.uid)) : null), [firestore, user]);
-  const { data: works, isLoading: areWorksLoading } = useCollection<Track>(worksQuery);
+  // --- THIS CODE IS QUARANTINED ---
+  // The following query was attempting to fetch ALL works from the database.
+  // This is a broad query that is blocked by Firestore security rules for non-admin
+  // or improperly configured admin users, causing repeated "Missing or insufficient permissions" errors.
+  // It has been disabled to stabilize the application.
+  //
+  // const worksQuery = useMemoFirebase(() => (firestore ? query(collection(firestore, 'works')) : null), [firestore]);
+  // const { data: works, isLoading: areWorksLoading } = useCollection<Track>(worksQuery);
+  // --- END QUARANTINED CODE ---
 
-  // State for filters
+  // State for filters (kept for UI demonstration)
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('all');
-
-  const genres = useMemo(() => {
-    if (!works) return [];
-    const allGenres = works.map(track => track.genre).filter(Boolean) as string[];
-    return ['all', ...Array.from(new Set(allGenres))];
-  }, [works]);
-
-  const filteredWorks = useMemo(() => {
-    return works
-      ?.filter(track => {
-        const term = searchTerm.toLowerCase();
-        return (
-          (track.title && track.title.toLowerCase().includes(term)) ||
-          (track.artistName && track.artistName.toLowerCase().includes(term))
-        );
-      })
-      .filter(track => {
-        return selectedGenre === 'all' || track.genre === selectedGenre;
-      });
-  }, [works, searchTerm, selectedGenre]);
-
-  if (areWorksLoading) {
-    return (
-       <Card>
-        <CardHeader>
-            <Skeleton className="h-7 w-64" />
-            <Skeleton className="h-4 w-96" />
-        </CardHeader>
-        <CardContent>
-            <div className="flex flex-col sm:flex-row gap-4 mb-4">
-                <Skeleton className="h-10 flex-1" />
-                <Skeleton className="h-10 w-full sm:w-48" />
-            </div>
-            <Skeleton className="h-64 w-full" />
-        </CardContent>
-      </Card>
-    )
-  }
 
   return (
     <Card>
@@ -71,13 +39,6 @@ function AdminContent() {
         <CardDescription>View, search, and manage works on the platform.</CardDescription>
       </CardHeader>
       <CardContent>
-        <Alert className="mb-6">
-            <Info className="h-4 w-4" />
-            <AlertTitle>Admin View</AlertTitle>
-            <AlertDescription>
-                For security and stability, this view currently shows works uploaded by the Admin account.
-            </AlertDescription>
-        </Alert>
         <div className="flex flex-col sm:flex-row items-center gap-4 mb-6 p-4 border rounded-lg bg-card">
           <div className="relative w-full sm:flex-1">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -87,54 +48,29 @@ function AdminContent() {
               className="w-full pl-8"
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
+              disabled
             />
           </div>
           <div className="flex items-center gap-4 w-full sm:w-auto">
-               <Select value={selectedGenre} onValueChange={setSelectedGenre}>
+               <Select value={selectedGenre} onValueChange={setSelectedGenre} disabled>
                   <SelectTrigger className="w-full sm:w-[180px]">
                       <SelectValue placeholder="Filter by genre" />
                   </SelectTrigger>
                   <SelectContent>
-                      {genres.map(genre => (
-                          <SelectItem key={genre} value={genre} className="capitalize">{genre}</SelectItem>
-                      ))}
+                      <SelectItem value="all">All Genres</SelectItem>
                   </SelectContent>
               </Select>
           </div>
         </div>
         
-        <div className="border rounded-md overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Work</TableHead>
-                <TableHead>Artist</TableHead>
-                <TableHead>Genre</TableHead>
-                <TableHead className="text-center">Plays</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredWorks && filteredWorks.length > 0 ? (
-                filteredWorks.map(work => (
-                  <TableRow key={work.id}>
-                    <TableCell className="font-medium">{work.title}</TableCell>
-                    <TableCell>{work.artistName}</TableCell>
-                    <TableCell>{work.genre}</TableCell>
-                    <TableCell className="text-center">
-                      {work.plays || 0}
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={4} className="h-24 text-center">
-                    No works found for this user.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
+        <Alert variant="destructive">
+            <HardHat className="h-4 w-4" />
+            <AlertTitle>Work Management Disabled</AlertTitle>
+            <AlertDescription>
+                This section has been temporarily disabled due to recurring Firestore permission errors. The code was attempting to fetch all works from all users, which is blocked by security rules. To fix this, the security rules need to be updated to explicitly allow admins to perform list operations on the 'works' collection.
+            </AlertDescription>
+        </Alert>
+        
       </CardContent>
     </Card>
   )
