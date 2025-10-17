@@ -19,22 +19,31 @@ export default function MiuSlideOut() {
   return (
     <>
       {/* Clickable Logo Tab - always visible when panel is closed */}
-      {!isOpen && (
-         <button
-          onClick={() => setIsOpen(true)}
-          className="fixed top-1/2 -translate-y-1/2 left-0 z-40 h-28 w-24 rounded-r-lg bg-card border-y border-r border-border hover:bg-muted transition-colors duration-300 group"
-          aria-label="Open Music Industry University panel"
-        >
-            <div className="absolute top-1/2 -translate-y-1/2 left-0 h-20 w-full transform transition-transform duration-300 group-hover:scale-105">
-               <Image 
-                  src="https://i.ibb.co/4gJqBfM8/MIU-logo-wt.png" 
-                  alt="MIU Logo" 
-                  layout="fill" 
-                  className="object-contain" 
-                />
-            </div>
-        </button>
-      )}
+      <AnimatePresence>
+        {!isOpen && (
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
+            transition={{ duration: 0.5, delay: 1 }}
+          >
+            <button
+              onClick={() => setIsOpen(true)}
+              className="fixed top-1/2 -translate-y-1/2 left-0 z-40 h-32 w-16 rounded-r-lg bg-card border-y border-r border-border hover:bg-muted transition-colors duration-300 group overflow-hidden"
+              aria-label="Open Music Industry University panel"
+            >
+              <div className="absolute top-1/2 -translate-y-1/2 -left-16 h-32 w-32 transform transition-transform duration-300 group-hover:scale-105">
+                <Image 
+                    src="https://i.ibb.co/4gJqBfM8/MIU-logo-wt.png" 
+                    alt="MIU Logo" 
+                    layout="fill" 
+                    className="object-contain" 
+                  />
+              </div>
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Slide-out Content Panel */}
       <AnimatePresence>
@@ -70,7 +79,7 @@ export default function MiuSlideOut() {
               </Button>
               
               <div className="flex flex-col items-center text-center mt-8">
-                <div className="relative h-20 w-40 mb-4">
+                <div className="relative h-32 w-64 mb-4">
                   <Image 
                     src="https://i.ibb.co/4gJqBfM8/MIU-logo-wt.png" 
                     alt="MIU Logo" 
