@@ -141,3 +141,13 @@
 .shepherd-arrow, .shepherd-arrow:before {
   display: none;
 }
+
+/* Remove scrollbar for popover content */
+[data-radix-popover-content-wrapper] {
+    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+}
+
+[data-radix-popover-content-wrapper]::-webkit-scrollbar { 
+    display: none;  /* Safari and Chrome */
+}
