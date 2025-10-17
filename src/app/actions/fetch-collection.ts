@@ -4,7 +4,6 @@
 import { getFirebaseAdmin } from '@/firebase/admin';
 import { cookies } from 'next/headers';
 import { DocumentData, Query } from 'firebase-admin/firestore';
-import { serializeFirestoreData } from '@/lib/serialization';
 import { safeServerAction } from './safe-action';
 
 export async function fetchCollectionAction({

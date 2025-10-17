@@ -1,5 +1,4 @@
 
-
 import { Timestamp, GeoPoint, DocumentReference } from "firebase/firestore";
 
 /**
