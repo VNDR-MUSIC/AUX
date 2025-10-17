@@ -22,21 +22,18 @@ export default function MiuSlideOut() {
       <AnimatePresence>
         {!isOpen && (
           <motion.div
-            initial={{ x: -80 }}
+            initial={{ x: -48, rotate: 0 }}
             animate={{
-              x: [-48, -52, -48], // Creates a subtle side-to-side wobble
+              rotate: [0, -5, 5, -5, 0],
             }}
             exit={{ x: -80 }}
             transition={{
-              type: 'spring',
-              stiffness: 300,
-              damping: 30,
-              delay: 1,
-              // Add repeat properties for the dormant animation
-              repeat: Infinity,
-              repeatType: "loop",
-              repeatDelay: 5, // Wait 5 seconds between each animation loop
-              duration: 2, // The wobble animation itself takes 2 seconds
+              rotate: {
+                duration: 5,
+                ease: 'easeInOut',
+                repeat: Infinity,
+                repeatType: 'loop',
+              },
             }}
             onClick={() => setIsOpen(true)}
             className="fixed top-1/2 -translate-y-1/2 left-0 z-40 h-32 w-24 cursor-pointer group"
