@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Sparkles, UploadCloud, Wand2, File as FileIcon, X } from "lucide-react";
+import { Loader2, Sparkles, UploadCloud, Wand2, File as FileIcon, X, Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
   Select,
@@ -77,6 +77,8 @@ export default function UploadForm() {
   
   const mainFormRef = useRef<HTMLFormElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const coverArtInputRef = useRef<HTMLInputElement>(null);
+
   const [trackTitle, setTrackTitle] = useState('');
   const [genre, setGenre] = useState('');
   const [description, setDescription] = useState('');
@@ -102,6 +104,7 @@ export default function UploadForm() {
             setCoverArtDataUri(null);
             setTrackTitle('');
             setGenre('');
+            setDescription('');
             setRecommendedPrice(null);
             setManualPrice('');
             setSelectedFile(null);
@@ -109,7 +112,7 @@ export default function UploadForm() {
     }
   }, [uploadState, toast]);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAudioFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null;
     setSelectedFile(file);
   };
@@ -141,6 +144,17 @@ export default function UploadForm() {
         setIsArtLoading(false);
     }
   }
+
+  const handleCoverArtFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setCoverArtDataUri(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleRecommendPrice = async () => {
     if (!genre) {
@@ -215,7 +229,7 @@ export default function UploadForm() {
                         Click to upload or drag and drop
                     </span>
                     <p className="mt-1 text-xs text-muted-foreground">MP3, WAV, FLAC up to 50MB</p>
-                    <input id="audio-file" name="audio-file" type="file" className="sr-only" required onChange={handleFileChange} ref={fileInputRef} accept="audio/*" />
+                    <input id="audio-file" name="audio-file" type="file" className="sr-only" required onChange={handleAudioFileChange} ref={fileInputRef} accept="audio/*" />
                 </label>
                 {selectedFile && (
                     <div className="mt-2 flex items-center justify-between rounded-lg border bg-muted p-2 text-sm">
@@ -247,10 +261,24 @@ export default function UploadForm() {
                             </div>
                         )}
                     </div>
-                    <Button variant="outline" className="w-full" type="button" onClick={handleGenerateArt} disabled={isArtLoading}>
-                        {isArtLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
-                        Generate with AI
-                    </Button>
+                     <input
+                        type="file"
+                        ref={coverArtInputRef}
+                        onChange={handleCoverArtFileChange}
+                        className="hidden"
+                        accept="image/*"
+                      />
+                    <div className="flex flex-col items-center w-full gap-2">
+                        <Button variant="outline" className="w-full" type="button" onClick={handleGenerateArt} disabled={isArtLoading}>
+                            {isArtLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
+                            Generate with AI
+                        </Button>
+                        <span className="text-xs text-muted-foreground">or</span>
+                        <Button variant="link" size="sm" type="button" onClick={() => coverArtInputRef.current?.click()} className="text-xs">
+                           <Upload className="mr-2 h-3 w-3" />
+                           Upload image
+                        </Button>
+                    </div>
                 </Card>
             </div>
         </div>
