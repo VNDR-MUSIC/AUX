@@ -4,7 +4,6 @@
 import { useUser } from "@/firebase";
 import { useOnboarding } from "@/hooks/use-onboarding";
 import DashboardStats from '@/components/dashboard/dashboard-stats';
-import RecentWorks from '@/components/dashboard/recent-works';
 import ActionCards from '@/components/dashboard/action-cards';
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -68,10 +67,11 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col gap-8">
       <DashboardHeader username={username} isLoading={isLoading} />
-      <DashboardStats userData={userData} user={user} isLoading={isLoading} />
+      <DashboardStats userData={userData} isLoading={isLoading} />
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <RecentWorks user={user} isLoading={isLoading} />
-        <ActionCards userData={userData} user={user} isLoading={isLoading} />
+        <div className="col-span-4 lg:col-span-4">
+           <ActionCards userData={userData} user={user} isLoading={isLoading} />
+        </div>
       </div>
     </div>
   );

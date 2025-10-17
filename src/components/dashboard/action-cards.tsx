@@ -40,7 +40,7 @@ export default function ActionCards({ userData, user, isLoading }: ActionCardsPr
 
   if (isLoading) {
       return (
-          <div className="col-span-4 lg:col-span-3 grid auto-rows-min gap-4">
+          <div className="grid auto-rows-min gap-4">
               <Skeleton className="h-40" />
               <Skeleton className="h-40" />
           </div>
@@ -48,7 +48,7 @@ export default function ActionCards({ userData, user, isLoading }: ActionCardsPr
   }
 
   return (
-    <div className="col-span-4 lg:col-span-3 grid auto-rows-min gap-4">
+    <div className="grid auto-rows-min gap-4">
       <Card>
         <CardHeader>
           <CardTitle className="font-headline flex items-center justify-between">

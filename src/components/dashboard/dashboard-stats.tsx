@@ -4,16 +4,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Icons } from '@/components/icons';
-import { Music, FileText, BarChart } from 'lucide-react';
-import { useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, where } from 'firebase/firestore';
-import { useFirebase } from '@/firebase/provider';
-import type { User } from 'firebase/auth';
+import { Music, FileText, BarChart, Wallet } from 'lucide-react';
 import type { DocumentData } from 'firebase/firestore';
 
 interface DashboardStatsProps {
     userData: DocumentData | null;
-    user: User | null;
     isLoading: boolean;
 }
 
@@ -41,38 +36,28 @@ function StatCard({ title, value, icon, description, isLoading }: { title: strin
     );
 }
 
-export default function DashboardStats({ userData, user, isLoading: isParentLoading }: DashboardStatsProps) {
-  const { firestore } = useFirebase();
-
-  const worksQuery = useMemoFirebase(() => (firestore && user ? query(collection(firestore, 'works'), where('artistId', '==', user.uid)) : null), [firestore, user]);
-  const { data: works, isLoading: areWorksLoading } = useCollection(worksQuery);
-  
-  const licenseQuery = useMemoFirebase(() => (firestore && user ? query(collection(firestore, 'license_requests'), where('artistId', '==', user.uid)) : null), [firestore, user]);
-  const { data: licenses, isLoading: areLicensesLoading } = useCollection(licenseQuery);
-
-  const isLoading = isParentLoading || areWorksLoading || areLicensesLoading;
-
+export default function DashboardStats({ userData, isLoading }: DashboardStatsProps) {
   return (
     <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
       <StatCard
         title="VSD-lite Balance"
         value={userData?.vsdBalance ?? 0}
-        icon={<Icons.vsd className="h-4 w-4 text-muted-foreground" />}
+        icon={<Wallet className="h-4 w-4 text-muted-foreground" />}
         description="Used for platform services"
         isLoading={isLoading}
       />
       <StatCard
         title="Total Works"
-        value={works?.length || 0}
+        value="N/A"
         icon={<Music className="h-4 w-4 text-muted-foreground" />}
-        description="In your catalog"
+        description="View in 'My Works'"
         isLoading={isLoading}
       />
       <StatCard
         title="Licenses"
-        value={licenses?.length || 0}
+        value="N/A"
         icon={<FileText className="h-4 w-4 text-muted-foreground" />}
-        description="Active and pending requests"
+        description="View in 'Licensing'"
         isLoading={isLoading}
       />
       <StatCard
