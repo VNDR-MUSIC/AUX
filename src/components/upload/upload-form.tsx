@@ -207,21 +207,16 @@ export default function UploadForm() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
+             <div className="space-y-2">
                 <Label htmlFor="audio-file">Audio File</Label>
-                <div className="flex justify-center items-center h-full rounded-lg border border-dashed border-input px-6 py-10">
-                    <div className="text-center">
-                        <UploadCloud className="mx-auto h-12 w-12 text-gray-400" />
-                        <div className="mt-4 flex text-sm leading-6 text-gray-600">
-                            <label htmlFor="audio-file" className="relative cursor-pointer rounded-md bg-background font-semibold text-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 hover:text-primary/80">
-                                <span>Click to upload</span>
-                                <input id="audio-file" name="audio-file" type="file" className="sr-only" required onChange={handleFileChange} ref={fileInputRef} accept="audio/*" />
-                            </label>
-                            <p className="pl-1">or drag and drop</p>
-                        </div>
-                        <p className="text-xs leading-5 text-gray-500">MP3, WAV, FLAC up to 50MB</p>
-                    </div>
-                </div>
+                <label htmlFor="audio-file" className="relative flex flex-col justify-center items-center h-full rounded-lg border-2 border-dashed border-input px-6 py-10 text-center cursor-pointer hover:border-primary transition-colors">
+                    <UploadCloud className="mx-auto h-12 w-12 text-muted-foreground" />
+                    <span className="mt-4 text-sm font-semibold text-foreground">
+                        Click to upload or drag and drop
+                    </span>
+                    <p className="mt-1 text-xs text-muted-foreground">MP3, WAV, FLAC up to 50MB</p>
+                    <input id="audio-file" name="audio-file" type="file" className="sr-only" required onChange={handleFileChange} ref={fileInputRef} accept="audio/*" />
+                </label>
                 {selectedFile && (
                     <div className="mt-2 flex items-center justify-between rounded-lg border bg-muted p-2 text-sm">
                         <div className="flex items-center gap-2 truncate">
@@ -311,3 +306,5 @@ export default function UploadForm() {
     </>
   );
 }
+
+    
