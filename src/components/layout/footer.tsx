@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from "next/link";
@@ -9,6 +8,7 @@ import Image from "next/image";
 import IVtvModal from "./ivtv-modal";
 import NDRadioModal from "./nd-radio-modal";
 import AudioExchangeModal from "./audio-exchange-modal";
+import MiuModal from "./miu-modal";
 import { MapPin } from "lucide-react";
 
 const socialLinks = [
@@ -38,6 +38,7 @@ export default function Footer() {
   const [isIvtvModalOpen, setIsIvtvModalOpen] = useState(false);
   const [isNdRadioModalOpen, setIsNdRadioModalOpen] = useState(false);
   const [isAudioExchangeModalOpen, setIsAudioExchangeModalOpen] = useState(false);
+  const [isMiuModalOpen, setIsMiuModalOpen] = useState(false);
   const isAdmin = (user as any)?.customClaims?.admin === true;
 
   let finalArtistLinks = [...artistLinks];
@@ -105,6 +106,9 @@ export default function Footer() {
                      <button onClick={() => setIsAudioExchangeModalOpen(true)} className="cursor-pointer">
                         <Image src="https://i.ibb.co/fVjNMVpk/logo2.png" alt="Audio Exchange Logo" width={100} height={50} className="object-contain" />
                     </button>
+                    <button onClick={() => setIsMiuModalOpen(true)} className="cursor-pointer">
+                        <Image src="https://i.ibb.co/4gJqBfM8/MIU-logo-wt.png" alt="MIU Logo" width={100} height={50} className="object-contain" />
+                    </button>
                 </div>
             </div>
 
@@ -129,6 +133,7 @@ export default function Footer() {
     <IVtvModal isOpen={isIvtvModalOpen} onClose={() => setIsIvtvModalOpen(false)} />
     <NDRadioModal isOpen={isNdRadioModalOpen} onClose={() => setIsNdRadioModalOpen(false)} />
     <AudioExchangeModal isOpen={isAudioExchangeModalOpen} onClose={() => setIsAudioExchangeModalOpen(false)} />
+    <MiuModal isOpen={isMiuModalOpen} onClose={() => setIsMiuModalOpen(false)} />
     </>
   );
 }

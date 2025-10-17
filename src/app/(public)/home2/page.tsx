@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Upload, Search, DollarSign, ArrowRight, Music, Film, Gamepad2, Tv } from 'lucide-react';
+import { Upload, Search, DollarSign, ArrowRight, Music, Film, Gamepad2, Tv, GraduationCap } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
@@ -147,8 +147,31 @@ export default function Home2Page() {
                 ))}
               </Accordion>
             </div>
-          </section>
+        </section>
         
+        {/* MIU Section */}
+        <section className="py-16 md:py-24 w-full">
+            <div className="container px-4 md:px-6">
+                <div className="text-center mb-12">
+                    <div className="flex justify-center mb-4">
+                        <Image src="https://i.ibb.co/4gJqBfM8/MIU-logo-wt.png" alt="MIU Logo" width={150} height={75} className="object-contain" />
+                    </div>
+                    <h2 className="font-headline text-3xl sm:text-4xl font-bold tracking-tighter">Continue Your Education</h2>
+                    <p className="max-w-[700px] mx-auto mt-4 text-muted-foreground md:text-lg">
+                        In partnership with Music Industry University, we provide courses and resources to help you master the business of music.
+                    </p>
+                </div>
+                <div className="flex justify-center">
+                    <Button asChild size="lg" variant="outline">
+                        <Link href="https://musicindustry.university" target="_blank" rel="noopener noreferrer">
+                            <GraduationCap className="mr-2 h-5 w-5" />
+                            Explore Courses at MIU
+                        </Link>
+                    </Button>
+                </div>
+            </div>
+        </section>
+
         {/* Final CTA Section */}
         <section className="py-16 md:py-24 bg-primary text-primary-foreground w-full">
             <div className="container text-center px-4">
