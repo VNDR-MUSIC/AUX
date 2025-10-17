@@ -2,7 +2,7 @@
 'use client';
 
 import Link from "next/link";
-import { ArrowUpRight, Music, Upload, FileText, BarChart3, HandCoins, HardHat } from "lucide-react";
+import { ArrowUpRight, Music, Upload, FileText, BarChart3, HandCoins, HardHat, Scale } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -200,12 +200,12 @@ export default function DashboardPage() {
             </Card>
              <Card>
                  <CardHeader>
-                    <CardTitle className="font-headline flex items-center justify-between">Knowledgebase</CardTitle>
+                    <CardTitle className="font-headline flex items-center justify-between">Legal Eagle AI</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    <p className="text-sm text-muted-foreground">Have questions? Our AI-powered knowledgebase can help you with publishing, licensing, and more.</p>
+                    <p className="text-sm text-muted-foreground">Have questions? Our AI legal assistant can help you with publishing, licensing, and more.</p>
                     <Button className="w-full" variant="secondary" asChild>
-                        <Link href="/dashboard/knowledgebase">
+                        <Link href="/dashboard/legal-eagle">
                             Ask Symbi
                             <ArrowUpRight className="ml-2 h-4 w-4" />
                         </Link>
