@@ -7,7 +7,7 @@ import { collection, addDoc, serverTimestamp, doc, deleteDoc, updateDoc, query, 
 import { revalidatePath } from "next/cache";
 import { createVsdTransaction } from "./vsd-transaction";
 import { generateReport } from "@/ai/flows/generate-report-flow";
-import { Track } from "@/store/music-player-store";
+import { Track, TrackSchema } from "@/store/music-player-store";
 
 
 const uploadWorkSchema = z.object({
@@ -213,6 +213,7 @@ export async function generateReportAction(userId: string): Promise<{ success: b
 
     const tracks = querySnapshot.docs.map(doc => {
       const data = doc.data();
+      // Ensure the data conforms to the Track schema, providing defaults
       return {
         id: doc.id,
         title: data.title || '',
@@ -221,8 +222,11 @@ export async function generateReportAction(userId: string): Promise<{ success: b
         genre: data.genre || '',
         plays: data.plays || 0,
         price: data.price,
+        coverArtUrl: data.coverArtUrl,
+        trackUrl: data.trackUrl,
       };
-    }) as Track[];
+    }).filter(track => TrackSchema.safeParse(track).success) as Track[];
+    
 
     // 3. Call the Genkit flow
     const report = await generateReport({ tracks });

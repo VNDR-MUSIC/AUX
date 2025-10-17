@@ -14,8 +14,8 @@ export const TrackSchema = z.object({
   genre: z.string().optional(),
   coverArtUrl: z.string().optional(),
   trackUrl: z.string().optional(),
-  price: z.number().optional(),
-  plays: z.number().optional(),
+  price: z.number().optional().nullable(),
+  plays: z.number().optional().nullable(),
 });
 
 
