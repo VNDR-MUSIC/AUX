@@ -11,7 +11,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   return (
     <FirebaseClientProvider>
         <SidebarProvider>
-            <div className="flex flex-col min-h-screen">
+            <div className="flex flex-col min-h-screen max-w-full overflow-x-hidden">
                 <div className="flex flex-1">
                     <div className="hidden md:flex flex-col">
                         <SidebarNav />

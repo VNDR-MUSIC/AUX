@@ -44,10 +44,10 @@ export default function Footer() {
 
   return (
     <>
-    <footer className="bg-transparent border-t">
+    <footer className="bg-transparent border-t w-screen max-w-full">
       <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
-            <div className="col-span-2 lg:col-span-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
+            <div className="col-span-full sm:col-span-2 lg:col-span-1">
                 <Link href="/" className="flex items-center gap-2">
                     <div className="relative h-20 w-40 sm:h-28 sm:w-56">
                         <Icons.logo />

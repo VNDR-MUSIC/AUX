@@ -136,11 +136,11 @@ function Home() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="flex flex-col min-h-screen bg-background max-w-full overflow-x-hidden">
       <LandingPageHeader />
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="relative h-[80vh] md:h-screen w-full flex flex-col items-center justify-center p-0 overflow-hidden">
+        <section className="relative h-[80vh] md:h-screen w-screen max-w-full flex flex-col items-center justify-center p-0 overflow-hidden">
             <Carousel
                 className="w-full h-full"
                 opts={{
@@ -197,7 +197,7 @@ function Home() {
         </section>
 
         {/* Daily Rewards Section */}
-        <section id="rewards" className="py-16 md:py-24 bg-primary text-primary-foreground">
+        <section id="rewards" className="py-16 md:py-24 bg-primary text-primary-foreground w-screen max-w-full">
             <div className="container px-4 md:px-6">
                 <div className="text-center">
                     <Gift className="h-16 w-16 mx-auto mb-4" />
@@ -219,7 +219,7 @@ function Home() {
 
 
         {/* Features Section */}
-        <section id="features" className="py-16 md:py-24 bg-secondary">
+        <section id="features" className="py-16 md:py-24 bg-secondary w-screen max-w-full">
             <div className="container px-4 md:px-6">
                 <div className="text-center mb-12">
                     <h2 className="font-headline text-3xl sm:text-4xl font-bold tracking-tighter">The Old Music Industry is Broken. We're Building a Better One.</h2>
@@ -227,7 +227,7 @@ function Home() {
                         VNDR gives independent artists the power of a major label, without the predatory contracts.
                     </p>
                 </div>
-                <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+                <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
                     {features.map((feature, index) => (
                         <div key={index} className="flex flex-col items-center text-center p-6 bg-card rounded-lg shadow-md border">
                             {feature.icon}
@@ -245,7 +245,7 @@ function Home() {
         </section>
 
         {/* Pricing Section */}
-        <section id="pricing" className="py-16 md:py-24">
+        <section id="pricing" className="py-16 md:py-24 w-screen max-w-full">
             <div className="container px-4 md:px-6">
                 <div className="text-center mb-12">
                     <h2 className="font-headline text-3xl sm:text-4xl font-bold tracking-tighter text-primary">Choose Your Path</h2>
@@ -258,7 +258,7 @@ function Home() {
                       <Label htmlFor="billing-cycle">Yearly (Save 20%)</Label>
                     </div>
                 </div>
-                <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
                     {/* Distribution Plan */}
                     <Card className="flex flex-col">
                         <CardHeader>
@@ -340,7 +340,7 @@ function Home() {
         </section>
 
         {/* Testimonials Section */}
-        <section className="py-16 md:py-24 bg-secondary">
+        <section className="py-16 md:py-24 bg-secondary w-screen max-w-full">
           <div className="container px-4 md:px-6">
             <div className="text-center mb-12">
               <h2 className="font-headline text-3xl sm:text-4xl font-bold tracking-tighter">Why Artists are Leaving Other Distributors for VNDR</h2>
@@ -382,7 +382,7 @@ function Home() {
         </section>
 
         {/* FAQ Section */}
-        <section className="py-16 md:py-24">
+        <section className="py-16 md:py-24 w-screen max-w-full">
           <div className="container max-w-3xl px-4 md:px-6">
             <div className="text-center mb-12">
               <h2 className="font-headline text-3xl sm:text-4xl font-bold tracking-tighter">Your Questions, Answered.</h2>
@@ -401,7 +401,7 @@ function Home() {
         </section>
         
         {/* Final CTA Section */}
-        <section className="py-16 md:py-24 bg-primary text-primary-foreground">
+        <section className="py-16 md:py-24 bg-primary text-primary-foreground w-screen max-w-full">
             <div className="container text-center px-4">
                 <h2 className="font-headline text-3xl sm:text-4xl font-bold tracking-tighter">
                    Ready to Own Your Music Career?
