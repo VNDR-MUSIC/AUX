@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -35,7 +36,8 @@ export const getArtistTracks = ai.defineTool(
   async input => {
     try {
       const {db} = await getFirebaseAdmin();
-      const tracksRef = collection(db, 'tracks');
+      // Corrected collection from 'tracks' to 'works'
+      const tracksRef = collection(db, 'works');
       const q = query(tracksRef, where('artistId', '==', input.artistId));
       
       const querySnapshot = await getDocs(q);
