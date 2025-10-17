@@ -9,6 +9,15 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+   async redirects() {
+    return [
+      {
+        source: '/dashboard/knowledgebase',
+        destination: '/dashboard/legal-eagle',
+        permanent: true,
+      },
+    ]
+  },
   images: {
     remotePatterns: [
       {

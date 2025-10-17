@@ -5,14 +5,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   Home,
-  Upload,
   Library,
   FileText,
   Shield,
   BarChart,
   Wallet,
-  BrainCircuit,
   Gavel,
+  Scale,
 } from 'lucide-react';
 import { useUser } from '@/firebase';
 
@@ -52,7 +51,7 @@ const authenticatedMenuItems = [
   { href: '/dashboard/wallet', icon: Wallet, label: 'Wallet' },
   { href: '/dashboard/auctions', icon: Gavel, label: 'Auctions' },
   { href: '/dashboard/reports', icon: BarChart, label: 'Analytics' },
-  { href: '/dashboard/knowledgebase', icon: BrainCircuit, label: 'Knowledgebase' },
+  { href: '/dashboard/legal-eagle', icon: Scale, label: 'Legal Eagle' },
 ];
 
 const adminMenuItem = { href: '/admin', icon: Shield, label: 'Admin' };
