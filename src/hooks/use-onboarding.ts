@@ -15,7 +15,8 @@ type OnboardingStep =
   | 'licensing'
   | 'auctions'
   | 'legalEagle'
-  | 'settings';
+  | 'settings'
+  | 'contracts';
 
 const tourSteps: Record<OnboardingStep, Shepherd.Step.StepOptions[]> = {
   dashboard: [
@@ -103,6 +104,9 @@ const tourSteps: Record<OnboardingStep, Shepherd.Step.StepOptions[]> = {
   settings: [
      // This tour is intentionally empty.
   ],
+  contracts: [
+    // This tour is intentionally empty.
+  ]
 };
 
 export function useOnboarding(step: OnboardingStep) {

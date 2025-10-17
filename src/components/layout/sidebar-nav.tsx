@@ -50,7 +50,7 @@ const authenticatedMenuItems = [
   { href: '/dashboard/my-works', icon: Library, label: 'My Works' },
   { href: '/dashboard/licensing', icon: FileText, label: 'Licensing' },
   { href: '/dashboard/wallet', icon: Wallet, label: 'Wallet' },
-  { href: '/dashboard/contracts', icon: Gavel, label: 'Contracts' },
+  { href: '/dashboard/auctions', icon: Gavel, label: 'Auctions' },
   { href: '/dashboard/reports', icon: BarChart, label: 'Analytics' },
   { href: '/dashboard/knowledgebase', icon: BrainCircuit, label: 'Knowledgebase' },
 ];

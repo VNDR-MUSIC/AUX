@@ -50,6 +50,7 @@ export async function signupAction(prevState: AuthState, formData: FormData): Pr
         catalog: false,
         licensing: false,
         auctions: false,
+        contracts: false,
         legalEagle: false,
         settings: false,
       },

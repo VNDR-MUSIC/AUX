@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal, Music } from 'lucide-react';
+import { MoreHorizontal, Music, PlusCircle } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -81,7 +81,10 @@ export default function MyWorksPage() {
           </p>
         </div>
         <Button asChild>
-          <Link href="/dashboard/upload">Upload New Work</Link>
+          <Link href="/dashboard/upload">
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Upload New Work
+          </Link>
         </Button>
       </div>
 

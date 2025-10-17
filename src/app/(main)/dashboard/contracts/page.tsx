@@ -15,7 +15,7 @@ import { useOnboarding } from "@/hooks/use-onboarding";
 import Link from "next/link";
 
 export default function ContractsPage() {
-  useOnboarding('auctions'); // This ID can be renamed later if a new tour is made
+  useOnboarding('contracts');
 
   return (
     <div className="container mx-auto py-8">
