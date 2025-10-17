@@ -18,72 +18,58 @@ import {
 } from './symbi-chat-types';
 import { getUserProfile } from '../tools/get-user-profile-tool';
 import { getKnowledgeBase } from '../tools/get-knowledge-base-tool';
+import { getArtistTracks } from '../tools/get-artist-tracks-tool';
 import { z } from 'zod';
 
 export async function symbiChat(input: SymbiChatInput): Promise<SymbiChatOutput> {
-  return symbiChatFlow(input);
+  // We pass the artistId to the flow so it can be used by tools if needed.
+  return symbiChatFlow({
+    ...input,
+    artistId: input.userId,
+  });
 }
 
 const systemPrompt = `You are Symbi, the single, unified AI assistant for the entire IMG ecosystem, which includes VNDR Music, IVtv, and ND Radio. You are a brand ambassador, and your persona is professional, knowledgeable, supportive, and consistent across all platforms.
 
-Your primary source of information about the platform's features, plans, and token economy is the Knowledge Base provided below. Refer to it to answer user questions.
+You have access to a suite of tools to answer user questions.
+- Use 'getKnowledgeBase' to answer general questions about the platform's features, plans, and token economy.
+- Use 'getUserProfile' to answer questions about the user's account, like their VSD balance or recent transactions.
+- Use 'getArtistTracks' to answer questions about the user's music catalog, like play counts or their most popular songs.
 
-You are aware of the user you are talking to. You have access to their user profile information, including their VSD balance and recent transactions, which you should use to provide personalized and context-aware responses.
+You are having a conversation with a user. Use the provided conversation history to maintain context and avoid asking for information the user has already provided. If you don't know an answer, admit it and offer to find out or point to support resources.
 
-Your Core Capabilities:
-- Answer questions about any IMG platform (VNDR, IVtv, ND Radio) using the provided Knowledge Base.
-- Access user data to provide personalized information.
-- Maintain a consistent, helpful, and professional tone.
-- If you don't know an answer, admit it and offer to find out or point to support resources.
+Conversation History: 
+{{{jsonStringify history}}}`;
 
-User Context:
-- User Profile: {{{jsonStringify userProfile}}}
-- Conversation History: {{{jsonStringify history}}}
-
-Knowledge Base:
----
-{{{knowledgeBase}}}
----
-
-Based on all this context, provide a helpful response to the user's latest question.`;
 
 const symbiChatFlow = ai.defineFlow(
   {
     name: 'symbiChatFlow',
-    inputSchema: SymbiChatInputSchema,
+    // The flow now also accepts artistId for the tools.
+    inputSchema: SymbiChatInputSchema.extend({ artistId: z.string() }),
     outputSchema: SymbiChatOutputSchema,
   },
-  async input => {
-    // 1. Fetch contextual data in parallel.
-    const [userProfile, knowledgeBase] = await Promise.all([
-      getUserProfile({ userId: input.userId }),
-      getKnowledgeBase({})
-    ]);
-
-    // 2. Define the prompt with all available context.
+  async (input) => {
+    // 1. Define the prompt, making tools available for the AI to use.
     const prompt = ai.definePrompt({
-        name: 'symbiChatPrompt',
-        system: systemPrompt,
-        // The AI can still use tools if needed for more specific, real-time data.
-        tools: [getUserProfile], 
-        input: {
-            schema: z.object({
-                userProfile: z.any(),
-                history: z.any(),
-                question: z.string(),
-                knowledgeBase: z.string(),
-            })
-        },
-        output: { schema: SymbiChatOutputSchema },
-        prompt: 'User Question: {{{question}}}'
+      name: 'symbiChatPrompt',
+      system: systemPrompt,
+      tools: [getKnowledgeBase, getUserProfile, getArtistTracks],
+      input: {
+        schema: z.object({
+          history: z.any(),
+          question: z.string(),
+        }),
+      },
+      output: { schema: SymbiChatOutputSchema },
+      prompt: 'User Question: {{{question}}}',
     });
 
-    // 3. Invoke the prompt with the rich context.
-    const {output} = await prompt({
-        userProfile,
-        knowledgeBase,
-        history: input.history || [],
-        question: input.question,
+    // 2. Invoke the prompt with the user's question and history.
+    // The AI will decide if it needs to call any tools.
+    const { output } = await prompt({
+      history: input.history || [],
+      question: input.question,
     });
 
     return output!;
