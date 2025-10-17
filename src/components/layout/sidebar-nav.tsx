@@ -12,6 +12,7 @@ import {
   Wallet,
   Gavel,
   Scale,
+  DollarSign,
 } from 'lucide-react';
 import { useUser } from '@/firebase';
 
@@ -52,6 +53,7 @@ const authenticatedMenuItems = [
   { href: '/dashboard/auctions', icon: Gavel, label: 'Auctions' },
   { href: '/dashboard/reports', icon: BarChart, label: 'Analytics' },
   { href: '/dashboard/legal-eagle', icon: Scale, label: 'Legal Eagle' },
+  { href: '/vsd-demo', icon: DollarSign, label: 'VSD Demo' },
 ];
 
 const adminMenuItem = { href: '/admin', icon: Shield, label: 'Admin' };
