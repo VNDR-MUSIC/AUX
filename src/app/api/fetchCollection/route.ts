@@ -3,47 +3,61 @@ import { NextResponse } from 'next/server';
 import { getFirebaseAdmin } from '@/firebase/admin';
 import { headers } from 'next/headers';
 import { Auth } from 'firebase-admin/auth';
-import { Query } from 'firebase-admin/firestore';
+import { CollectionReference } from 'firebase-admin/firestore';
 
 async function verifyToken(auth: Auth, idToken: string) {
   try {
     const decodedToken = await auth.verifyIdToken(idToken);
     return decodedToken;
   } catch (error) {
-    console.error("Error verifying token:", error);
+    // This is expected if the token is invalid or expired
     return null;
   }
 }
 
 export async function POST(request: Request) {
   const { collectionPath, filters } = await request.json();
-  const headersList = headers();
-  const authorization = headersList.get('Authorization');
-
-  if (!authorization || !authorization.startsWith('Bearer ')) {
-    return NextResponse.json({ error: 'Unauthorized: No token provided' }, { status: 401 });
+  
+  if (!collectionPath) {
+     return NextResponse.json({ error: 'Collection path is required.' }, { status: 400 });
   }
 
-  const idToken = authorization.split('Bearer ')[1];
-  
+  const headersList = headers();
+  const authorization = headersList.get('Authorization');
+  const idToken = authorization?.split('Bearer ')[1];
+
   try {
     const { auth: adminAuth, db } = await getFirebaseAdmin();
-    const decodedToken = await verifyToken(adminAuth, idToken);
-
-    if (!decodedToken) {
-      return NextResponse.json({ error: 'Unauthorized: Invalid token' }, { status: 401 });
+    let decodedToken = null;
+    if (idToken) {
+        decodedToken = await verifyToken(adminAuth, idToken);
     }
-
-    const uid = decodedToken.uid;
-    const isAdmin = decodedToken.admin === true;
     
-    // Server-side fetch from Firestore
-    let query: Query = db.collection(collectionPath);
+    const uid = decodedToken?.uid;
+    const isAdmin = decodedToken?.admin === true;
+    
+    // --- THIS IS THE FIX ---
+    // If the collection is 'works' (the public catalog), we don't require authentication
+    // unless a specific user's works are being requested via filters.
+    if (collectionPath === 'works' && !filters) {
+       const publicWorksSnap = await db.collection(collectionPath).get();
+       const publicWorks = publicWorksSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+       return NextResponse.json(publicWorks);
+    }
+    
+    // For all other requests, or filtered 'works' requests, enforce authentication.
+    if (!uid) {
+        return NextResponse.json({ error: 'Unauthorized: A valid user token is required for this request.' }, { status: 401 });
+    }
+    
+    let query: CollectionReference | FirebaseFirestore.Query = db.collection(collectionPath);
     
     // Apply server-side filters if they exist
     if (filters) {
       for (const key in filters) {
         if (Object.prototype.hasOwnProperty.call(filters, key)) {
+          // Skip if filter value is null or undefined to avoid invalid queries
+          if (filters[key] === null || filters[key] === undefined) continue;
           query = query.where(key, '==', filters[key]);
         }
       }
@@ -51,7 +65,7 @@ export async function POST(request: Request) {
 
     const snap = await query.get();
 
-    // After fetching, apply security filtering based on user role
+    // After fetching, apply security filtering based on user role and ownership.
     const docs = snap.docs
       .map(doc => ({ id: doc.id, ...doc.data() }))
       .filter(doc => {

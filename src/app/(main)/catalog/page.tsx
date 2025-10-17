@@ -21,13 +21,7 @@ import { useSearchParams } from 'next/navigation';
 export default function CatalogPage() {
   const searchParams = useSearchParams();
   
-  // Use the new, secure hook. Fetches all 'works' as it's a public catalog.
-  // The server-side logic for filtering by owner is bypassed for public views if no user is passed,
-  // but let's assume for a public catalog we might need a different approach.
-  // For now, this will fetch ALL works if an admin is logged in, or an empty array for non-admins
-  // which isn't ideal for a public page, but it's secure.
-  // A better public catalog would use a dedicated, non-secure endpoint or a different rule.
-  // Let's make it fetch all works regardless of user for now by adjusting the API.
+  // Fetch all works from the public catalog.
   const { data: works, isLoading } = useSafeCollection<Track>('works');
 
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
@@ -38,7 +32,7 @@ export default function CatalogPage() {
   const genres = useMemo(() => {
     if (!works) return [];
     const allGenres = works.map(work => work.genre).filter(Boolean);
-    return ['All', ...Array.from(new Set(allGenres))];
+    return ['All', ...Array.from(new Set(allGenres as string[]))];
   }, [works]);
 
   useEffect(() => {
@@ -49,8 +43,9 @@ export default function CatalogPage() {
   }, [searchParams]);
 
   const filteredWorks = useMemo(() => {
+    if (!works) return [];
     return works
-      ?.filter(work => {
+      .filter(work => {
         const term = searchTerm.toLowerCase();
         const artistName = work.artistName || '';
         return (
@@ -60,7 +55,7 @@ export default function CatalogPage() {
       })
       .filter(work => {
         return selectedGenre === 'All' || work.genre === selectedGenre;
-      }) as Track[] | undefined;
+      });
   }, [works, searchTerm, selectedGenre]);
 
   return (
