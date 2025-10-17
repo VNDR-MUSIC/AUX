@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -9,8 +8,6 @@ import {
   FirestoreError,
   QuerySnapshot,
   CollectionReference,
-  query,
-  where,
 } from 'firebase/firestore';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
@@ -28,22 +25,19 @@ export interface UseCollectionResult<T> {
   error: FirestoreError | Error | null; // Error object, or null.
 }
 
-/* Internal implementation of Query:
-  https://github.com/firebase/firebase-js-sdk/blob/c5f08a9bc5da0d2b0207802c972d53724ccef055/packages/firestore/src/lite-api/reference.ts#L143
-*/
+/* Internal representation of a Firestore query object. */
 export interface InternalQuery extends Query<DocumentData> {
   _query: {
     path: {
       canonicalString(): string;
-      toString(): string;
     },
     filters: {
-        _a: { // This is a simplified representation of internal properties
-            field: {
-                segments: string[]
-            },
-            op: string
-        }
+      _a: {
+        field: {
+          segments: string[]
+        },
+        op: string
+      }
     }[]
   }
 }
@@ -77,30 +71,26 @@ export function useCollection<T = any>(
       return;
     }
 
-    // --- SAFETY CHECK ---
-    // This is the core of the fix. We inspect the query before executing it.
     const internalQuery = memoizedTargetRefOrQuery as unknown as InternalQuery;
     const path = internalQuery._query.path.canonicalString();
 
+    // --- SAFETY CHECK for 'works' collection ---
     if (path === 'works') {
-        // Check if there is a filter for 'artistId'
         const hasArtistIdFilter = internalQuery._query.filters.some(
             (f) => f._a?.field?.segments.join('/') === 'artistId'
         );
 
         if (!hasArtistIdFilter) {
-            console.warn(
-                "[SECURITY] Blocked an insecure query on the 'works' collection. The query must include a 'where(\"artistId\", \"==\", ...)' clause."
+            console.error(
+                "[SECURITY] Blocked an insecure query on the 'works' collection. The query must include a 'where(\"artistId\", \"==\", ...)' clause. The app will show no data for this component."
             );
-            // Block the query from running and return an empty state.
             setData([]); 
             setIsLoading(false);
-            setError(null);
-            return; // Stop execution of this effect.
+            setError(new Error("Insecure 'works' query blocked."));
+            return;
         }
     }
     // --- END SAFETY CHECK ---
-
 
     setIsLoading(true);
     setError(null);
@@ -139,5 +129,3 @@ export function useCollection<T = any>(
   
   return { data, isLoading, error };
 }
-
-    

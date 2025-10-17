@@ -1,61 +1,29 @@
-
 'use client';
 
-import { useState, useMemo } from 'react';
 import { useUser, useFirebase, useDoc, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, ShieldX, Link as LinkIcon, HardHat } from 'lucide-react';
+import { ShieldX, Link as LinkIcon, HardHat } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 function AdminContent() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedGenre, setSelectedGenre] = useState('all');
-
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Work Management</CardTitle>
-        <CardDescription>View, search, and manage works on the platform.</CardDescription>
+        <CardTitle>Platform Management</CardTitle>
+        <CardDescription>Tools for platform oversight and data management.</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-col sm:flex-row items-center gap-4 mb-6 p-4 border rounded-lg bg-card">
-          <div className="relative w-full sm:flex-1">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search by title or artist..."
-              className="w-full pl-8"
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-              disabled
-            />
-          </div>
-          <div className="flex items-center gap-4 w-full sm:w-auto">
-               <Select value={selectedGenre} onValueChange={setSelectedGenre} disabled>
-                  <SelectTrigger className="w-full sm:w-[180px]">
-                      <SelectValue placeholder="Filter by genre" />
-                  </SelectTrigger>
-                  <SelectContent>
-                      <SelectItem value="all">All Genres</SelectItem>
-                  </SelectContent>
-              </Select>
-          </div>
-        </div>
-        
         <Alert variant="destructive">
             <HardHat className="h-4 w-4" />
-            <AlertTitle>Work Management Disabled</AlertTitle>
+            <AlertTitle>Admin Features Under Development</AlertTitle>
             <AlertDescription>
-                This section has been temporarily disabled due to recurring Firestore permission errors. The code was attempting to fetch all works from all users, which is blocked by security rules. A secure, paginated backend for administrators needs to be built to support this feature. For now, all other admin functions are available.
+                A secure, paginated backend for administrators to manage users and works is currently under development. For now, you can access the subsidiary integration panel.
             </AlertDescription>
         </Alert>
-        
       </CardContent>
     </Card>
   )
