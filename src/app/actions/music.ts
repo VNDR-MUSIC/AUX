@@ -15,6 +15,11 @@ const uploadWorkSchema = z.object({
     artistName: z.string().min(1, "Artist name is required."),
     genre: z.string().min(1, "Genre is required."),
     description: z.string().optional(),
+    coverArtDataUri: z.string().optional(),
+    price: z.preprocess(
+        (val) => (val === "" ? undefined : Number(val)),
+        z.number().min(0).optional()
+    ),
 });
 
 type UploadWorkState = {
@@ -39,16 +44,19 @@ export async function uploadTrackAction(
         artistName: formData.get("artistName"),
         genre: formData.get("genre"),
         description: formData.get("description"),
+        coverArtDataUri: formData.get("coverArtDataUri"),
+        price: formData.get("price"),
     });
     
     if (!validatedFields.success) {
+        console.log(validatedFields.error.flatten());
         return {
             errors: validatedFields.error.flatten().fieldErrors,
             message: "Missing or invalid fields. Failed to upload work.",
         };
     }
 
-    const { trackTitle, artistId, artistName, genre, description } = validatedFields.data;
+    const { trackTitle, artistId, artistName, genre, description, coverArtDataUri, price } = validatedFields.data;
 
     try {
         const { db } = await getFirebaseAdmin();
@@ -60,6 +68,14 @@ export async function uploadTrackAction(
         // For now, we use a placeholder and write directly to Firestore.
         const demoTrackUrl = "https://storage.googleapis.com/studiopublic/vndr/synthwave-track.mp3";
         
+        let coverArtUrl = coverArtDataUri;
+        // In a real app, if coverArtDataUri is present, we'd upload it to Cloud Storage
+        // and get back a public URL. For now, we can store the data URI directly
+        // if it's not too large, or use a placeholder if it's missing.
+        if (!coverArtUrl) {
+           coverArtUrl = `https://picsum.photos/seed/${trackTitle.replace(/\s/g, '-')}/400/400`;
+        }
+
         await addDoc(worksCollection, {
             title: trackTitle,
             artistId: artistId,
@@ -69,9 +85,10 @@ export async function uploadTrackAction(
             uploadDate: serverTimestamp(),
             status: "processing", // Initial status
             trackUrl: demoTrackUrl, // Placeholder URL
+            coverArtUrl: coverArtUrl,
+            price: price || null,
             
             // These fields will be populated by the backend workers
-            coverArtUrl: "https://picsum.photos/seed/placeholder/400/400", // Placeholder
             audioFeatures: null,
             musoCreditsFetched: false,
             enrichedMetadata: null,

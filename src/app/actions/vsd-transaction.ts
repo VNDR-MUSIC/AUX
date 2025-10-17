@@ -88,20 +88,22 @@ export async function claimDailyTokensAction(userId: string): Promise<{ message:
       // If we are here, it means the tokens can be claimed.
       transaction.update(walletRef, { dailyTokenClaimed: today });
       
-      return { success: true };
+      return { success: true, isNewClaim: true };
     });
 
     if (!result.success) {
       return { success: false, message: result.message || 'Failed to claim credits.' };
     }
 
-    // Create the transaction outside of the check, but only if it passed
-    await createVsdTransaction({
-        userId,
-        amount: 5,
-        type: 'reward',
-        details: 'Daily credits claim'
-    });
+    // Only create the transaction if it was a new claim
+    if (result.isNewClaim) {
+        await createVsdTransaction({
+            userId,
+            amount: 5,
+            type: 'reward',
+            details: 'Daily credits claim'
+        });
+    }
     
     revalidatePath('/dashboard');
     return { message: 'You have successfully claimed 5 VSD-lite credits!', success: true };

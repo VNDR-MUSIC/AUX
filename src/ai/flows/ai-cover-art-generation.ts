@@ -21,14 +21,6 @@ export async function generateCoverArt(input: CoverArtInput): Promise<CoverArtOu
   return generateCoverArtFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'generateCoverArtPrompt',
-  input: {schema: CoverArtInputSchema},
-  output: {schema: CoverArtOutputSchema},
-  prompt: `Generate cover art for a music track with the following characteristics:\n\nTitle: {{{trackTitle}}}\nGenre: {{{genre}}}\n\nCreate visually appealing cover art that reflects the music's style. Return the image as a data URI.
-`,
-});
-
 const generateCoverArtFlow = ai.defineFlow(
   {
     name: 'generateCoverArtFlow',
@@ -38,7 +30,7 @@ const generateCoverArtFlow = ai.defineFlow(
   async input => {
     const {media} = await ai.generate({
       model: 'googleai/imagen-4.0-fast-generate-001',
-      prompt: `Create a cover art image for a song titled "${input.trackTitle}" in the style of ${input.genre} music.`,
+      prompt: `Create a square album cover art for a song titled "${input.trackTitle}" in the style of ${input.genre} music. The image should be vibrant, professional, and evocative of the genre. Do not include any text or logos on the image.`,
     });
 
     if (!media || !media.url) {

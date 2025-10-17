@@ -61,6 +61,7 @@ export async function signupAction(prevState: AuthState, formData: FormData): Pr
         userId: userCredential.uid,
         vsdLiteBalance: 0,
         erc20Address: null,
+        dailyTokenClaimed: null, // Initialize as null
     });
 
     // Grant initial tokens via a transaction

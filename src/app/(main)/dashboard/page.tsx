@@ -35,11 +35,15 @@ export default function DashboardPage() {
   
   useOnboarding('dashboard');
 
-  const userRef = useMemoFirebase(() => (firestore && user ? doc(firestore, 'users', user.uid) : null), [firestore, user]);
-  const { data: userData, isLoading: isUserDataLoading } = useDoc(userRef);
+  const walletRef = useMemoFirebase(() => (firestore && user ? doc(firestore, 'wallets', user.uid) : null), [firestore, user]);
+  const { data: walletData, isLoading: isWalletLoading } = useDoc(walletRef);
 
   const worksQuery = useMemoFirebase(() => (firestore && user ? query(collection(firestore, 'works'), where('artistId', '==', user.uid), orderBy('uploadDate', 'desc'), limit(5)) : null), [firestore, user]);
   const { data: recentWorks, isLoading: areWorksLoading } = useCollection(worksQuery);
+  
+  const userDocRef = useMemoFirebase(() => (firestore && user ? doc(firestore, 'users', user.uid) : null), [firestore, user]);
+  const { data: userData } = useDoc(userDocRef);
+
 
   const handleClaimTokens = async () => {
     if (!user) return;
@@ -52,8 +56,8 @@ export default function DashboardPage() {
   };
 
   const today = new Date().toISOString().split('T')[0];
-  const canClaimTokens = userData?.dailyTokenClaimed !== today;
-  const isLoading = isUserLoading || isUserDataLoading || areWorksLoading;
+  const canClaimTokens = walletData?.dailyTokenClaimed !== today;
+  const isLoading = isUserLoading || isWalletLoading || areWorksLoading;
 
   if (isLoading) {
     return (
@@ -94,7 +98,7 @@ export default function DashboardPage() {
             <Icons.vsd className="h-4 w-4 text-muted-foreground"/>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{userData?.vsdBalance || 0}</div>
+            <div className="text-2xl font-bold">{walletData?.vsdLiteBalance || 0}</div>
             <p className="text-xs text-muted-foreground">
               +10 VSD on sign up
             </p>
