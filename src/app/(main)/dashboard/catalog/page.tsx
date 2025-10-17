@@ -24,15 +24,14 @@ export default function CatalogPage() {
   const { user } = useUser();
   const searchParams = useSearchParams();
   
-  // This query now explicitly waits for user.uid to be available before running.
-  // It fetches ALL works if the user is an admin, or just their own if they are not.
+  // CRITICAL FIX: Ensure the query is ONLY created when user.uid is available.
   const worksQuery = useMemoFirebase(() => {
-    if (!firestore || !user) return null;
+    if (!firestore || !user?.uid) return null;
     
-    // For a normal user, only fetch their works.
+    // This query is now strictly for the logged-in user's works. No exceptions.
     return query(collection(firestore, 'works'), where('artistId', '==', user.uid));
     
-  }, [firestore, user]);
+  }, [firestore, user?.uid]);
   
   const { data: works, isLoading } = useCollection<DocumentData>(worksQuery);
 

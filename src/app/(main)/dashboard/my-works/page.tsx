@@ -44,16 +44,17 @@ export default function MyWorksPage() {
   const { user } = useUser();
   const { firestore } = useFirebase();
 
+  // CRITICAL FIX: Ensure the query is ONLY created when user.uid is available.
   const worksQuery = useMemoFirebase(
     () =>
-      firestore && user
+      firestore && user?.uid
         ? query(
             collection(firestore, 'works'),
             where('artistId', '==', user.uid),
             orderBy('uploadDate', 'desc')
           )
         : null,
-    [firestore, user]
+    [firestore, user?.uid]
   );
 
   const { data: works, isLoading } = useCollection<Work>(worksQuery);

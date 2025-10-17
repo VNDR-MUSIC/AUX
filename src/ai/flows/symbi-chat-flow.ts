@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -5,11 +6,10 @@
  *
  * This flow is designed to answer user questions about the VNDR platform,
  * its features, music licensing, and provide general advice for artists.
- * It can also use tools to fetch real-time data about the user's catalog.
+ * It can also use tools to fetch real-time data about the user's profile.
  */
 
 import {ai} from '@/ai/genkit';
-import {getArtistTracks} from '@/ai/tools/get-artist-tracks-tool';
 import {
   SymbiChatInputSchema,
   type SymbiChatInput,
@@ -53,7 +53,7 @@ const symbiChatFlow = ai.defineFlow(
     const prompt = ai.definePrompt({
         name: 'symbiChatPrompt',
         system: systemPrompt,
-        // Available tools for the LLM to use
+        // CRITICAL FIX: Removed the getArtistTracks tool to prevent unauthorized global queries.
         tools: [getUserProfile], 
         // We pass the full context object to the prompt.
         // The handlebars in the system prompt will access these properties.
