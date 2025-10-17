@@ -53,6 +53,21 @@ export interface UserHookResult { // Renamed from UserAuthHookResult for consist
 // React Context
 export const FirebaseContext = createContext<FirebaseContextState | undefined>(undefined);
 
+// Helper function to set a cookie
+function setCookie(name: string, value: string, days: number) {
+    let expires = "";
+    if (days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days*24*60*60*1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+}
+
+function eraseCookie(name: string) {   
+    document.cookie = name+'=; Max-Age=-99999999;';  
+}
+
 /**
  * FirebaseProvider manages and provides Firebase services and user authentication state.
  */
@@ -83,11 +98,18 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
         if (firebaseUser) {
             const tokenResult = await firebaseUser.getIdTokenResult();
             (firebaseUser as any).customClaims = tokenResult.claims;
+             // Set the token in a cookie for server-side access
+            const idToken = await firebaseUser.getIdToken();
+            setCookie('firebaseIdToken', idToken, 1);
+        } else {
+            // User is signed out, so remove the cookie
+            eraseCookie('firebaseIdToken');
         }
         setUserAuthState({ user: firebaseUser, isUserLoading: false, userError: null });
       },
       (error) => { // Auth listener error
         console.error("FirebaseProvider: onAuthStateChanged error:", error);
+        eraseCookie('firebaseIdToken'); // Also erase on error
         setUserAuthState({ user: null, isUserLoading: false, userError: error });
       }
     );

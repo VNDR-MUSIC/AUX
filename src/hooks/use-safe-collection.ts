@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { useUser } from '@/firebase';
+import { fetchCollectionAction } from '@/app/actions/fetch-collection';
 
 // The hook now accepts an optional filters object.
 export function useSafeCollection<T>(collectionPath: string | null, filters?: Record<string, any>) {
@@ -34,31 +35,13 @@ export function useSafeCollection<T>(collectionPath: string | null, filters?: Re
       setIsLoading(true);
       setError(null);
       try {
-        const idToken = user ? await user.getIdToken() : null;
-        const headers: HeadersInit = { 'Content-Type': 'application/json' };
-        if (idToken) {
-            headers['Authorization'] = `Bearer ${idToken}`;
-        }
+        const result = await fetchCollectionAction({ collectionPath, filters });
         
-        const response = await fetch('/api/fetchCollection', {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify({ collectionPath, filters }),
-        });
-
-        if (!response.ok) {
-            try {
-              // Try to parse the error response as JSON.
-              const errorData = await response.json();
-              throw new Error(errorData.error || `Server responded with status: ${response.status}`);
-            } catch (e) {
-              // If parsing fails, it's not a JSON response (e.g., HTML error page).
-              throw new Error(`An unexpected response was received from the server.`);
-            }
+        if (result.error) {
+            throw new Error(result.error);
         }
 
-        const result = await response.json();
-        setData(result as T[]);
+        setData(result.data as T[]);
       } catch (err) {
         setError(err);
         console.error(`Error fetching collection '${collectionPath}':`, err);
