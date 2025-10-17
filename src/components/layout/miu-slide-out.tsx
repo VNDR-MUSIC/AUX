@@ -39,7 +39,7 @@ export default function MiuSlideOut() {
             className="fixed top-1/2 -translate-y-1/2 left-0 z-40 h-32 w-24 cursor-pointer group"
             aria-label="Open Music Industry University panel"
           >
-            <div className="relative w-full h-full bg-card rounded-r-lg border-y border-r border-border shadow-lg flex items-center justify-end pr-2 transition-colors duration-300 hover:bg-muted">
+            <div className="relative w-full h-full flex items-center justify-end">
               <div className="relative w-20 h-20 transition-transform duration-300 group-hover:scale-105">
                 <Image 
                     src="https://i.ibb.co/4gJqBfM8/MIU-logo-wt.png" 
