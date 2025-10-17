@@ -3,7 +3,7 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { useCollection, useFirebase, useMemoFirebase, useUser } from '@/firebase';
-import { collection, query, where, DocumentData } from 'firebase/firestore';
+import { collection, query, DocumentData } from 'firebase/firestore';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -24,14 +24,12 @@ export default function CatalogPage() {
   const { user } = useUser();
   const searchParams = useSearchParams();
   
-  // CRITICAL FIX: Ensure the query is ONLY created when user.uid is available.
+  // The useCollection hook now automatically applies security rules.
+  // We just need to define the base collection we're interested in.
   const worksQuery = useMemoFirebase(() => {
-    if (!firestore || !user?.uid) return null;
-    
-    // This query is now strictly for the logged-in user's works.
-    return query(collection(firestore, 'works'), where('artistId', '==', user.uid));
-    
-  }, [firestore, user?.uid]);
+    if (!firestore || !user) return null;
+    return query(collection(firestore, 'works'));
+  }, [firestore, user]);
   
   const { data: works, isLoading } = useCollection<DocumentData>(worksQuery);
 
@@ -57,7 +55,6 @@ export default function CatalogPage() {
     return works
       ?.filter(work => {
         const term = searchTerm.toLowerCase();
-        // Fallback for artistName to avoid errors
         const artistName = work.artistName || '';
         return (
           (work.title && work.title.toLowerCase().includes(term)) ||
@@ -128,5 +125,3 @@ export default function CatalogPage() {
     </div>
   );
 }
-
-    

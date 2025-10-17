@@ -57,7 +57,7 @@ export const getUserProfile = ai.defineTool(
       }
       const userData = userDoc.data();
 
-      // 2. Fetch recent transactions
+      // 2. Fetch recent transactions securely
       const transRef = collection(db, 'vsd_transactions');
       // THIS IS THE DEFINITIVE FIX: Added the where() clause and removed orderBy() to prevent index issues.
       const q = query(

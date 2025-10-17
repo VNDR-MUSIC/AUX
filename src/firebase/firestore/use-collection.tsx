@@ -8,9 +8,13 @@ import {
   FirestoreError,
   QuerySnapshot,
   CollectionReference,
+  collection,
+  query,
+  where,
 } from 'firebase/firestore';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
+import { useFirebase, useUser } from '../provider';
 
 /** Utility type to add an 'id' field to a given type T. */
 export type WithId<T> = T & { id: string };
@@ -21,95 +25,78 @@ export type WithId<T> = T & { id: string };
  */
 export interface UseCollectionResult<T> {
   data: WithId<T>[] | null; // Document data with ID, or null.
-  isLoading: boolean;       // True if loading.
+  isLoading: boolean; // True if loading.
   error: FirestoreError | Error | null; // Error object, or null.
 }
 
-/* Internal representation of a Firestore query object. */
-export interface InternalQuery extends Query<DocumentData> {
-  _query: {
-    path: {
-      canonicalString(): string;
-    },
-    filters: {
-      _a: {
-        field: {
-          segments: string[]
-        },
-        op: string
-      }
-    }[]
-  }
-}
+const SECURED_COLLECTIONS: Record<string, string> = {
+    'works': 'artistId',
+    'vsd_transactions': 'userId',
+    'license_requests': 'artistId',
+};
+
 
 /**
- * A safer implementation of the useCollection hook that prevents broad queries on sensitive collections.
- * 
+ * A hook to securely subscribe to a Firestore collection in real-time.
+ * It automatically applies security filters based on the user's role (admin vs. regular user)
+ * for collections defined in `SECURED_COLLECTIONS`.
+ *
  * IMPORTANT! YOU MUST MEMOIZE the inputted memoizedTargetRefOrQuery or BAD THINGS WILL HAPPEN.
  * Use useMemoFirebase to memoize it.
- *  
+ *
  * @template T Optional type for document data. Defaults to any.
- * @param {CollectionReference<DocumentData> | Query<DocumentData> | null | undefined} memoizedTargetRefOrQuery -
- * The Firestore CollectionReference or Query. Waits if null/undefined.
+ * @param {CollectionReference<DocumentData> | Query<DocumentData> | null | undefined} originalQuery -
+ * The original Firestore CollectionReference or Query. Hook execution waits if null/undefined.
  * @returns {UseCollectionResult<T>} Object with data, isLoading, error.
  */
 export function useCollection<T = any>(
-    memoizedTargetRefOrQuery: ((CollectionReference<DocumentData> | Query<DocumentData>) & {__memo?: boolean})  | null | undefined,
+  originalQuery: ((CollectionReference<DocumentData> | Query<DocumentData>) & { __memo?: boolean }) | null | undefined
 ): UseCollectionResult<T> {
   type ResultItemType = WithId<T>;
   type StateDataType = ResultItemType[] | null;
 
   const [data, setData] = useState<StateDataType>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true); // Start as loading
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<FirestoreError | Error | null>(null);
+  const { user } = useUser();
+  const { firestore } = useFirebase();
+  const isAdmin = (user as any)?.customClaims?.admin === true;
 
   useEffect(() => {
-    if (!memoizedTargetRefOrQuery) {
+    if (!originalQuery || !firestore || !user) {
       setData(null);
       setIsLoading(false);
       setError(null);
       return;
     }
 
-    const internalQuery = memoizedTargetRefOrQuery as unknown as InternalQuery;
-    const path = internalQuery._query.path.canonicalString();
+    let finalQuery: Query<DocumentData> = originalQuery;
+    const collectionPath = (originalQuery as any)._query.path.segments.join('/');
+    const ownerField = SECURED_COLLECTIONS[collectionPath];
 
-    // --- SAFETY CHECK for 'works' collection ---
-    if (path === 'works') {
-        const hasArtistIdFilter = internalQuery._query.filters.some(
-            (f) => f._a?.field?.segments.join('/') === 'artistId'
-        );
-
-        if (!hasArtistIdFilter) {
-            console.error(
-                "[SECURITY] Blocked an insecure query on the 'works' collection. The query must include a 'where(\"artistId\", \"==\", ...)' clause. The app will show no data for this component."
-            );
-            setData([]); 
-            setIsLoading(false);
-            setError(new Error("Insecure 'works' query blocked."));
-            return;
-        }
+    // If it's a secured collection and the user is NOT an admin, apply the security filter.
+    if (ownerField && !isAdmin) {
+        finalQuery = query(originalQuery, where(ownerField, '==', user.uid));
     }
-    // --- END SAFETY CHECK ---
 
     setIsLoading(true);
     setError(null);
 
     const unsubscribe = onSnapshot(
-      memoizedTargetRefOrQuery,
+      finalQuery,
       (snapshot: QuerySnapshot<DocumentData>) => {
-        const results: ResultItemType[] = [];
-        for (const doc of snapshot.docs) {
-          results.push({ ...(doc.data() as T), id: doc.id });
-        }
+        const results: ResultItemType[] = snapshot.docs.map(doc => ({
+          ...(doc.data() as T),
+          id: doc.id,
+        }));
         setData(results);
         setError(null);
         setIsLoading(false);
       },
-      (error: FirestoreError) => {
+      (err: FirestoreError) => {
         const contextualError = new FirestorePermissionError({
           operation: 'list',
-          path,
+          path: (finalQuery as any)._query.path.segments.join('/'),
         });
 
         setError(contextualError);
@@ -121,11 +108,11 @@ export function useCollection<T = any>(
     );
 
     return () => unsubscribe();
-  }, [memoizedTargetRefOrQuery]);
+  }, [originalQuery, firestore, user, isAdmin]);
 
-  if (memoizedTargetRefOrQuery && !memoizedTargetRefOrQuery.__memo) {
+  if (originalQuery && !originalQuery.__memo) {
     throw new Error('A Firestore query was not properly memoized using useMemoFirebase. This will cause infinite loops.');
   }
-  
+
   return { data, isLoading, error };
 }

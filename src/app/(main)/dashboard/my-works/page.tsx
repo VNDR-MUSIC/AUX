@@ -3,7 +3,7 @@
 
 import { useUser, useCollection, useMemoFirebase } from '@/firebase';
 import { useFirebase } from '@/firebase/provider';
-import { collection, query, where, orderBy } from 'firebase/firestore';
+import { collection, query, orderBy } from 'firebase/firestore';
 import {
   Card,
   CardContent,
@@ -44,13 +44,13 @@ export default function MyWorksPage() {
   const { user } = useUser();
   const { firestore } = useFirebase();
 
-  // CRITICAL FIX: Ensure the query is ONLY created when user.uid is available.
+  // The useCollection hook now automatically applies the where('artistId', '==', user.uid) filter.
+  // We only need to specify the collection and ordering.
   const worksQuery = useMemoFirebase(
     () =>
       firestore && user?.uid
         ? query(
             collection(firestore, 'works'),
-            where('artistId', '==', user.uid),
             orderBy('uploadDate', 'desc')
           )
         : null,
@@ -186,5 +186,3 @@ export default function MyWorksPage() {
     </div>
   );
 }
-
-    

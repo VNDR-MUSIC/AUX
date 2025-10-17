@@ -2,7 +2,7 @@
 'use client';
 
 import { useUser, useFirebase, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, where, orderBy, Timestamp } from 'firebase/firestore';
+import { collection, query, orderBy, Timestamp } from 'firebase/firestore';
 import {
   Card,
   CardContent,
@@ -38,19 +38,18 @@ export default function WalletPage() {
   const { user } = useUser();
   const { firestore } = useFirebase();
 
-  // FIX: Point to the user document in the 'users' collection.
   const userDocRef = useMemoFirebase(
     () => (firestore && user ? doc(firestore, 'users', user.uid) : null),
     [firestore, user]
   );
   const { data: userData, isLoading: isUserDocLoading } = useDoc(userDocRef);
 
+  // The useCollection hook now automatically applies where('userId', '==', user.uid)
   const transactionsQuery = useMemoFirebase(
     () =>
       firestore && user
         ? query(
             collection(firestore, 'vsd_transactions'),
-            where('userId', '==', user.uid),
             orderBy('transactionDate', 'desc')
           )
         : null,
@@ -172,5 +171,3 @@ export default function WalletPage() {
     </div>
   );
 }
-
-    
