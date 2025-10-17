@@ -42,7 +42,7 @@ export async function signupAction(prevState: AuthState, formData: FormData): Pr
     const userProperties = {
       email,
       password,
-      ...(isAdminUser && { displayName: 'Preston' })
+      ...(isAdminUser && { displayName: 'VNDR Support' })
     };
 
     const userCredential = await adminAuth.createUser(userProperties);
@@ -53,7 +53,7 @@ export async function signupAction(prevState: AuthState, formData: FormData): Pr
       id: userCredential.uid,
       email: email,
       role: isAdminUser ? 'admin' : 'artist',
-      username: isAdminUser ? 'Preston' : email.split('@')[0], // Default username
+      username: isAdminUser ? 'VNDR Support' : email.split('@')[0], // Default username
       onboardingCompleted: {
         dashboard: false,
         upload: false,
@@ -124,5 +124,3 @@ export async function completeOnboardingStepAction(
     return { success: false };
   }
 }
-
-    

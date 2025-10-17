@@ -1,9 +1,10 @@
+
 'use client';
 
 import { useUser, useFirebase, useDoc, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ShieldX, Link as LinkIcon, HardHat } from 'lucide-react';
+import { ShieldX, Link as LinkIcon, HardHat, Crown } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -37,6 +38,7 @@ export default function AdminPage() {
   const adminRef = useMemoFirebase(() => (firestore && user ? doc(firestore, `roles_admin/${user.uid}`) : null), [firestore, user]);
   const { data: adminDoc, isLoading: isAdminLoading } = useDoc(adminRef);
   const isAdmin = !!adminDoc;
+  const isSuperAdmin = user?.email === 'support@vndrmusic.com';
   
   const isLoading = isAuthLoading || isAdminLoading;
 
@@ -63,8 +65,13 @@ export default function AdminPage() {
     <div className="container mx-auto py-8">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="font-headline text-3xl sm:text-4xl font-bold tracking-tighter md:text-5xl">Admin Dashboard</h1>
-          <p className="mt-2 text-muted-foreground">Platform oversight and data management.</p>
+          <h1 className="font-headline text-3xl sm:text-4xl font-bold tracking-tighter md:text-5xl flex items-center gap-3">
+             {isSuperAdmin && <Crown className="text-yellow-400 h-8 w-8" />}
+             {isSuperAdmin ? 'Super Admin' : 'Admin'} Dashboard
+          </h1>
+          <p className="mt-2 text-muted-foreground">
+            {isSuperAdmin ? 'Full control over the VNDR Music ecosystem.' : 'Platform oversight and data management.'}
+          </p>
         </div>
         <Button asChild variant="outline">
           <Link href="/admin/subsidiaries">
