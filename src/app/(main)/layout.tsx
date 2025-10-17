@@ -6,6 +6,7 @@ import { FirebaseClientProvider } from "@/firebase";
 import { Sidebar, SidebarProvider } from "@/components/ui/sidebar";
 import SidebarNav from "@/components/layout/sidebar-nav";
 import SymbiChatWidget from "@/components/symbi/symbi-chat-widget";
+import SessionRewindTracker from "@/components/session-rewind-tracker";
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -23,6 +24,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                 <Footer />
                 <MusicPlayer />
                 <SymbiChatWidget />
+                <SessionRewindTracker />
             </div>
       </SidebarProvider>
     </FirebaseClientProvider>

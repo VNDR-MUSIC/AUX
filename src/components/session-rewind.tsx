@@ -1,9 +1,7 @@
 
 'use client';
 
-import { useUser, FirebaseClientProvider } from '@/firebase';
 import Script from 'next/script';
-import { useEffect } from 'react';
 
 // Extend the Window interface to include sessionRewind
 declare global {
@@ -13,21 +11,6 @@ declare global {
       identifyUser: (userInfo: { userId: string; [key: string]: string }) => void;
     };
   }
-}
-
-function SessionRewindTracker() {
-  const { user } = useUser();
-
-  useEffect(() => {
-    if (user && window.sessionRewind) {
-      window.sessionRewind.identifyUser({
-        userId: user.uid,
-        email: user.email || 'N/A',
-      });
-    }
-  }, [user]);
-
-  return null; // This component does not render anything
 }
 
 export default function SessionRewind() {
@@ -53,9 +36,6 @@ export default function SessionRewind() {
           `,
         }}
       />
-      <FirebaseClientProvider>
-          <SessionRewindTracker />
-      </FirebaseClientProvider>
     </>
   );
 }
