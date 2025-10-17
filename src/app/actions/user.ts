@@ -35,15 +35,25 @@ export async function signupAction(prevState: AuthState, formData: FormData): Pr
 
   try {
     const { db, auth: adminAuth } = await getFirebaseAdmin();
-    const userCredential = await adminAuth.createUser({ email, password });
+    
+    // If the user is the special support email, set up admin properties
+    const isAdminUser = email === 'support@vndrmusic.com';
+    
+    const userProperties = {
+      email,
+      password,
+      ...(isAdminUser && { displayName: 'Preston', phoneNumber: '+13477082466' })
+    };
 
+    const userCredential = await adminAuth.createUser(userProperties);
+    
     // Create user document in Firestore, now including vsdBalance
     const userRef = doc(db, 'users', userCredential.uid);
     await setDoc(userRef, {
       id: userCredential.uid,
       email: email,
-      role: 'artist',
-      username: email.split('@')[0], // Default username
+      role: isAdminUser ? 'admin' : 'artist',
+      username: isAdminUser ? 'Preston' : email.split('@')[0], // Default username
       onboardingCompleted: {
         dashboard: false,
         upload: false,
@@ -66,10 +76,9 @@ export async function signupAction(prevState: AuthState, formData: FormData): Pr
       details: 'Initial sign-up reward',
     });
 
-    // If the user is the special support email, set the admin custom claim
-    if (email === 'support@vndrmusic.com') {
+    if (isAdminUser) {
       await adminAuth.setCustomUserClaims(userCredential.uid, { admin: true });
-       const adminRoleRef = doc(db, 'roles_admin', userCredential.uid);
+      const adminRoleRef = doc(db, 'roles_admin', userCredential.uid);
       await setDoc(adminRoleRef, { isAdmin: true });
     }
 
