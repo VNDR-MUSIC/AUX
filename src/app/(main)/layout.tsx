@@ -1,4 +1,3 @@
-
 'use client';
 import Footer from "@/components/layout/footer";
 import MusicPlayer from "@/components/layout/music-player";
@@ -25,7 +24,9 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                         {children}
                     </main>
                 </div>
-                <Footer />
+                <div className="relative z-10">
+                  <Footer />
+                </div>
                 <MusicPlayer />
                 <SymbiChatWidget />
                 <SessionRewindTracker />
