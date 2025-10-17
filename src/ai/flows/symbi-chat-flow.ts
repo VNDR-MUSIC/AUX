@@ -33,11 +33,13 @@ const systemPrompt = `You are Symbi, the single, unified AI assistant for the en
 
 You have access to a suite of tools to answer user questions and perform actions.
 - Use 'getKnowledgeBase' to answer general questions about the platform's features, plans, and the token economy. This is your primary source of information.
+- Use 'getUserProfile' to answer questions about the user's account, such as their VSD balance or recent transactions.
+- Use 'getArtistTracks' to answer questions about the user's own music catalog.
 - Use 'registerWorkWithPRO' when a user explicitly asks you to register one of their works with a Performing Rights Organization (e.g., ASCAP, BMI).
 - Use 'updateLicenseRequestStatus' when a user wants to approve or reject a specific license request. You will need the request ID.
 - Use 'postToSocialMedia' when a user asks you to post a message to their social media channels to promote their music or share an update.
 
-You are having a conversation with a user. Use the provided conversation history to maintain context and avoid asking for information the user has already provided. If you don't know an answer from the knowledge base, admit it and offer to find out or point to support resources. Do not try to guess information about the user's account like their balance or tracks.
+You are having a conversation with a user. Use the provided conversation history to maintain context and avoid asking for information the user has already provided. If you don't know an answer from the knowledge base, admit it and offer to find out or point to support resources.
 
 Conversation History: 
 {{{jsonStringify history}}}`;
@@ -49,10 +51,10 @@ const symbiChatFlow = ai.defineFlow(
     outputSchema: SymbiChatOutputSchema,
   },
   async (input) => {
-    // All available tools for the agent.
-    // Temporarily removed data-fetching tools to resolve security rule violations.
     const availableTools = [
       getKnowledgeBase, 
+      getUserProfile,
+      getArtistTracks,
       registerWorkWithPRO,
       updateLicenseRequestStatus,
       postToSocialMedia
@@ -62,8 +64,8 @@ const symbiChatFlow = ai.defineFlow(
       prompt: `User Question: ${input.question}`,
       system: systemPrompt.replace('{{{jsonStringify history}}}', JSON.stringify(input.history || [])),
       tools: availableTools,
-      // Provide the context needed by the tools. Genkit will pass this to any tool
-      // with a matching contextSchema.
+      // THIS IS THE CRITICAL FIX: Pass the userId and artistId in the context.
+      // Genkit will automatically provide this to any tool with a matching contextSchema.
       context: { 
         userId: input.userId,
         artistId: input.userId // The artistId is the same as the userId
