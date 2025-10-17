@@ -36,18 +36,6 @@ export async function POST(request: Request) {
     const uid = decodedToken.uid;
     const isAdmin = decodedToken.admin === true;
     
-    // Determine owner field based on collection
-    let ownerField = 'userId';
-    if (collectionPath === 'works') {
-        ownerField = 'artistId';
-    } else if (collectionPath === 'license_requests') {
-        // For license requests, a user might be the artist OR the requestor
-        // A more complex logic might be needed if users need to see requests they made
-        // For now, we assume artists manage requests made for their work.
-        ownerField = 'artistId';
-    }
-
-
     let query: FirebaseFirestore.Query = db.collection(collectionPath);
     
     const snap = await query.get();
@@ -57,7 +45,14 @@ export async function POST(request: Request) {
       .filter(doc => {
         // Admins can see everything
         if (isAdmin) return true;
-        // Non-admins can only see their own documents
+        
+        // Special logic for license_requests: user can be artist OR requestor
+        if (collectionPath === 'license_requests') {
+            return doc.artistId === uid || doc.requestorId === uid;
+        }
+
+        // Standard ownership check for other collections
+        const ownerField = collectionPath === 'works' ? 'artistId' : 'userId';
         return doc[ownerField] === uid;
       });
 
