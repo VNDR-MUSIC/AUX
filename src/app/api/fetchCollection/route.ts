@@ -2,7 +2,8 @@
 import { NextResponse } from 'next/server';
 import { getFirebaseAdmin } from '@/firebase/admin';
 import { headers } from 'next/headers';
-import { Auth, getAuth } from 'firebase-admin/auth';
+import { Auth } from 'firebase-admin/auth';
+import { Query } from 'firebase-admin/firestore';
 
 async function verifyToken(auth: Auth, idToken: string) {
   try {
@@ -36,10 +37,21 @@ export async function POST(request: Request) {
     const uid = decodedToken.uid;
     const isAdmin = decodedToken.admin === true;
     
-    let query: FirebaseFirestore.Query = db.collection(collectionPath);
+    // Server-side fetch from Firestore
+    let query: Query = db.collection(collectionPath);
     
+    // Apply server-side filters if they exist
+    if (filters) {
+      for (const key in filters) {
+        if (Object.prototype.hasOwnProperty.call(filters, key)) {
+          query = query.where(key, '==', filters[key]);
+        }
+      }
+    }
+
     const snap = await query.get();
 
+    // After fetching, apply security filtering based on user role
     const docs = snap.docs
       .map(doc => ({ id: doc.id, ...doc.data() }))
       .filter(doc => {

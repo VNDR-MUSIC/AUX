@@ -1,18 +1,16 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useUser, useAuth } from '@/firebase';
+import { useUser } from '@/firebase';
 
-export function useSafeCollection<T>(collectionPath: string | null) {
+// The hook now accepts an optional filters object.
+export function useSafeCollection<T>(collectionPath: string | null, filters?: Record<string, any>) {
   const { user } = useUser();
-  const auth = useAuth(); // We might not need auth here if user object is sufficient
   const [data, setData] = useState<T[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<any>(null);
 
   useEffect(() => {
-    // We must have a user and a collection path to proceed.
     if (!user || !collectionPath) {
       setData([]);
       setIsLoading(false);
@@ -30,7 +28,8 @@ export function useSafeCollection<T>(collectionPath: string | null) {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${idToken}`,
             },
-            body: JSON.stringify({ collectionPath }),
+            // Pass filters in the body
+            body: JSON.stringify({ collectionPath, filters }),
         });
 
         if (!response.ok) {
@@ -49,7 +48,8 @@ export function useSafeCollection<T>(collectionPath: string | null) {
     };
 
     fetchDocs();
-  }, [collectionPath, user]); // Removed auth from dependency array as `user` covers the auth state change
+  // Pass filters as a dependency. Use JSON.stringify for stable dependency checking.
+  }, [collectionPath, user, JSON.stringify(filters)]);
 
   return { data, isLoading, error };
 }

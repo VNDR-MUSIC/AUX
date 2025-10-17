@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useUser, useCollection } from "@/firebase";
+import { useUser, useDoc, useMemoFirebase } from "@/firebase";
 import { useOnboarding } from "@/hooks/use-onboarding";
 import DashboardStats from '@/components/dashboard/dashboard-stats';
 import ActionCards from '@/components/dashboard/action-cards';
@@ -9,8 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Upload } from "lucide-react";
-import { useDoc } from "@/firebase";
-import { doc, query } from "firebase/firestore";
+import { doc } from "firebase/firestore";
 import { useFirebase } from "@/firebase/provider";
 import RecentWorks from "@/components/dashboard/recent-works";
 import {
@@ -24,6 +23,7 @@ import TopTracksChart from "@/components/dashboard/top-tracks-chart";
 import { Track } from "@/store/music-player-store";
 import RecommendationsClient from "@/components/dashboard/recommendations-client";
 import { useMemo } from "react";
+import { useSafeCollection } from "@/hooks/use-safe-collection";
 
 function DashboardHeader({
   username,
@@ -70,12 +70,13 @@ export default function DashboardPage() {
   const { firestore } = useFirebase();
   useOnboarding('dashboard');
 
-  const userDocRef = useMemo(() => (firestore && user ? doc(firestore, 'users', user.uid) : null), [firestore, user]);
+  const userDocRef = useMemoFirebase(() => (firestore && user ? doc(firestore, 'users', user.uid) : null), [firestore, user]);
   const { data: userData, isLoading: isUserDocLoading } = useDoc(userDocRef);
 
-  const { data: allWorks, isLoading: areWorksLoading } = useCollection<Track>('works');
+  // Use the new, secure hook to get works filtered by artist
+  const { data: allWorks, isLoading: areWorksLoading } = useSafeCollection<Track>('works');
   
-  const recentWorks = useMemo(() => allWorks?.sort((a, b) => (b.uploadDate as any) - (a.uploadDate as any)).slice(0, 5) || [], [allWorks]);
+  const recentWorks = useMemo(() => allWorks?.sort((a: any, b: any) => (b.uploadDate?.seconds || 0) - (a.uploadDate?.seconds || 0)).slice(0, 5) || [], [allWorks]);
   const topWorks = useMemo(() => allWorks?.sort((a, b) => (b.plays || 0) - (a.plays || 0)) || [], [allWorks]);
 
   const totalPlays = useMemo(() => allWorks?.reduce((acc, work) => acc + (work.plays || 0), 0) || 0, [allWorks]);

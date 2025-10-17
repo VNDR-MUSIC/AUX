@@ -1,8 +1,8 @@
 
 'use client';
 
-import { useUser, useCollection } from '@/firebase';
-import { query, orderBy } from 'firebase/firestore';
+import { useUser, useMemoFirebase } from '@/firebase';
+import { useSafeCollection } from '@/hooks/use-safe-collection';
 import {
   Card,
   CardContent,
@@ -38,17 +38,24 @@ type Work = Track & {
   status?: string;
   musoCreditsFetched?: boolean;
   audioFeatures?: any;
+  uploadDate: any; // Allow for sorting
 };
 
 export default function MyWorksPage() {
   const { user } = useUser();
+  
+  // Use the new, secure hook. It automatically filters by user ID.
+  const { data, isLoading } = useSafeCollection<Work>('works');
 
-  // The new useCollection hook takes the collection path and an optional query builder.
-  const queryBuilder = useMemo(() => {
-    return (q: Query) => query(q, orderBy('uploadDate', 'desc'));
-  }, []);
-
-  const { data: works, isLoading } = useCollection<Work>('works', queryBuilder);
+  // Sort the data client-side after it's fetched securely.
+  const works = useMemo(() => {
+    if (!data) return [];
+    return [...data].sort((a, b) => {
+      const dateA = a.uploadDate?.seconds || 0;
+      const dateB = b.uploadDate?.seconds || 0;
+      return dateB - dateA;
+    });
+  }, [data]);
 
   const getStatusBadge = (work: Work) => {
     if (work.status === 'processing') {

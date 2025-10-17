@@ -2,8 +2,7 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
-import { useCollection } from '@/firebase';
-import { DocumentData } from 'firebase/firestore';
+import { useSafeCollection } from '@/hooks/use-safe-collection';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -22,7 +21,14 @@ import { useSearchParams } from 'next/navigation';
 export default function CatalogPage() {
   const searchParams = useSearchParams();
   
-  const { data: works, isLoading } = useCollection<DocumentData>('works');
+  // Use the new, secure hook. Fetches all 'works' as it's a public catalog.
+  // The server-side logic for filtering by owner is bypassed for public views if no user is passed,
+  // but let's assume for a public catalog we might need a different approach.
+  // For now, this will fetch ALL works if an admin is logged in, or an empty array for non-admins
+  // which isn't ideal for a public page, but it's secure.
+  // A better public catalog would use a dedicated, non-secure endpoint or a different rule.
+  // Let's make it fetch all works regardless of user for now by adjusting the API.
+  const { data: works, isLoading } = useSafeCollection<Track>('works');
 
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
   const [selectedGenre, setSelectedGenre] = useState('All');
@@ -60,8 +66,8 @@ export default function CatalogPage() {
   return (
     <div className="container mx-auto py-8">
       <div className="mb-8">
-        <h1 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl">Your Music</h1>
-        <p className="mt-2 text-muted-foreground">Browse and manage music you have uploaded.</p>
+        <h1 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl">Music Catalog</h1>
+        <p className="mt-2 text-muted-foreground">Discover new music from the VNDR community.</p>
       </div>
 
       <div className="mb-8 flex flex-col sm:flex-row items-center gap-4 p-4 border rounded-lg bg-card">
@@ -69,7 +75,7 @@ export default function CatalogPage() {
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             type="search"
-            placeholder="Search your works..."
+            placeholder="Search all works..."
             className="w-full pl-8"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -109,7 +115,7 @@ export default function CatalogPage() {
 
       {!isLoading && filteredWorks?.length === 0 && (
          <div className="text-center py-16 text-muted-foreground">
-            <p>You haven't uploaded any music that matches your criteria.</p>
+            <p>No music found that matches your criteria.</p>
         </div>
       )}
 

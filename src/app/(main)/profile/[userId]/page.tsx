@@ -3,9 +3,10 @@
 
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
-import { useDoc, useCollection, useUser } from '@/firebase';
-import { doc, query, where } from 'firebase/firestore';
-import { useFirebase } from '@/firebase';
+import { useDoc, useUser, useMemoFirebase } from '@/firebase';
+import { useSafeCollection } from '@/hooks/use-safe-collection';
+import { doc } from 'firebase/firestore';
+import { useFirebase } from '@/firebase/provider';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -26,7 +27,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { useMemo } from 'react';
-
+import { Track } from '@/store/music-player-store';
 
 export default function ProfilePage() {
   const { userId } = useParams();
@@ -40,14 +41,11 @@ export default function ProfilePage() {
   );
   const { data: user, isLoading: isUserLoading } = useDoc(userRef);
 
-  // The new hook automatically filters by artistId if the user is not an admin.
-  // For a public profile page, we need to manually construct the query to show
-  // another user's works.
-  const queryBuilder = useMemo(() => {
-    return (q: Query) => query(q, where('artistId', '==', userId as string));
-  }, [userId]);
-
-  const { data: works, isLoading: areWorksLoading } = useCollection('works', queryBuilder);
+  // Use the new, secure hook. We pass the artistId as a filter.
+  const { data: works, isLoading: areWorksLoading } = useSafeCollection<Track>(
+    'works',
+    { artistId: userId as string }
+  );
   
   const adminRef = useMemo(() => (firestore && currentUser ? doc(firestore, `roles_admin/${currentUser.uid}`) : null), [firestore, currentUser]);
   const { data: adminDoc } = useDoc(adminRef);
