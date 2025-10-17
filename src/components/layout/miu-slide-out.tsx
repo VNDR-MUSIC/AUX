@@ -18,21 +18,23 @@ export default function MiuSlideOut() {
 
   return (
     <>
-      {/* Clickable Logo Tab */}
-      <button
-        onClick={() => setIsOpen(true)}
-        className="fixed top-1/2 -translate-y-1/2 left-0 z-40 h-28 w-24 rounded-r-lg bg-card border-y border-r border-border hover:bg-muted transition-colors duration-300 group"
-        aria-label="Open Music Industry University panel"
-      >
-        <div className="absolute top-1/2 -translate-y-1/2 left-0 h-20 w-full transform transition-transform duration-300 group-hover:scale-105">
-           <Image 
-              src="https://i.ibb.co/4gJqBfM8/MIU-logo-wt.png" 
-              alt="MIU Logo" 
-              layout="fill" 
-              className="object-contain" 
-            />
-        </div>
-      </button>
+      {/* Clickable Logo Tab - always visible when panel is closed */}
+      {!isOpen && (
+         <button
+          onClick={() => setIsOpen(true)}
+          className="fixed top-1/2 -translate-y-1/2 left-0 z-40 h-28 w-24 rounded-r-lg bg-card border-y border-r border-border hover:bg-muted transition-colors duration-300 group"
+          aria-label="Open Music Industry University panel"
+        >
+            <div className="absolute top-1/2 -translate-y-1/2 left-0 h-20 w-full transform transition-transform duration-300 group-hover:scale-105">
+               <Image 
+                  src="https://i.ibb.co/4gJqBfM8/MIU-logo-wt.png" 
+                  alt="MIU Logo" 
+                  layout="fill" 
+                  className="object-contain" 
+                />
+            </div>
+        </button>
+      )}
 
       {/* Slide-out Content Panel */}
       <AnimatePresence>
