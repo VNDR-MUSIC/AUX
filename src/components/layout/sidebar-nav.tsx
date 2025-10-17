@@ -70,7 +70,10 @@ export default function SidebarNav() {
   const router = useRouter();
   const { toast } = useToast();
 
-  const isAdmin = (user as any)?.customClaims?.admin === true;
+  const isAdmin = useMemo(() => {
+    if (isUserLoading || !user) return false;
+    return (user as any)?.customClaims?.admin === true;
+  }, [user, isUserLoading]);
 
   const menuItems = useMemo(() => {
     if (isUserLoading) return [];
