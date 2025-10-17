@@ -33,7 +33,7 @@ const serializeData = (data: any): any => {
     return serialized;
 };
 
-const serializeDoc = (doc: FirebaseFirestore.DocumentData) => {
+const serializeDoc = (doc: FirebaseFirestore.DocumentSnapshot) => {
     return {
         id: doc.id,
         ...serializeData(doc.data()),
@@ -56,7 +56,9 @@ export async function fetchCollectionAction({ collectionPath, filters }: { colle
 
     // Authenticated access for all other collections
     if (!idToken) {
-      return { error: 'Unauthorized: User token is required for this request.' };
+      // This is not an error, but a state where the user is not logged in.
+      // The client should handle this gracefully (e.g., show a login prompt).
+      return { data: [] }; 
     }
     
     const decodedToken = await adminAuth.verifyIdToken(idToken);
@@ -74,7 +76,7 @@ export async function fetchCollectionAction({ collectionPath, filters }: { colle
                 .map(serializeDoc)
                 .filter((doc: any) => doc.artistId === uid || doc.requestorId === uid);
              return { data: docs };
-        } else {
+        } else if (collectionPath !== 'works' || (collectionPath === 'works' && filters?.artistId)) {
              // For most collections, filter by ownership
             const ownerField = collectionPath === 'works' ? 'artistId' : 'userId';
             query = query.where(ownerField, '==', uid);

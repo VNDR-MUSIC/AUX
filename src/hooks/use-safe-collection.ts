@@ -7,7 +7,7 @@ import { fetchCollectionAction } from '@/app/actions/fetch-collection';
 
 // The hook now accepts an optional filters object.
 export function useSafeCollection<T>(collectionPath: string | null, filters?: Record<string, any>) {
-  const { user } = useUser();
+  const { user, isUserLoading } = useUser();
   const [data, setData] = useState<T[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -21,13 +21,12 @@ export function useSafeCollection<T>(collectionPath: string | null, filters?: Re
     }
 
     // For public collections that don't need a user, we can fetch immediately.
-    // For protected collections, we must wait for the user object.
+    // For protected collections, we must wait for the user object to be loaded.
     const isPublicPath = collectionPath === 'works' && !filters;
-    if (!isPublicPath && !user) {
-      // If it's a protected path and we don't have a user, wait.
-      // If data is already there from a previous user, clear it.
-      if (data) setData(null);
-      setIsLoading(true); // Remain in loading state until user is available
+    if (!isPublicPath && isUserLoading) {
+      // If it's a protected path and we are still checking the user, wait.
+      // Don't clear data, to avoid flashes of empty content on re-renders.
+      setIsLoading(true);
       return;
     }
 
@@ -54,7 +53,8 @@ export function useSafeCollection<T>(collectionPath: string | null, filters?: Re
 
     fetchDocs();
   // Pass filters as a dependency. Use JSON.stringify for stable dependency checking.
-  }, [collectionPath, user, JSON.stringify(filters)]);
+  // also depends on isUserLoading to re-trigger fetch after auth state is resolved.
+  }, [collectionPath, user, isUserLoading, JSON.stringify(filters)]);
 
   return { data, isLoading, error };
 }
