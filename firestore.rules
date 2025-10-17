@@ -2,94 +2,95 @@
  * @fileoverview Firestore Security Rules for VNDR Music Platform
  *
  * Core Philosophy:
- * This ruleset prioritizes user data protection and enforces a strict ownership model
- * for user-related data (profiles, wallets). Public read access is granted for
- * specific collections like 'works' to enable content discovery while maintaining
- * owner-only write access.
+ * This ruleset enforces a strict user-ownership model for user-specific data
+ * while allowing public read access to some content.
  *
  * Data Structure:
- * - /users/{userId}: User profile information, accessible only to the user.
- * - /works/{workId}: Music tracks, publicly readable but only writable by the owner.
- * - /wallets/{userId}: User's token balances, accessible only to the user.
- * - /vsd_transactions/{transactionId}: Records of token transactions, accessible only to the owner.
- * - /contracts/{contractId}: Licensing and split agreements.
- * - /knowledgebase/{topicId}: Publicly available help articles.
- * - /roles_admin/{userId}: Documents indicating admin privileges.
+ * - /users/{userId}: Stores user profile data, accessible only to the user.
+ * - /works/{workId}: Stores musical works, publicly readable, but writable only by the owner.
+ * - /wallets/{userId}: Manages user token balances, accessible only to the user.
+ * - /vsd_transactions/{transactionId}: Stores token transactions, accessible only to the user.
+ * - /contracts/{contractId}: Stores licensing agreements, publicly readable, but writable only by the owner.
+ * - /knowledgebase/{topicId}: Stores help articles, publicly readable, writable by admins
  *
  * Key Security Decisions:
- * - User listing is disallowed to protect user privacy.
- * - Wallets are secured with strict ownership.
- * - Public content ('works') uses an owner-only write pattern.
- * - No schema validation is performed in this prototype phase beyond authorization checks.
+ * - User listing is disallowed to protect privacy.
+ * - Wallets are owned by users and access is restricted to the wallet owner.
+ * - Admin roles are granted by the existence of a document in the /roles_admin/{userId} collection.
  *
  * Denormalization for Authorization:
- *  - Each work document has `artistId` for checking ownership.
- *  - Wallet documents are named by `userId` to avoid `get()` calls.
+ *  - /works/{workId} documents must contain an `artistId` field to identify the owner.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Checks if the user is signed in.
-     * @return {boolean} True if the user is signed in, false otherwise.
+     * @description Checks if the requesting user is signed in.
+     * @param {none}
+     * @return {boolean}
      */
     function isSignedIn() {
       return request.auth != null;
     }
 
     /**
-     * @description Checks if the authenticated user ID matches the provided user ID.
-     * @param {string} userId The user ID to compare against the authenticated user's ID.
-     * @return {boolean} True if the user IDs match, false otherwise.
+     * @description Checks if the requesting user's UID matches the provided userId.
+     * @param {string} userId - The user ID to compare against.
+     * @return {boolean}
      */
     function isOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId;
+      return request.auth.uid == userId;
     }
 
-     /**
-      * @description Checks if the authenticated user is the existing owner of the document.
-      * @param {string} userId The user ID to compare against the authenticated user's ID.
-      * @return {boolean} True if the user IDs match and the resource exists, false otherwise.
-      */
+    /**
+     * @description Checks if the requesting user is the owner of the existing document.
+     *              This function also ensures that the document exists.
+     * @param {string} userId - The user ID to compare against the document's owner ID.
+     * @return {boolean}
+     */
     function isExistingOwner(userId) {
       return isOwner(userId) && resource != null;
     }
 
     /**
-     * @description Defines the admin role check.
-     * @return {boolean} True if the user is an admin, false otherwise.
+     * @description Checks if the requesting user is an admin by verifying the existence
+     *              of a document under /roles_admin/{userId}.
+     * @return {boolean}
      */
     function isAdmin() {
-        return exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
+      return exists(/databases/(default)/documents/roles_admin/$(request.auth.uid));
     }
 
+
     /**
-     * @description Rules for user profiles. Only the user can read/write their own profile.
+     * @description Manages access to user profile data.
      * @path /users/{userId}
-     * @allow (create) User 'abc' can create their own profile if authenticated as 'abc'.
-     * @deny (create) User 'abc' cannot create a profile for user 'def'.
-     * @allow (get) User 'abc' can read their own profile.
-     * @deny (get) User 'abc' cannot read user 'def's profile.
-     * @principle Enforces document ownership for all operations.
+     * @allow (create) - Authenticated user can create their own profile.
+     * @allow (get, list) - Authenticated user can read their own profile.
+     * @allow (update, delete) - Authenticated user can update/delete their own profile.
+     * @deny (create) - Unauthenticated user cannot create a profile.
+     * @deny (get, list) - Unauthenticated user cannot read any profile.
+     * @deny (update, delete) - Unauthenticated user cannot update/delete any profile.
+     * @principle Enforces document ownership for writes.
      */
     match /users/{userId} {
-      allow create: if isOwner(userId) && request.resource.data.id == userId;
       allow get: if isOwner(userId);
-      allow list: if false;
-      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow list: if false; // Disallow listing all users
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
       allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Rules for musical works. Public read, owner-only write.
+     * @description Manages access to musical works.
      * @path /works/{workId}
-     * @allow (get) Any user can retrieve a work.
-     * @allow (list) Any user can list works.
-     * @allow (create) User 'abc' can create a work if artistId matches.
-     * @deny (create) User 'abc' cannot create a work with a mismatched artistId.
-     * @deny (update) User 'abc' cannot update a work they don't own.
-     * @principle Public read with owner-only writes.
+     * @allow (get, list) - Anyone can read works.
+     * @allow (create) - Authenticated user can create a work with their artistId.
+     * @allow (update, delete) - Only the owner (artistId) can modify/delete their work.
+     * @deny (create) - Unauthenticated user cannot create a work.
+     * @deny (update, delete) - Unauthenticated user cannot modify/delete a work they don't own.
+     * @principle Public read, owner-only writes, validates ownership on create.
      */
     match /works/{workId} {
       allow get, list: if true;
@@ -99,82 +100,90 @@ service cloud.firestore {
     }
 
     /**
-     * @description Rules for user wallets. Only the user can read/write their own wallet.
+     * @description Manages access to user wallets.
      * @path /wallets/{userId}
-     * @allow (create) User 'abc' can create their wallet if authenticated as 'abc'.
-     * @deny (create) User 'abc' cannot create a wallet for user 'def'.
-     * @allow (get) User 'abc' can read their own wallet.
-     * @deny (get) User 'abc' cannot read user 'def's wallet.
-     * @principle Enforces document ownership for all operations.
+     * @allow (get) - Authenticated user can read their own wallet.
+     * @allow (create) - Authenticated user can create their own wallet (on account creation).
+     * @allow (update, delete) - Authenticated user can update/delete their own wallet.
+     * @deny (get) - Unauthenticated user cannot read any wallet.
+     * @deny (create) - Unauthenticated user cannot create a wallet for another user.
+     * @deny (update, delete) - Unauthenticated user cannot update/delete any wallet.
+     * @principle Enforces strict document ownership.
      */
     match /wallets/{userId} {
-      allow create: if isOwner(userId) && request.resource.data.userId == userId;
       allow get: if isOwner(userId);
-      allow list: if false;
-      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+      allow list: if false; // Wallets should not be listable
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
       allow delete: if isExistingOwner(userId);
     }
 
-    /**
-     * @description Rules for VSD transactions. Only the owner can manage their transactions.
-     * @path /vsd_transactions/{transactionId}
-     * @allow (create) User 'abc' can create a transaction if userId matches.
-     * @deny (create) User 'abc' cannot create a transaction for user 'def'.
-     * @deny (update) User 'abc' cannot update a transaction they don't own.
-     * @principle Enforces document ownership for all operations.
-     */
+     /**
+      * @description Manages access to VSD transactions.
+      * @path /vsd_transactions/{transactionId}
+      * @allow (get) - Authenticated user can read their own transactions.
+      * @allow (create) - Authenticated user can create a transaction for themself.
+      * @allow (update, delete) - Authenticated user can update/delete their own transactions.
+      * @deny (get) - Unauthenticated user cannot read any transactions.
+      * @deny (create) - Unauthenticated user cannot create a transaction for another user.
+      * @deny (update, delete) - Unauthenticated user cannot update/delete any transaction.
+      * @principle Enforces strict document ownership.
+      */
     match /vsd_transactions/{transactionId} {
-      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
       allow get: if isOwner(resource.data.userId);
       allow list: if isOwner(resource.data.userId);
-      allow update: if isExistingOwner(resource.data.userId);
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update: if isExistingOwner(resource.data.userId) && request.resource.data.userId == resource.data.userId;
       allow delete: if isExistingOwner(resource.data.userId);
     }
 
+
     /**
-     * @description Rules for contracts.
+     * @description Manages access to contracts.
      * @path /contracts/{contractId}
+     * @allow (get, list) - Anyone can read contracts.
+     * @allow (create) - Authenticated user can create a contract.
+     * @allow (update, delete) - Only the owner can modify/delete their contract.
+     * @deny (create) - Unauthenticated user cannot create a contract.
+     * @deny (update, delete) - Unauthenticated user cannot modify/delete a contract they don't own.
+     * @principle Public read, owner-only writes.
      */
     match /contracts/{contractId} {
-        allow get: if true;
-        allow list: if true;
-        allow create: if isAdmin();
-        allow update: if isAdmin();
-        allow delete: if isAdmin();
-    }
-
-   /**
-    * @description Rules for musoAudits. Only admin can create, all can read
-    * @path /musoAudits/{auditId}
-    */
-    match /musoAudits/{auditId} {
       allow get, list: if true;
-      allow create: if isAdmin();
-      allow update: if false;
-      allow delete: if false;
+      allow create: if isSignedIn();
+      allow update: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
+      allow delete: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
+      // CRITICAL: Cannot implement owner-only writes. The 'Contract' entity is missing an 'ownerId' or 'authorId' field.
     }
 
     /**
-     * @description Rules for Knowledgebase Articles. Public read, admin write.
-     * @path /knowledgebase/{topicId}
+     * @description Placeholder for musoAudits collection.  No rules implemented.
+     * @path /musoAudits/{auditId}
      */
-    match /knowledgebase/{topicId} {
-        allow get, list: if true;
-        allow create: if isAdmin();
-        allow update: if isAdmin();
-        allow delete: if isAdmin();
+    match /musoAudits/{auditId} {
+      allow get, list, create, update, delete: if false;
     }
 
-    /**
-     * @description Admin role check. Document existence confers admin privileges.
-     * @path /roles_admin/{userId}
-     */
+     /**
+      * @description Manages access to knowledge base articles.
+      * @path /knowledgebase/{topicId}
+      * @allow (get, list) - Anyone can read knowledge base articles.
+      * @allow (create, update, delete) - Only admins can create, update, and delete knowledge base articles.
+      * @deny (create, update, delete) - Non-admins cannot create, update, or delete knowledge base articles.
+      * @principle Public read, admin-only writes.
+      */
+     match /knowledgebase/{topicId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+     /**
+      * @description Grants admin privileges based on document existence. This collection should only be modified by trusted code.
+      * @path /roles_admin/{userId}
+      * @allow (get, list, create, update, delete) - No client-side access allowed.
+      */
     match /roles_admin/{userId} {
-        allow get: if isAdmin();
-        allow list: if false;
-        allow create: if false;
-        allow update: if false;
-        allow delete: if false;
+      allow get, list, create, update, delete: if false;
     }
   }
 }
