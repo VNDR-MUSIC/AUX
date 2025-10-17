@@ -8,6 +8,7 @@ import { useState } from "react";
 import Image from "next/image";
 import IVtvModal from "./ivtv-modal";
 import NDRadioModal from "./nd-radio-modal";
+import AudioExchangeModal from "./audio-exchange-modal";
 
 const socialLinks = [
     { name: "Twitter", href: "#" },
@@ -35,6 +36,7 @@ export default function Footer() {
   const { user, isUserLoading } = useUser();
   const [isIvtvModalOpen, setIsIvtvModalOpen] = useState(false);
   const [isNdRadioModalOpen, setIsNdRadioModalOpen] = useState(false);
+  const [isAudioExchangeModalOpen, setIsAudioExchangeModalOpen] = useState(false);
   const isAdmin = (user as any)?.customClaims?.admin === true;
 
   let finalArtistLinks = [...artistLinks];
@@ -86,12 +88,15 @@ export default function Footer() {
             
             <div>
                 <h3 className="font-semibold text-foreground">Our Subsidiaries & Partners</h3>
-                <div className="mt-4 grid grid-cols-2 gap-4 items-center">
+                <div className="mt-4 grid grid-cols-3 gap-4 items-center">
                     <button onClick={() => setIsIvtvModalOpen(true)} className="cursor-pointer">
                         <Image src="https://i.ibb.co/FqwXfkL9/Screenshot-20250914-224236-Facebook.jpg" alt="IVtv Logo" width={100} height={50} className="object-contain" />
                     </button>
                     <button onClick={() => setIsNdRadioModalOpen(true)} className="cursor-pointer">
                         <Image src="https://i.ibb.co/4wvZ1Mzq/ND-Radio-transparent.png" alt="ND Radio Logo" width={100} height={50} className="object-contain" />
+                    </button>
+                     <button onClick={() => setIsAudioExchangeModalOpen(true)} className="cursor-pointer">
+                        <Image src="https://i.ibb.co/fVjNMVpk/logo2.png" alt="Audio Exchange Logo" width={100} height={50} className="object-contain" />
                     </button>
                 </div>
             </div>
@@ -116,6 +121,7 @@ export default function Footer() {
     </footer>
     <IVtvModal isOpen={isIvtvModalOpen} onClose={() => setIsIvtvModalOpen(false)} />
     <NDRadioModal isOpen={isNdRadioModalOpen} onClose={() => setIsNdRadioModalOpen(false)} />
+    <AudioExchangeModal isOpen={isAudioExchangeModalOpen} onClose={() => setIsAudioExchangeModalOpen(false)} />
     </>
   );
 }
