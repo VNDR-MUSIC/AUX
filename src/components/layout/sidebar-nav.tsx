@@ -2,7 +2,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   Home,
   Library,
@@ -42,7 +42,6 @@ import { Avatar, AvatarFallback } from '../ui/avatar';
 import { signOut } from 'firebase/auth';
 import { useFirebase } from '@/firebase/provider';
 import { useToast } from '@/hooks/use-toast';
-import { useRouter } from 'next/navigation';
 
 
 const authenticatedMenuItems = [
@@ -79,11 +78,11 @@ export default function SidebarNav() {
     if (!auth) return;
     try {
       await signOut(auth);
+      router.push("/");
       toast({
         title: "Logged Out",
         description: "You have been successfully logged out.",
       });
-      router.push("/");
     } catch (error) {
       console.error("Logout error:", error);
       toast({
