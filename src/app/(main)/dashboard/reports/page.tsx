@@ -29,6 +29,9 @@ export default function ReportsPage() {
   const userRef = useMemoFirebase(() => (firestore && user ? doc(firestore, 'users', user.uid) : null), [firestore, user]);
   const { data: userData } = useDoc(userRef);
 
+  const walletRef = useMemoFirebase(() => (firestore && user ? doc(firestore, 'wallets', user.uid) : null), [firestore, user]);
+  const { data: walletData } = useDoc(walletRef);
+
   const [isLoading, setIsLoading] = useState(false);
   const [report, setReport] = useState<string | null>(null);
 
@@ -59,7 +62,7 @@ export default function ReportsPage() {
     }
   };
 
-  const canGenerate = userData && userData.vsdBalance >= 25;
+  const canGenerate = walletData && walletData.vsdLiteBalance >= 25;
 
   return (
     <div className="container mx-auto py-8">
@@ -101,7 +104,7 @@ export default function ReportsPage() {
               {isLoading ? 'Generating Report...' : 'Generate AI Report'}
             </Button>
             {!isLoading && !canGenerate && user && (
-              <p className="text-sm text-destructive">You need at least 25 VSD-lite to generate a report. Your balance is {userData?.vsdBalance || 0}.</p>
+              <p className="text-sm text-destructive">You need at least 25 VSD-lite to generate a report. Your balance is {walletData?.vsdLiteBalance || 0}.</p>
             )}
         </CardFooter>
       </Card>

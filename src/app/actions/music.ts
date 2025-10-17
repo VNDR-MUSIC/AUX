@@ -7,6 +7,7 @@ import { collection, addDoc, serverTimestamp, doc, deleteDoc, updateDoc, query, 
 import { revalidatePath } from "next/cache";
 import { createVsdTransaction } from "./vsd-transaction";
 import { generateReport } from "@/ai/flows/generate-report-flow";
+import { Track } from "@/store/music-player-store";
 
 
 const uploadWorkSchema = z.object({
@@ -117,7 +118,7 @@ export async function uploadTrackAction(
 
 export async function deleteTrackAction(trackId: string, artistId: string) {
     if (!trackId || !artistId) {
-        return { error: 'Missing track or artist ID.' };
+        return { error: 'Missing work or artist ID.' };
     }
 
     try {
@@ -180,7 +181,7 @@ export async function generateReportAction(userId: string): Promise<{ success: b
     const querySnapshot = await getDocs(q);
     
     if (querySnapshot.empty) {
-      // Refund the VSD token if no tracks are found
+      // Refund the VSD token if no works are found
       await createVsdTransaction({
           userId,
           amount: 25,
@@ -190,7 +191,18 @@ export async function generateReportAction(userId: string): Promise<{ success: b
       return { success: false, message: "You don't have any works to generate a report for." };
     }
 
-    const tracks = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const tracks = querySnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        title: data.title || '',
+        artistId: data.artistId || '',
+        artistName: data.artistName || '',
+        genre: data.genre || '',
+        plays: data.plays || 0,
+        price: data.price,
+      };
+    }) as Track[];
 
     // 3. Call the Genkit flow
     const report = await generateReport({ tracks });

@@ -22,21 +22,21 @@ export default function AdminPage() {
   const isAdmin = !!adminDoc;
 
   // Data fetching
-  const tracksQuery = useMemoFirebase(() => (firestore ? collection(firestore, 'tracks') : null), [firestore]);
-  const { data: tracks, isLoading: areTracksLoading } = useCollection<Track>(tracksQuery);
+  const worksQuery = useMemoFirebase(() => (firestore ? collection(firestore, 'works') : null), [firestore]);
+  const { data: works, isLoading: areWorksLoading } = useCollection<Track>(worksQuery);
 
   // State for filters
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('all');
 
   const genres = useMemo(() => {
-    if (!tracks) return [];
-    const allGenres = tracks.map(track => track.genre).filter(Boolean) as string[];
+    if (!works) return [];
+    const allGenres = works.map(track => track.genre).filter(Boolean) as string[];
     return ['all', ...Array.from(new Set(allGenres))];
-  }, [tracks]);
+  }, [works]);
 
-  const filteredTracks = useMemo(() => {
-    return tracks
+  const filteredWorks = useMemo(() => {
+    return works
       ?.filter(track => {
         const term = searchTerm.toLowerCase();
         return (
@@ -47,9 +47,9 @@ export default function AdminPage() {
       .filter(track => {
         return selectedGenre === 'all' || track.genre === selectedGenre;
       });
-  }, [tracks, searchTerm, selectedGenre]);
+  }, [works, searchTerm, selectedGenre]);
   
-  const isLoading = isAdminLoading || areTracksLoading;
+  const isLoading = isAdminLoading || areWorksLoading;
 
   if (isLoading) {
       return (
@@ -91,8 +91,8 @@ export default function AdminPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Track Management</CardTitle>
-          <CardDescription>View, search, and filter all tracks on the platform.</CardDescription>
+          <CardTitle>Work Management</CardTitle>
+          <CardDescription>View, search, and filter all works on the platform.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col sm:flex-row items-center gap-4 mb-6 p-4 border rounded-lg bg-card">
@@ -124,28 +124,28 @@ export default function AdminPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Track</TableHead>
+                  <TableHead>Work</TableHead>
                   <TableHead>Artist</TableHead>
                   <TableHead>Genre</TableHead>
                   <TableHead className="text-center">Plays</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredTracks && filteredTracks.length > 0 ? (
-                  filteredTracks.map(track => (
-                    <TableRow key={track.id}>
-                      <TableCell className="font-medium">{track.title}</TableCell>
-                      <TableCell>{track.artistName}</TableCell>
-                      <TableCell>{track.genre}</TableCell>
+                {filteredWorks && filteredWorks.length > 0 ? (
+                  filteredWorks.map(work => (
+                    <TableRow key={work.id}>
+                      <TableCell className="font-medium">{work.title}</TableCell>
+                      <TableCell>{work.artistName}</TableCell>
+                      <TableCell>{work.genre}</TableCell>
                       <TableCell className="text-center">
-                        {track.plays || 0}
+                        {work.plays || 0}
                       </TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
                     <TableCell colSpan={4} className="h-24 text-center">
-                      No tracks found matching your criteria.
+                      No works found matching your criteria.
                     </TableCell>
                   </TableRow>
                 )}

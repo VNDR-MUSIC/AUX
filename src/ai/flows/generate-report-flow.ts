@@ -28,16 +28,16 @@ const prompt = ai.definePrompt({
   output: {schema: GenerateReportOutputSchema},
   prompt: `You are an expert music industry analyst AI for the VNDR platform. Your task is to generate a concise, insightful, and encouraging performance report for an independent artist based on their track data.
 
-The data provided is a JSON array of the artist's tracks. Each track object contains fields like 'title', 'genre', 'plays', and 'price' (in VSD tokens).
+The data provided is a JSON array of the artist's works. Each work object contains fields like 'title', 'genre', 'plays', and 'price' (in VSD tokens).
 
-Analyze the provided track data: {{{jsonStringify tracks}}}
+Analyze the provided work data: {{{jsonStringify tracks}}}
 
 Based on your analysis, generate a report that includes the following sections:
 1.  **Overall Summary:** A brief, encouraging overview of their catalog's performance.
-2.  **Top Performing Tracks:** Identify the top 2-3 tracks based on play count. Mention their titles and play counts.
-3.  **Audience Insights:** Based on the genres of their most popular tracks, make some inferences about the artist's core audience.
-4.  **Monetization Analysis:** Comment on their licensing strategy. If they have tracks priced for licensing, mention the average price. If not, suggest they consider it.
-5.  **Strategic Recommendations:** Provide 2-3 actionable, simple recommendations for the artist to grow. For example, suggest promoting their top tracks, creating more music in their popular genres, or adjusting their licensing prices.
+2.  **Top Performing Works:** Identify the top 2-3 works based on play count. Mention their titles and play counts.
+3.  **Audience Insights:** Based on the genres of their most popular works, make some inferences about the artist's core audience.
+4.  **Monetization Analysis:** Comment on their licensing strategy. If they have works priced for licensing, mention the average price. If not, suggest they consider it.
+5.  **Strategic Recommendations:** Provide 2-3 actionable, simple recommendations for the artist to grow. For example, suggest promoting their top works, creating more music in their popular genres, or adjusting their licensing prices.
 
 Keep the tone professional, but also supportive and empowering for an independent artist. Present the report as a single block of text, using markdown for formatting (e.g., using '#' for headers and '*' for bullet points).`,
 });

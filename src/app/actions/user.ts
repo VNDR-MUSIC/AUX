@@ -53,6 +53,7 @@ export async function signupAction(prevState: AuthState, formData: FormData): Pr
         legalEagle: false,
         settings: false,
       },
+      vsdBalance: 0, // Add vsdBalance directly to the user document
     });
 
     // Create wallet document

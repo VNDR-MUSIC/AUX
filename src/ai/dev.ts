@@ -7,3 +7,4 @@ import '@/ai/flows/ai-cover-art-generation.ts';
 import '@/ai/flows/ai-licensing-price-recommendation.ts';
 import '@/ai/flows/symbi-chat-flow.ts';
 import '@/ai/flows/legal-eagle-flow.ts';
+import '@/ai/flows/generate-report-flow.ts';

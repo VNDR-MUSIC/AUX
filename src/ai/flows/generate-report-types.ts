@@ -1,22 +1,12 @@
 
 import {z} from 'genkit';
-
-const TrackSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  artistId: z.string(),
-  artistName: z.string(),
-  genre: z.string(),
-  plays: z.number().optional(),
-  price: z.number().optional(),
-  // Add other relevant fields from your Track entity if needed
-});
+import { TrackSchema } from '@/store/music-player-store';
 
 /**
  * Input schema for the AI-powered report generation flow.
  */
 export const GenerateReportInputSchema = z.object({
-  tracks: z.array(TrackSchema).describe("An array of the artist's track objects."),
+  tracks: z.array(TrackSchema).describe("An array of the artist's work objects."),
 });
 export type GenerateReportInput = z.infer<typeof GenerateReportInputSchema>;
 

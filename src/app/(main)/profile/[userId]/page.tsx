@@ -39,14 +39,14 @@ export default function ProfilePage() {
   );
   const { data: user, isLoading: isUserLoading } = useDoc(userRef);
 
-  const tracksQuery = useMemoFirebase(
+  const worksQuery = useMemoFirebase(
     () =>
       firestore && userId
-        ? query(collection(firestore, 'tracks'), where('artistId', '==', userId))
+        ? query(collection(firestore, 'works'), where('artistId', '==', userId))
         : null,
     [firestore, userId]
   );
-  const { data: tracks, isLoading: areTracksLoading } = useCollection(tracksQuery);
+  const { data: works, isLoading: areWorksLoading } = useCollection(worksQuery);
   
   const adminRef = useMemoFirebase(() => (firestore && currentUser ? doc(firestore, `roles_admin/${currentUser.uid}`) : null), [firestore, currentUser]);
   const { data: adminDoc } = useDoc(adminRef);
@@ -76,10 +76,10 @@ export default function ProfilePage() {
           <Skeleton className="h-8 w-48 mb-4" />
         </div>
         <Skeleton className="h-24 w-full" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {Array.from({ length: 4 }).map((_, i) => (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+          {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="space-y-2">
-              <Skeleton className="h-48 w-full" />
+              <Skeleton className="aspect-square w-full" />
               <Skeleton className="h-4 w-3/4" />
               <Skeleton className="h-4 w-1/2" />
             </div>
@@ -128,26 +128,26 @@ export default function ProfilePage() {
       </div>
 
       <div>
-        <h2 className="font-headline text-2xl font-bold mb-6">Music Catalog ({tracks?.length || 0})</h2>
-        {areTracksLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {Array.from({ length: 4 }).map((_, i) => (
+        <h2 className="font-headline text-2xl font-bold mb-6">Music Catalog ({works?.length || 0})</h2>
+        {areWorksLoading ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+                {Array.from({ length: 6 }).map((_, i) => (
                     <div key={i} className="space-y-2">
-                        <Skeleton className="h-48 w-full" />
+                        <Skeleton className="aspect-square w-full" />
                         <Skeleton className="h-4 w-3/4" />
                         <Skeleton className="h-4 w-1/2" />
                     </div>
                 ))}
             </div>
-        ) : tracks && tracks.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {tracks.map(track => (
-              <div key={track.id} className="relative group">
-                <TrackCard track={track as any} />
+        ) : works && works.length > 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+            {works.map(work => (
+              <div key={work.id} className="relative group">
+                <TrackCard track={work as any} playlist={works as any} />
                  {canModerate && (
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                       <Button variant="destructive" size="icon" className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                       <Button variant="destructive" size="icon" className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8">
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </AlertDialogTrigger>
@@ -155,13 +155,13 @@ export default function ProfilePage() {
                       <AlertDialogHeader>
                         <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                         <AlertDialogDescription>
-                          This action cannot be undone. This will permanently delete the track
-                          &quot;{track.title}&quot; and remove its data from our servers.
+                          This action cannot be undone. This will permanently delete the work
+                          &quot;{work.title}&quot; and remove its data from our servers.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => handleDeleteTrack(track.id)}>
+                        <AlertDialogAction onClick={() => handleDeleteTrack(work.id)}>
                           Delete
                         </AlertDialogAction>
                       </AlertDialogFooter>

@@ -4,17 +4,22 @@
 import { create } from 'zustand';
 import { WithId } from '@/firebase';
 import { trackPlays } from '@/app/actions/music';
+import { z } from 'zod';
 
-export type Track = WithId<{
-  title: string;
-  artistId: string;
-  artistName?: string;
-  genre?: string;
-  coverArtUrl?: string;
-  trackUrl?: string;
-  price?: number;
-  plays?: number;
-}>;
+export const TrackSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  artistId: z.string(),
+  artistName: z.string().optional(),
+  genre: z.string().optional(),
+  coverArtUrl: z.string().optional(),
+  trackUrl: z.string().optional(),
+  price: z.number().optional(),
+  plays: z.number().optional(),
+});
+
+
+export type Track = z.infer<typeof TrackSchema>;
 
 interface MusicPlayerState {
   playlist: Track[];
