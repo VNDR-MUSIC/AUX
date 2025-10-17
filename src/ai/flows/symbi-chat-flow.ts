@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -47,6 +48,21 @@ You are having a conversation with a user. Use the provided conversation history
 Conversation History: 
 {{{jsonStringify history}}}`;
 
+// 1. Define the prompt at the top level, making tools available for the AI to use.
+const symbiPrompt = ai.definePrompt({
+  name: 'symbiChatPrompt',
+  system: systemPrompt,
+  tools: [getKnowledgeBase, getUserProfile, getArtistTracks, registerWorkWithPRO, updateLicenseRequestStatus, postToSocialMedia],
+  input: {
+    schema: z.object({
+      history: z.any(),
+      question: z.string(),
+    }),
+  },
+  output: { schema: SymbiChatOutputSchema },
+  prompt: 'User Question: {{{question}}}',
+});
+
 
 const symbiChatFlow = ai.defineFlow(
   {
@@ -56,24 +72,9 @@ const symbiChatFlow = ai.defineFlow(
     outputSchema: SymbiChatOutputSchema,
   },
   async (input) => {
-    // 1. Define the prompt, making tools available for the AI to use.
-    const prompt = ai.definePrompt({
-      name: 'symbiChatPrompt',
-      system: systemPrompt,
-      tools: [getKnowledgeBase, getUserProfile, getArtistTracks, registerWorkWithPRO, updateLicenseRequestStatus, postToSocialMedia],
-      input: {
-        schema: z.object({
-          history: z.any(),
-          question: z.string(),
-        }),
-      },
-      output: { schema: SymbiChatOutputSchema },
-      prompt: 'User Question: {{{question}}}',
-    });
-
-    // 2. Invoke the prompt with the user's question and history.
+    // 2. Invoke the pre-defined prompt with the user's question and history.
     // The AI will decide if it needs to call any tools.
-    const { output } = await prompt({
+    const { output } = await symbiPrompt({
       history: input.history || [],
       question: input.question,
     });
