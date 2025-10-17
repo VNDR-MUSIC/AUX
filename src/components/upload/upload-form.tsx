@@ -2,14 +2,13 @@
 "use client";
 
 import { useActionState, useEffect, useRef, useState } from "react";
-import { useFormStatus } from "react-dom";
 import Image from "next/image";
 import { uploadTrackAction } from "@/app/actions/music";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Sparkles, UploadCloud, Wand2 } from "lucide-react";
+import { Loader2, Sparkles, UploadCloud, Wand2, File as FileIcon, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
   Select,
@@ -24,6 +23,8 @@ import { recommendLicensingPrice } from "@/ai/flows/ai-licensing-price-recommend
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Icons } from "../icons";
+import { Progress } from "../ui/progress";
+import { useFormStatus } from "react-dom";
 
 const initialUploadState = {
     message: null,
@@ -43,15 +44,43 @@ function UploadButton() {
     )
 }
 
+function UploadProgress() {
+    const { pending } = useFormStatus();
+    const [progress, setProgress] = useState(0);
+
+    useEffect(() => {
+        if (pending) {
+            const interval = setInterval(() => {
+                setProgress(prev => {
+                    if (prev >= 95) {
+                        clearInterval(interval);
+                        return 95;
+                    }
+                    return prev + 5;
+                });
+            }, 200);
+            return () => clearInterval(interval);
+        } else {
+            setProgress(0);
+        }
+    }, [pending]);
+    
+    if (!pending) return null;
+
+    return <Progress value={progress} className="w-full" />;
+}
+
 export default function UploadForm() {
   const [uploadState, uploadFormAction] = useActionState(uploadTrackAction, initialUploadState);
   const { user } = useUser();
   const { toast } = useToast();
   
   const mainFormRef = useRef<HTMLFormElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [trackTitle, setTrackTitle] = useState('');
   const [genre, setGenre] = useState('');
   const [description, setDescription] = useState('');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const [isArtLoading, setIsArtLoading] = useState(false);
   const [coverArtDataUri, setCoverArtDataUri] = useState<string | null>(null);
@@ -75,9 +104,22 @@ export default function UploadForm() {
             setGenre('');
             setRecommendedPrice(null);
             setManualPrice('');
+            setSelectedFile(null);
         }
     }
   }, [uploadState, toast]);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] || null;
+    setSelectedFile(file);
+  };
+
+  const handleRemoveFile = () => {
+    setSelectedFile(null);
+    if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+    }
+  }
 
   const handleGenerateArt = async () => {
     if (!trackTitle || !genre) {
@@ -173,13 +215,25 @@ export default function UploadForm() {
                             <div className="mt-4 flex text-sm leading-6 text-gray-600">
                                 <label htmlFor="audio-file" className="relative cursor-pointer rounded-md bg-background font-semibold text-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 hover:text-primary/80">
                                     <span>Click to upload</span>
-                                    <input id="audio-file" name="audio-file" type="file" className="sr-only" required />
+                                    <input id="audio-file" name="audio-file" type="file" className="sr-only" required onChange={handleFileChange} ref={fileInputRef} accept="audio/*" />
                                 </label>
                                 <p className="pl-1">or drag and drop</p>
                             </div>
                             <p className="text-xs leading-5 text-gray-500">MP3, WAV, FLAC up to 50MB</p>
                         </div>
                     </div>
+                     {selectedFile && (
+                        <div className="mt-2 flex items-center justify-between rounded-lg border bg-muted p-2 text-sm">
+                            <div className="flex items-center gap-2 truncate">
+                                <FileIcon className="h-4 w-4 shrink-0" />
+                                <span className="truncate">{selectedFile.name}</span>
+                                <span className="text-muted-foreground text-xs shrink-0">({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)</span>
+                            </div>
+                            <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0" onClick={handleRemoveFile}>
+                                <X className="h-4 w-4" />
+                            </Button>
+                        </div>
+                    )}
                 </div>
                  <div className="space-y-2">
                     <Label>Cover Art</Label>
@@ -247,8 +301,12 @@ export default function UploadForm() {
         </Card>
         
         {uploadState.errors?._form && <p className="text-sm text-destructive">{uploadState.errors._form[0]}</p>}
-        <div className="flex justify-end pt-4">
-            <UploadButton />
+        
+        <div className="space-y-2">
+            <UploadProgress />
+            <div className="flex justify-end pt-4">
+                <UploadButton />
+            </div>
         </div>
       </form>
     </>
