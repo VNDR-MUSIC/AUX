@@ -14,6 +14,7 @@ import {
   BrainCircuit,
   Scale,
   Shield,
+  BarChart,
 } from 'lucide-react';
 import { useUser } from '@/firebase';
 
@@ -37,6 +38,7 @@ const authenticatedMenuItems = [
   { href: '/dashboard/catalog', icon: Library, label: 'Catalog' },
   { href: '/dashboard/licensing', icon: FileText, label: 'Licensing' },
   { href: '/dashboard/auctions', icon: Gavel, label: 'Auctions' },
+  { href: '/dashboard/reports', icon: BarChart, label: 'Reports' },
   { href: '/dashboard/legal-eagle', icon: Scale, label: 'Legal Eagle' },
 ];
 

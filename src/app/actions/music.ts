@@ -349,6 +349,9 @@ export async function trackPlays(trackId: string) {
     await updateDoc(trackRef, {
       plays: increment(1),
     });
+    // This revalidation is not strictly necessary for the client to see the change,
+    // as the real-time listener will update the UI. However, it's good practice
+    // for any Server Components that might depend on this data.
     revalidatePath('/dashboard');
     return { success: true };
   } catch (error) {

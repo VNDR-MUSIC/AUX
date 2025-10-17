@@ -26,5 +26,3 @@ const AnimatedGradientText: FC<AnimatedGradientTextProps> = ({
 };
 
 export default AnimatedGradientText;
-
-    
