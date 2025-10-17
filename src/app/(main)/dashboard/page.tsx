@@ -2,7 +2,7 @@
 'use client';
 
 import Link from "next/link";
-import { ArrowUpRight, Music, Upload, FileText, BarChart3, HandCoins, HardHat, Scale } from "lucide-react";
+import { ArrowUpRight, Music, Upload, FileText, HandCoins } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -27,6 +27,7 @@ import { claimDailyTokensAction } from "@/app/actions/vsd-transaction";
 import { useToast } from "@/hooks/use-toast";
 import { useOnboarding } from "@/hooks/use-onboarding";
 import { Badge } from "@/components/ui/badge";
+import { Track } from "@/store/music-player-store";
 
 export default function DashboardPage() {
   const { user, isUserLoading } = useUser();
@@ -39,11 +40,10 @@ export default function DashboardPage() {
   const { data: walletData, isLoading: isWalletLoading } = useDoc(walletRef);
 
   const worksQuery = useMemoFirebase(() => (firestore && user ? query(collection(firestore, 'works'), where('artistId', '==', user.uid), orderBy('uploadDate', 'desc'), limit(5)) : null), [firestore, user]);
-  const { data: recentWorks, isLoading: areWorksLoading } = useCollection(worksQuery);
+  const { data: recentWorks, isLoading: areWorksLoading } = useCollection<Track>(worksQuery);
   
   const userDocRef = useMemoFirebase(() => (firestore && user ? doc(firestore, 'users', user.uid) : null), [firestore, user]);
   const { data: userData } = useDoc(userDocRef);
-
 
   const handleClaimTokens = async () => {
     if (!user) return;
@@ -62,14 +62,26 @@ export default function DashboardPage() {
   if (isLoading) {
     return (
         <div className="flex flex-col gap-8">
+            <div className="flex items-center justify-between">
+                <div className="space-y-2">
+                    <Skeleton className="h-9 w-64" />
+                    <Skeleton className="h-5 w-80" />
+                </div>
+                <Skeleton className="h-9 w-32" />
+            </div>
             <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
                 <Skeleton className="h-32"/>
                 <Skeleton className="h-32"/>
                 <Skeleton className="h-32"/>
                 <Skeleton className="h-32"/>
             </div>
-            <Skeleton className="h-64"/>
-             <Skeleton className="h-48"/>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+                <Skeleton className="col-span-4 h-80"/>
+                <div className="col-span-4 lg:col-span-3 grid auto-rows-min gap-4">
+                    <Skeleton className="h-40"/>
+                    <Skeleton className="h-40"/>
+                </div>
+            </div>
         </div>
     );
   }
@@ -78,7 +90,7 @@ export default function DashboardPage() {
     <div className="flex flex-col gap-8">
       <div className="flex items-center justify-between">
         <div>
-            <h1 className="font-headline text-3xl md:text-4xl">Welcome, {userData?.username || 'Artist'}!</h1>
+            <h1 className="font-headline text-3xl md:text-4xl">Welcome, {userData?.username || user?.email?.split('@')[0] || 'Artist'}!</h1>
             <p className="text-muted-foreground">Here is the latest snapshot of your music ecosystem.</p>
         </div>
         <Button asChild size="sm" className="ml-auto gap-1">
@@ -98,9 +110,9 @@ export default function DashboardPage() {
             <Icons.vsd className="h-4 w-4 text-muted-foreground"/>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{walletData?.vsdLiteBalance || 0}</div>
+            <div className="text-2xl font-bold">{walletData?.vsdLiteBalance ?? 0}</div>
             <p className="text-xs text-muted-foreground">
-              +10 VSD on sign up
+              Used for platform services
             </p>
           </CardContent>
         </Card>
@@ -143,11 +155,19 @@ export default function DashboardPage() {
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <Card className="col-span-4">
-          <CardHeader>
-            <CardTitle>Recent Works</CardTitle>
-            <CardDescription>
-              Your 5 most recently uploaded works.
-            </CardDescription>
+          <CardHeader className="flex flex-row items-center">
+            <div className="grid gap-2">
+              <CardTitle>Recent Works</CardTitle>
+              <CardDescription>
+                Your 5 most recently uploaded works.
+              </CardDescription>
+            </div>
+            <Button asChild size="sm" className="ml-auto gap-1">
+              <Link href="/dashboard/my-works">
+                View All
+                <ArrowUpRight className="h-4 w-4" />
+              </Link>
+            </Button>
           </CardHeader>
           <CardContent>
              {recentWorks && recentWorks.length > 0 ? (
@@ -155,8 +175,8 @@ export default function DashboardPage() {
                 <TableHeader>
                     <TableRow>
                     <TableHead>Title</TableHead>
-                    <TableHead className="hidden md:table-cell">Genre</TableHead>
-                    <TableHead className="hidden md:table-cell">Status</TableHead>
+                    <TableHead className="hidden sm:table-cell">Genre</TableHead>
+                    <TableHead className="hidden sm:table-cell">Status</TableHead>
                     <TableHead className="text-right">Plays</TableHead>
                     </TableRow>
                 </TableHeader>
@@ -169,8 +189,8 @@ export default function DashboardPage() {
                                 {work.artistName}
                             </div>
                         </TableCell>
-                         <TableCell className="hidden md:table-cell">{work.genre}</TableCell>
-                         <TableCell className="hidden md:table-cell">
+                         <TableCell className="hidden sm:table-cell">{work.genre}</TableCell>
+                         <TableCell className="hidden sm:table-cell">
                              <Badge variant="outline">{work.status || 'Pending'}</Badge>
                         </TableCell>
                         <TableCell className="text-right">{work.plays || 0}</TableCell>
@@ -181,6 +201,9 @@ export default function DashboardPage() {
              ) : (
                 <div className="text-center py-12 text-muted-foreground">
                     <p>You haven't uploaded any works yet.</p>
+                     <Button asChild size="sm" className="mt-4">
+                        <Link href="/dashboard/upload">Upload Work</Link>
+                    </Button>
                 </div>
              )}
           </CardContent>
@@ -206,7 +229,7 @@ export default function DashboardPage() {
                     <p className="text-sm text-muted-foreground">Have questions? Our AI legal assistant can help you with publishing, licensing, and more.</p>
                     <Button className="w-full" variant="secondary" asChild>
                         <Link href="/dashboard/legal-eagle">
-                            Ask Symbi
+                            Ask Legal Eagle
                             <ArrowUpRight className="ml-2 h-4 w-4" />
                         </Link>
                     </Button>
@@ -217,3 +240,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
