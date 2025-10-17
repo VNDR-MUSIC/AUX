@@ -6,13 +6,14 @@ import { useUser, useAuth } from '@/firebase';
 
 export function useSafeCollection<T>(collectionPath: string | null) {
   const { user } = useUser();
-  const auth = useAuth();
+  const auth = useAuth(); // We might not need auth here if user object is sufficient
   const [data, setData] = useState<T[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<any>(null);
 
   useEffect(() => {
-    if (!user || !auth || !collectionPath) {
+    // We must have a user and a collection path to proceed.
+    if (!user || !collectionPath) {
       setData([]);
       setIsLoading(false);
       return;
@@ -34,7 +35,7 @@ export function useSafeCollection<T>(collectionPath: string | null) {
 
         if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.error || 'Failed to fetch data');
+            throw new Error(errorData.error || `Failed to fetch data with status: ${response.status}`);
         }
 
         const result = await response.json();
@@ -48,7 +49,7 @@ export function useSafeCollection<T>(collectionPath: string | null) {
     };
 
     fetchDocs();
-  }, [collectionPath, user, auth]);
+  }, [collectionPath, user]); // Removed auth from dependency array as `user` covers the auth state change
 
   return { data, isLoading, error };
 }

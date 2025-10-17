@@ -40,7 +40,13 @@ export async function POST(request: Request) {
     let ownerField = 'userId';
     if (collectionPath === 'works') {
         ownerField = 'artistId';
+    } else if (collectionPath === 'license_requests') {
+        // For license requests, a user might be the artist OR the requestor
+        // A more complex logic might be needed if users need to see requests they made
+        // For now, we assume artists manage requests made for their work.
+        ownerField = 'artistId';
     }
+
 
     let query: FirebaseFirestore.Query = db.collection(collectionPath);
     
