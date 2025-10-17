@@ -29,10 +29,10 @@ export async function fetchCollectionAction({ collectionPath, filters }: { colle
   try {
     const cookieStore = cookies();
     const idToken = cookieStore.get('firebaseIdToken')?.value;
+    const { db } = await getFirebaseAdmin();
 
     // Public, unauthenticated access is allowed ONLY for the 'works' collection without filters.
     if (collectionPath === 'works' && !filters && !idToken) {
-      const { db } = await getFirebaseAdmin();
       const publicWorksSnap = await db.collection(collectionPath).get();
       const publicWorks = publicWorksSnap.docs.map(serializeData);
       return { data: publicWorks };
@@ -42,7 +42,7 @@ export async function fetchCollectionAction({ collectionPath, filters }: { colle
       return { error: 'Unauthorized: A valid user token is required for this request.' };
     }
 
-    const { auth: adminAuth, db } = await getFirebaseAdmin();
+    const { auth: adminAuth } = await getFirebaseAdmin();
     const decodedToken = await adminAuth.verifyIdToken(idToken);
     
     if (!decodedToken) {
@@ -84,6 +84,8 @@ export async function fetchCollectionAction({ collectionPath, filters }: { colle
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "An unknown server error occurred.";
     console.error(`[Server Action fetchCollection] Error:`, errorMessage);
+    // Ensure that even in case of an error, a serializable object is returned.
     return { error: "Internal Server Error", details: errorMessage };
   }
 }
+
