@@ -113,59 +113,36 @@
     ]
   },
   "firestore": {
-    "structure": [
-      {
-        "path": "/users/{userId}",
-        "definition": {
-          "entityName": "User",
-          "description": "Stores core user profile data."
-        }
-      },
-      {
-        "path": "/works/{workId}",
-        "definition": {
-            "entityName": "Work",
-            "description": "Central collection for all musical works."
-        }
-      },
-      {
-        "path": "/wallets/{userId}",
-        "definition": {
-            "entityName": "Wallet",
-            "description": "Manages token balances for each user. Path is userId for 1:1 mapping."
-        }
-      },
-       {
-        "path": "/vsd_transactions/{transactionId}",
-        "definition": {
-          "entityName": "VSDTransaction"
-        }
-      },
-      {
-        "path": "/contracts/{contractId}",
-        "definition": {
-          "entityName": "Contract"
-        }
-      },
-      {
-        "path": "/musoAudits/{auditId}",
-        "definition": {
-            "description": "Logs results of daily Muso.ai credit and exposure audits."
-        }
-      },
-      {
-        "path": "/knowledgebase/{topicId}",
-        "definition": {
-            "entityName": "KnowledgebaseArticle"
-        }
-      },
-      {
-        "path": "/roles_admin/{userId}",
-        "definition": {
-          "description": "Indicates admin privileges for a user. Document existence grants admin role."
-        }
-      }
-    ],
+    "rules": "rules_version = '2';\nservice cloud.firestore {\n  match /databases/{database}/documents {\n    function isOwner(userId) {\n      return request.auth.uid == userId;\n    }\n\n    function isAdmin() {\n      return request.auth.token.admin == true;\n    }\n\n    match /{document=**} {\n      allow read, write: if isAdmin();\n    }\n\n    match /users/{userId} {\n      allow read: if isOwner(userId);\n      allow create: if request.resource.data.id == request.auth.uid;\n      allow update: if isOwner(userId);\n    }\n\n    match /wallets/{userId} {\n      allow read: if isOwner(userId);\n      allow create, update: if isOwner(userId);\n    }\n\n    match /vsd_transactions/{transactionId} {\n      allow read, create: if isOwner(request.resource.data.userId);\n    }\n\n    match /works/{workId} {\n      allow read: if true;\n      allow create: if isOwner(request.resource.data.artistId);\n      allow update, delete: if isOwner(resource.data.artistId);\n    }\n\n    match /license_requests/{requestId} {\n      allow create: if true;\n      allow read: if isOwner(resource.data.artistId) || isOwner(resource.data.requestorId);\n      allow update: if isOwner(resource.data.artistId);\n    }\n\n     match /roles_admin/{userId} {\n        allow read: if isAdmin();\n     }\n  }\n}",
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Stores core user profile data."
+    },
+    "/works/{workId}": {
+      "schema": "Work",
+      "description": "Central collection for all musical works."
+    },
+    "/wallets/{userId}": {
+      "schema": "Wallet",
+      "description": "Manages token balances for each user. Path is userId for 1:1 mapping."
+    },
+    "/vsd_transactions/{transactionId}": {
+      "schema": "VSDTransaction"
+    },
+    "/contracts/{contractId}": {
+      "schema": "Contract"
+    },
+    "/musoAudits/{auditId}": {
+      "description": "Logs results of daily Muso.ai credit and exposure audits."
+    },
+    "/knowledgebase/{topicId}": {
+      "schema": "KnowledgebaseArticle"
+    },
+    "/roles_admin/{userId}": {
+      "description": "Indicates admin privileges for a user. Document existence grants admin role."
+    },
     "reasoning": "The Firestore structure is designed for a scalable, event-driven architecture. The 'works' collection is central. All other data is either linked by ID or stored in separate collections to optimize for specific query patterns. For instance, 'wallets' uses the userId as the document ID for fast, direct lookups. This structure minimizes nested data, simplifies security rules, and supports the modular, serverless functions that will perform the heavy lifting for audio processing, AI enrichment, and external API integrations."
   }
 }
+
+    
