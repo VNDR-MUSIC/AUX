@@ -1,3 +1,4 @@
+
 'use client';
 
 import Image from 'next/image';
@@ -44,6 +45,7 @@ const royaltyFaqs = [
 
 export default function Home2Page() {
   const heroImage = PlaceHolderImages.find((img) => img.id === 'hero-6');
+  const cardBgImage = PlaceHolderImages.find((img) => img.id === 'hero-3');
 
   return (
     <div className="flex flex-col min-h-screen bg-background/0 max-w-full overflow-x-hidden">
@@ -87,10 +89,24 @@ export default function Home2Page() {
                 </div>
                 <div className="grid gap-8 grid-cols-1 md:grid-cols-3">
                     {howItWorksSteps.map((step, index) => (
-                        <div key={index} className="flex flex-col items-center text-center p-6 bg-card rounded-lg shadow-md border">
-                            {step.icon}
-                            <h3 className="font-headline text-xl font-semibold mt-4 mb-2">{step.title}</h3>
-                            <p className="text-muted-foreground text-sm">{step.description}</p>
+                        <div key={index} className="relative flex flex-col items-center text-center p-6 bg-card rounded-lg shadow-md border overflow-hidden">
+                             {cardBgImage && (
+                                <>
+                                    <Image
+                                        src={cardBgImage.imageUrl}
+                                        alt="Music production background"
+                                        layout="fill"
+                                        className="object-cover"
+                                        data-ai-hint={cardBgImage.imageHint}
+                                    />
+                                    <div className="absolute inset-0 bg-black/80"></div>
+                                </>
+                            )}
+                            <div className="relative z-10 flex flex-col items-center">
+                                {step.icon}
+                                <h3 className="font-headline text-xl font-semibold mt-4 mb-2">{step.title}</h3>
+                                <p className="text-muted-foreground text-sm">{step.description}</p>
+                            </div>
                         </div>
                     ))}
                 </div>
