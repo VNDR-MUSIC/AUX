@@ -9,5 +9,4 @@ import '@/ai/flows/symbi-chat-flow.ts';
 import '@/ai/flows/legal-eagle-flow.ts';
 import '@/ai/flows/generate-report-flow.ts';
 import '@/ai/flows/radiolize-polling-flow.ts';
-
-
+import '@/ai/tools/get-knowledge-base-tool.ts';
