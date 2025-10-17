@@ -1,44 +1,54 @@
 "use server";
 import { NextResponse } from "next/server";
-import { Timestamp } from "firebase-admin/firestore";
+import { Timestamp, GeoPoint, DocumentReference } from "firebase/firestore";
 
 /**
  * Recursively serialize Firestore data to JSON-safe values.
- * Converts Timestamp -> ISO string, handles arrays and nested objects.
+ * Handles:
+ * - Timestamp -> ISO string
+ * - GeoPoint -> { lat, lng }
+ * - DocumentReference -> path string
+ * - Arrays, nested objects
+ * - null and undefined
+ * - Any unknown types -> string
  */
 function serializeFirestoreData(data: any): any {
-  if (data === null || data === undefined || typeof data !== 'object') {
-    return data;
-  }
+  if (data === undefined) return null; // avoid undefined
+  if (data === null) return null;
   if (data instanceof Timestamp) return data.toDate().toISOString();
+  if (data instanceof GeoPoint) return { lat: data.latitude, lng: data.longitude };
+  if (data instanceof DocumentReference) return data.path;
   if (Array.isArray(data)) return data.map(serializeFirestoreData);
-  
-  const serialized: any = {};
-  for (const key in data) {
-    if (Object.prototype.hasOwnProperty.call(data, key)) {
-      serialized[key] = serializeFirestoreData(data[key]);
+  if (data && typeof data === "object") {
+    const serialized: Record<string, any> = {};
+    for (const key in data) {
+      if (Object.prototype.hasOwnProperty.call(data, key)) {
+         serialized[key] = serializeFirestoreData(data[key]);
+      }
     }
+    return serialized;
   }
-  return serialized;
+  if (typeof data === "function") return `[Function: ${data.name || "anonymous"}]`;
+  if (typeof data === "symbol") return data.toString();
+  return data; // primitives like string, number, boolean
 }
 
 
 /**
  * Master Safe Server Action Wrapper
  * @param action - async function containing your server logic
- * Returns a plain JSON object with success/error handling.
+ * Returns a JSON-safe response with success/error handling
  */
-export async function safeServerAction(action: () => Promise<any>): Promise<{ success: boolean; data?: any; error?: string; details?: string; }> {
+export async function safeServerAction(action: () => Promise<any>): Promise<NextResponse> {
   try {
     const result = await action();
-    // The serialization should now happen inside the action that calls this wrapper.
-    return { success: true, data: serializeFirestoreData(result) };
+    const serializedResult = serializeFirestoreData(result);
+    return NextResponse.json({ success: true, data: serializedResult });
   } catch (error: any) {
     console.error("🔥 Server Action Error:", error);
-    return {
-      success: false,
-      error: "Internal Server Error",
-      details: error.message,
-    };
+    return NextResponse.json(
+      { success: false, error: "Internal Server Error", details: error.message },
+      { status: 500 }
+    );
   }
 }

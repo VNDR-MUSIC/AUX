@@ -18,6 +18,7 @@ export function useSafeCollection<T>(collectionPath: string | null, filters?: Re
       return;
     }
 
+    // For public paths, don't wait for user loading to finish.
     const isPublicPath = collectionPath === 'works' && !filters;
     if (!isPublicPath && isUserLoading) {
       setIsLoading(true);
@@ -27,7 +28,9 @@ export function useSafeCollection<T>(collectionPath: string | null, filters?: Re
     setIsLoading(true);
     setError(null);
     
-    const result = await fetchCollectionAction({ collectionPath, filters });
+    // Server action now returns a Response object, which we need to parse.
+    const response = await fetchCollectionAction({ collectionPath, filters });
+    const result = await response.json();
 
     if (result.success) {
       setData(result.data as T[]);

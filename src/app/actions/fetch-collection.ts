@@ -6,27 +6,6 @@ import { cookies } from 'next/headers';
 import { CollectionReference, DocumentData, Timestamp } from 'firebase-admin/firestore';
 import { safeServerAction } from './safe-action';
 
-/**
- * Recursively serialize Firestore data to JSON-safe values.
- * This is a private helper function and not exported.
- * Converts Timestamp -> ISO string, handles arrays and nested objects.
- */
-function serializeFirestoreData(data: any): any {
-  if (data === null || data === undefined || typeof data !== 'object') {
-    return data;
-  }
-  if (data instanceof Timestamp) return data.toDate().toISOString();
-  if (Array.isArray(data)) return data.map(serializeFirestoreData);
-  
-  const serialized: any = {};
-  for (const key in data) {
-    if (Object.prototype.hasOwnProperty.call(data, key)) {
-      serialized[key] = serializeFirestoreData(data[key]);
-    }
-  }
-  return serialized;
-}
-
 export async function fetchCollectionAction({
   collectionPath,
   filters,
@@ -34,7 +13,8 @@ export async function fetchCollectionAction({
   collectionPath: string;
   filters?: Record<string, any>;
 }) {
-  const result = await safeServerAction(async () => {
+  // Wrap the entire logic in the safe server action
+  return safeServerAction(async () => {
     const cookieStore = cookies();
     const idToken = cookieStore.get('firebaseIdToken')?.value;
     const { db, auth: adminAuth } = await getFirebaseAdmin();
@@ -49,18 +29,20 @@ export async function fetchCollectionAction({
         isAdmin = decodedToken.admin === true;
     }
 
+    // Handle public 'works' collection fetch
     if (collectionPath === 'works' && !filters?.artistId && !idToken) {
       const publicWorksSnap = await db.collection(collectionPath).get();
-      const data = publicWorksSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      return serializeFirestoreData(data);
+      return publicWorksSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     }
 
+    // If not a public fetch and no user is logged in, return empty.
     if (!uid) {
-        return serializeFirestoreData([]);
+        return [];
     }
     
     let query: CollectionReference<DocumentData> | FirebaseFirestore.Query<DocumentData> = db.collection(collectionPath);
     
+    // Apply user-based security filters if the user is not an admin
     if (!isAdmin) {
         if (collectionPath === 'license_requests') {
              const artistQuery = query.where('artistId', '==', uid);
@@ -75,10 +57,10 @@ export async function fetchCollectionAction({
              artistSnap.docs.forEach(doc => requestsById.set(doc.id, { id: doc.id, ...doc.data() }));
              requestorSnap.docs.forEach(doc => requestsById.set(doc.id, { id: doc.id, ...doc.data() }));
              
-             const data = Array.from(requestsById.values());
-             return serializeFirestoreData(data);
+             return Array.from(requestsById.values());
 
         } else if (collectionPath === 'works') {
+            // Non-admins can only query their own works.
             if (filters?.artistId && filters.artistId !== uid) {
                 throw new Error("Permission denied: You can only view your own works.");
             }
@@ -89,8 +71,10 @@ export async function fetchCollectionAction({
         }
     }
     
+    // Apply any additional developer-provided filters
     if (filters) {
       for (const key in filters) {
+        // This prevents redundantly applying the artistId filter for non-admins on the 'works' collection.
         if (collectionPath === 'works' && key === 'artistId' && !isAdmin) continue;
         
         if (Object.prototype.hasOwnProperty.call(filters, key)) {
@@ -101,9 +85,6 @@ export async function fetchCollectionAction({
     }
 
     const snap = await query.get();
-    const data = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    return serializeFirestoreData(data);
+    return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   });
-
-  return result;
 }
