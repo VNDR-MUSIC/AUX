@@ -17,6 +17,7 @@ import {
   type SymbiChatOutput,
 } from './symbi-chat-types';
 import { getUserProfile } from '../tools/get-user-profile-tool';
+import { getArtistTracks } from '../tools/get-artist-tracks-tool';
 import { z } from 'zod';
 
 export async function symbiChat(input: SymbiChatInput): Promise<SymbiChatOutput> {
@@ -53,8 +54,7 @@ const symbiChatFlow = ai.defineFlow(
     const prompt = ai.definePrompt({
         name: 'symbiChatPrompt',
         system: systemPrompt,
-        // CRITICAL FIX: Removed the getArtistTracks tool to prevent unauthorized global queries.
-        tools: [getUserProfile], 
+        tools: [getArtistTracks, getUserProfile], 
         // We pass the full context object to the prompt.
         // The handlebars in the system prompt will access these properties.
         input: {
