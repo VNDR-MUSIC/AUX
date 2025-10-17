@@ -1,8 +1,8 @@
 
 'use client';
 
-import { useUser, useCollection } from '@/firebase';
-import { query, orderBy, Timestamp } from 'firebase/firestore';
+import { useUser, useDoc, useMemoFirebase } from '@/firebase';
+import { Timestamp, doc } from 'firebase/firestore';
 import {
   Card,
   CardContent,
@@ -22,11 +22,9 @@ import { Button } from '@/components/ui/button';
 import { Wallet, Plus, Minus } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Icons } from '@/components/icons';
-import { useDoc } from '@/firebase/firestore/use-doc';
-import { doc } from 'firebase/firestore';
 import { Separator } from '@/components/ui/separator';
-import { useMemo } from 'react';
 import { useFirebase } from '@/firebase/provider';
+import { useSafeCollection } from '@/hooks/use-safe-collection';
 
 type Transaction = {
   id: string;
@@ -40,24 +38,21 @@ export default function WalletPage() {
   const { user } = useUser();
   const { firestore } = useFirebase();
 
-  const userDocRef = useMemo(
+  const userDocRef = useMemoFirebase(
     () => (firestore && user ? doc(firestore, 'users', user.uid) : null),
     [firestore, user]
   );
   const { data: userData, isLoading: isUserDocLoading } = useDoc(userDocRef);
 
-  // The new useCollection hook takes the collection path and an optional query builder.
-  // We provide the query builder just for sorting. The security filter is now automatic.
-  const queryBuilder = useMemo(() => {
-    return (q: Query) => query(q, orderBy('transactionDate', 'desc'));
-  }, []);
-  
-  const { data: transactions, isLoading: areTransactionsLoading } = useCollection<Transaction>('vsd_transactions', queryBuilder);
+  const { data: transactions, isLoading: areTransactionsLoading } = useSafeCollection<Transaction>('vsd_transactions');
 
   const isLoading = isUserDocLoading || areTransactionsLoading;
 
-  const formatDate = (timestamp: Timestamp | Date) => {
-    const date = timestamp instanceof Timestamp ? timestamp.toDate() : timestamp;
+  const formatDate = (timestamp: Timestamp | Date | any) => {
+    // Firestore Timestamps can be tricky. They might not always be instances of the Timestamp class
+    // on the client, especially after serialization/deserialization.
+    if (!timestamp) return 'N/A';
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
     return new Intl.DateTimeFormat('en-US', {
       year: 'numeric',
       month: 'short',
@@ -78,6 +73,16 @@ export default function WalletPage() {
       </div>
     )
   }
+
+  // Sort transactions client-side
+  const sortedTransactions = useMemoFirebase(() => {
+    return [...transactions].sort((a, b) => {
+        const dateA = a.transactionDate?.toDate ? a.transactionDate.toDate().getTime() : 0;
+        const dateB = b.transactionDate?.toDate ? b.transactionDate.toDate().getTime() : 0;
+        return dateB - dateA;
+    });
+  }, [transactions]);
+
 
   return (
     <div className="container mx-auto py-8">
@@ -129,7 +134,7 @@ export default function WalletPage() {
                     <Skeleton className="h-12 w-full" />
                     <Skeleton className="h-12 w-full" />
                     </div>
-                ) : transactions && transactions.length > 0 ? (
+                ) : sortedTransactions && sortedTransactions.length > 0 ? (
                     <Table>
                     <TableHeader>
                         <TableRow>
@@ -138,7 +143,7 @@ export default function WalletPage() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {transactions.map((tx) => (
+                        {sortedTransactions.map((tx) => (
                         <TableRow key={tx.id}>
                             <TableCell>
                                 <div className="flex items-center gap-3">
