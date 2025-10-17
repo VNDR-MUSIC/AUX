@@ -23,6 +23,7 @@ import {
 import TopTracksChart from "@/components/dashboard/top-tracks-chart";
 import { Track } from "@/store/music-player-store";
 import RecommendationsClient from "@/components/dashboard/recommendations-client";
+import { useMemo } from "react";
 
 function DashboardHeader({
   username,

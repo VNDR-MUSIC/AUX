@@ -28,7 +28,7 @@ export default function CatalogPage() {
   const worksQuery = useMemoFirebase(() => {
     if (!firestore || !user?.uid) return null;
     
-    // This query is now strictly for the logged-in user's works. No exceptions.
+    // This query is now strictly for the logged-in user's works.
     return query(collection(firestore, 'works'), where('artistId', '==', user.uid));
     
   }, [firestore, user?.uid]);
@@ -47,9 +47,9 @@ export default function CatalogPage() {
   }, [works]);
 
   useEffect(() => {
-    const query = searchParams.get('q');
-    if (query !== null) {
-      setSearchTerm(query);
+    const queryParam = searchParams.get('q');
+    if (queryParam !== null) {
+      setSearchTerm(queryParam);
     }
   }, [searchParams]);
 
@@ -57,9 +57,11 @@ export default function CatalogPage() {
     return works
       ?.filter(work => {
         const term = searchTerm.toLowerCase();
+        // Fallback for artistName to avoid errors
+        const artistName = work.artistName || '';
         return (
           (work.title && work.title.toLowerCase().includes(term)) ||
-          (work.artistName && work.artistName.toLowerCase().includes(term))
+          (artistName.toLowerCase().includes(term))
         );
       })
       .filter(work => {
