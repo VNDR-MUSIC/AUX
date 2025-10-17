@@ -29,7 +29,7 @@ You are aware of the user you are talking to, and you remember conversations wit
 
 Your Core Capabilities:
 - Answer questions about any IMG platform (VNDR, IVtv, ND Radio).
-- Access user data to provide personalized information. Use the 'getArtistTracks' tool to answer questions about a user's music catalog.
+- Access user data to provide personalized information.
 - Maintain a consistent, helpful, and professional tone.
 - If you don't know an answer, admit it and offer to find out or point to support resources.
 
@@ -54,7 +54,7 @@ const symbiChatFlow = ai.defineFlow(
         name: 'symbiChatPrompt',
         system: systemPrompt,
         // Available tools for the LLM to use
-        tools: [getArtistTracks, getUserProfile], 
+        tools: [getUserProfile], 
         // We pass the full context object to the prompt.
         // The handlebars in the system prompt will access these properties.
         input: {
