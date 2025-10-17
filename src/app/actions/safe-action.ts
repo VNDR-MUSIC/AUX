@@ -20,19 +20,23 @@ function serializeFirestoreData(data: any): any {
   if (data instanceof DocumentReference) return data.path;
   if (Array.isArray(data)) return data.map(serializeFirestoreData);
   if (data && typeof data === "object") {
+    // This is the crucial part for nested objects.
+    // It creates a new object and recursively calls serializeFirestoreData for each value.
     const serialized: Record<string, any> = {};
     for (const key in data) {
-      if (Object.prototype.hasOwnProperty.call(data, key)) {
-         serialized[key] = serializeFirestoreData(data[key]);
-      }
+        if (Object.prototype.hasOwnProperty.call(data, key)) {
+            serialized[key] = serializeFirestoreData(data[key]);
+        }
     }
     return serialized;
   }
+  
+  // Handle primitives and other types
   if (typeof data === "function") return `[Function: ${data.name || "anonymous"}]`;
   if (typeof data === "symbol") return data.toString();
-  return data; // primitives like string, number, boolean
+  
+  return data;
 }
-
 
 /**
  * Master Safe Server Action Wrapper
