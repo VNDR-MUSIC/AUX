@@ -2,8 +2,8 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
-import { useCollection, useFirebase, useMemoFirebase } from '@/firebase';
-import { collection, DocumentData } from 'firebase/firestore';
+import { useCollection, useFirebase, useMemoFirebase, useUser } from '@/firebase';
+import { collection, query, where, DocumentData } from 'firebase/firestore';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -20,10 +20,16 @@ import { useOnboarding } from '@/hooks/use-onboarding';
 import { useSearchParams } from 'next/navigation';
 
 export default function CatalogPage() {
-  const { firestore } = useFirebase();
+  const { firestore, user } = useFirebase(); // Get user from useFirebase
   const searchParams = useSearchParams();
-  // Point to the new 'works' collection
-  const worksQuery = useMemoFirebase(() => firestore ? collection(firestore, 'works') : null, [firestore]);
+  
+  // This query now fetches only the works of the currently logged-in user.
+  const worksQuery = useMemoFirebase(() => 
+    firestore && user 
+      ? query(collection(firestore, 'works'), where('artistId', '==', user.uid)) 
+      : null, 
+  [firestore, user]);
+  
   const { data: works, isLoading } = useCollection<DocumentData>(worksQuery);
 
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
@@ -61,8 +67,8 @@ export default function CatalogPage() {
   return (
     <div className="container mx-auto py-8">
       <div className="mb-8">
-        <h1 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl">Music Catalog</h1>
-        <p className="mt-2 text-muted-foreground">Discover and license music from the VNDR ecosystem.</p>
+        <h1 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl">Your Music</h1>
+        <p className="mt-2 text-muted-foreground">Browse and manage music you have uploaded.</p>
       </div>
 
       <div className="mb-8 flex flex-col sm:flex-row items-center gap-4 p-4 border rounded-lg bg-card">
@@ -70,7 +76,7 @@ export default function CatalogPage() {
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             type="search"
-            placeholder="Search by title or artist..."
+            placeholder="Search your works..."
             className="w-full pl-8"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -110,7 +116,7 @@ export default function CatalogPage() {
 
       {!isLoading && filteredWorks?.length === 0 && (
          <div className="text-center py-16 text-muted-foreground">
-            <p>No works found that match your criteria.</p>
+            <p>You haven't uploaded any music that matches your criteria.</p>
         </div>
       )}
 

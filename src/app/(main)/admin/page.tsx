@@ -3,22 +3,23 @@
 
 import { useState, useMemo } from 'react';
 import { useUser, useFirebase, useCollection, useDoc, useMemoFirebase } from '@/firebase';
-import { collection, DocumentData } from 'firebase/firestore';
+import { collection, query, where, DocumentData } from 'firebase/firestore';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Search, ShieldX, Link as LinkIcon } from 'lucide-react';
+import { Search, ShieldX, Link as LinkIcon, Info } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Track } from '@/store/music-player-store';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 function AdminContent() {
-  const { firestore } = useFirebase();
+  const { firestore, user } = useFirebase();
 
-  // Data fetching
-  const worksQuery = useMemoFirebase(() => (firestore ? collection(firestore, 'works') : null), [firestore]);
+  // Data fetching - NOW QUERIES ONLY FOR THE ADMIN'S OWN WORKS
+  const worksQuery = useMemoFirebase(() => (firestore && user ? query(collection(firestore, 'works'), where('artistId', '==', user.uid)) : null), [firestore, user]);
   const { data: works, isLoading: areWorksLoading } = useCollection<Track>(worksQuery);
 
   // State for filters
@@ -67,9 +68,16 @@ function AdminContent() {
     <Card>
       <CardHeader>
         <CardTitle>Work Management</CardTitle>
-        <CardDescription>View, search, and filter all works on the platform.</CardDescription>
+        <CardDescription>View, search, and manage works on the platform.</CardDescription>
       </CardHeader>
       <CardContent>
+        <Alert className="mb-6">
+            <Info className="h-4 w-4" />
+            <AlertTitle>Admin View</AlertTitle>
+            <AlertDescription>
+                For security and stability, this view currently shows works uploaded by the Admin account.
+            </AlertDescription>
+        </Alert>
         <div className="flex flex-col sm:flex-row items-center gap-4 mb-6 p-4 border rounded-lg bg-card">
           <div className="relative w-full sm:flex-1">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -120,7 +128,7 @@ function AdminContent() {
               ) : (
                 <TableRow>
                   <TableCell colSpan={4} className="h-24 text-center">
-                    No works found matching your criteria.
+                    No works found for this user.
                   </TableCell>
                 </TableRow>
               )}
@@ -133,7 +141,7 @@ function AdminContent() {
 }
 
 export default function AdminPage() {
-  const { user } = useUser();
+  const { user, isUserLoading: isAuthLoading } = useUser();
   const { firestore } = useFirebase();
 
   // Admin role check
@@ -141,7 +149,7 @@ export default function AdminPage() {
   const { data: adminDoc, isLoading: isAdminLoading } = useDoc(adminRef);
   const isAdmin = !!adminDoc;
   
-  const isLoading = isAdminLoading;
+  const isLoading = isAuthLoading || isAdminLoading;
 
   if (isLoading) {
       return (
