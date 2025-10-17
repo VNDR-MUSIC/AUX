@@ -3,7 +3,7 @@
 
 import { z } from "zod";
 import { getFirebaseAdmin } from "@/firebase/admin";
-import { collection, addDoc, serverTimestamp, doc, deleteDoc, updateDoc, query, where, getDocs, increment } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, doc, deleteDoc, updateDoc, query, where, getDocs, increment, getDoc } from "firebase/firestore";
 import { revalidatePath } from "next/cache";
 import { createVsdTransaction } from "./vsd-transaction";
 import { generateReport } from "@/ai/flows/generate-report-flow";
@@ -239,5 +239,115 @@ export async function generateReportAction(userId: string): Promise<{ success: b
         details: 'Refund for failed report generation',
     });
     return { success: false, message: `Report generation failed and your VSD has been refunded. Reason: ${errorMessage}` };
+  }
+}
+
+
+const licenseRequestSchema = z.object({
+  requestorId: z.string().min(1, "Requestor ID is required"),
+  fullName: z.string().min(1, "Full name is required."),
+  email: z.string().email("Invalid email address."),
+  trackTitle: z.string().min(1, "Track title is required."),
+  artistName: z.string().min(1, "Artist name is required."),
+  usageType: z.string().min(1, "Intended use is required."),
+  description: z.string().min(1, "Project description is required."),
+});
+
+type LicenseRequestState = {
+  message?: string | null;
+  errors?: {
+    fullName?: string[];
+    email?: string[];
+    trackTitle?: string[];
+    artistName?: string[];
+    usageType?: string[];
+    description?: string[];
+    _form?: string[];
+  }
+}
+
+export async function submitLicenseRequestAction(prevState: LicenseRequestState, formData: FormData): Promise<LicenseRequestState> {
+  const validatedFields = licenseRequestSchema.safeParse(Object.fromEntries(formData.entries()));
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: "Missing fields. Failed to submit request.",
+    };
+  }
+
+  const { requestorId, fullName, email, trackTitle, artistName, usageType, description } = validatedFields.data;
+
+  try {
+    const { db } = await getFirebaseAdmin();
+
+    // Find the work and the artist to assign the request to
+    const worksRef = collection(db, "works");
+    const q = query(worksRef, where("title", "==", trackTitle), where("artistName", "==", artistName));
+    const workSnapshot = await getDocs(q);
+
+    if (workSnapshot.empty) {
+      return {
+        errors: { _form: ["Could not find a matching track. Please check the track title and artist name."] },
+        message: "Submission failed.",
+      };
+    }
+    const workDoc = workSnapshot.docs[0];
+    const artistId = workDoc.data().artistId;
+
+    const requestsCollection = collection(db, "license_requests");
+    await addDoc(requestsCollection, {
+      artistId: artistId,
+      requestorId: requestorId,
+      requestorName: fullName,
+      requestorEmail: email,
+      trackId: workDoc.id,
+      trackTitle: trackTitle,
+      usageType: usageType,
+      projectDescription: description,
+      status: "pending",
+      requestDate: serverTimestamp(),
+    });
+
+    revalidatePath("/dashboard/licensing");
+
+    return { message: "Your license request has been submitted successfully." };
+
+  } catch (error) {
+    console.error("License Request Error:", error);
+    return {
+      errors: { _form: ["An internal error occurred. Please try again later."] },
+      message: "Submission failed.",
+    }
+  }
+}
+
+export async function approveLicenseRequestAction(requestId: string): Promise<{ success: boolean; message: string }> {
+  if (!requestId) return { success: false, message: "Request ID is missing." };
+
+  try {
+    const { db } = await getFirebaseAdmin();
+    const requestRef = doc(db, 'license_requests', requestId);
+    await updateDoc(requestRef, { status: 'approved' });
+    revalidatePath('/dashboard/licensing');
+    return { success: true, message: 'Request approved.' };
+  } catch (error) {
+    console.error("Error approving request:", error);
+    return { success: false, message: 'Failed to approve request.' };
+  }
+}
+
+export async function rejectLicenseRequestAction(requestId: string): Promise<{ success: boolean; message: string }> {
+  if (!requestId) return { success: false, message: "Request ID is missing." };
+
+  try {
+    const { db } = await getFirebaseAdmin();
+    const requestRef = doc(db, 'license_requests', requestId);
+    await updateDoc(requestRef, { status: 'rejected' });
+    revalidatePath('/dashboard/licensing');
+    return { success: true, message: 'Request rejected.' };
+  } catch (error) {
+    console.error("Error rejecting request:", error);
+    return { success: false, message: 'Failed to reject request.' };
   }
 }
