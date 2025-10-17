@@ -62,6 +62,7 @@ export default function MyWorksPage() {
     if (work.status === 'processing') {
       return <Badge variant="secondary">Processing</Badge>;
     }
+    // Considered "Published" if both Muso and Audio features are done (simulated)
     if (work.musoCreditsFetched && work.audioFeatures) {
       return <Badge className="bg-green-600 hover:bg-green-700">Published</Badge>;
     }

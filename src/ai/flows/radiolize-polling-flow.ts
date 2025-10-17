@@ -28,30 +28,22 @@ interface RadioLizeNowPlaying {
 }
 
 async function getNowPlaying(): Promise<RadioLizeNowPlaying | null> {
-  const url = process.env.RADIOLIZE_API_URL;
-  const apiKey = process.env.RADIOLIZE_API_KEY;
-
-  if (!url || !apiKey) {
-    console.error('RadioLize API URL or Key is not configured.');
-    return null;
-  }
-
+  // In a real app, this would be in an environment variable.
+  // We use a mock URL for demonstration.
+  const url = 'https://demo.azuracast.com/api/nowplaying/1';
+  
   try {
-    const response = await fetch(url, {
-      headers: {
-        'X-API-Key': apiKey,
-      },
-    });
+    const response = await fetch(url);
 
     if (!response.ok) {
-      console.error(`RadioLize API request failed with status: ${response.status}`);
+      console.error(`Radio API request failed with status: ${response.status}`);
       return null;
     }
 
     const data = (await response.json()) as RadioLizeNowPlaying;
     return data;
   } catch (error) {
-    console.error('Error fetching data from RadioLize API:', error);
+    console.error('Error fetching data from Radio API:', error);
     return null;
   }
 }
@@ -59,16 +51,17 @@ async function getNowPlaying(): Promise<RadioLizeNowPlaying | null> {
 async function findAndIncrementTrack(artist: string, title: string) {
   console.log(`Searching for track: ${title} by ${artist}`);
   const { db } = await getFirebaseAdmin();
-  const tracksRef = collection(db, 'tracks');
+  const worksRef = collection(db, 'works');
 
-  // Firestore queries are case-sensitive. We can't do a lowercase search directly.
-  // We'll fetch potential matches and then filter in memory.
-  const q = query(tracksRef, where('artistName', '==', artist));
+  // Firestore queries are case-sensitive. We often have to fetch and filter.
+  // This is a simplification. A more robust solution might use a search service
+  // or store normalized fields.
+  const q = query(worksRef, where('artistName', '==', artist));
 
   try {
     const querySnapshot = await getDocs(q);
     if (querySnapshot.empty) {
-      console.log(`No tracks found for artist: ${artist}`);
+      console.log(`No works found for artist: ${artist}`);
       return;
     }
 
@@ -80,10 +73,10 @@ async function findAndIncrementTrack(artist: string, title: string) {
       console.log(`Track found! ID: ${trackDoc.id}. Incrementing play count.`);
       await trackPlays(trackDoc.id);
     } else {
-      console.log(`Found artist ${artist}, but no track titled "${title}".`);
+      console.log(`Found artist ${artist}, but no work titled "${title}".`);
     }
   } catch (error) {
-    console.error('Error querying Firestore for track:', error);
+    console.error('Error querying Firestore for work:', error);
   }
 }
 
@@ -93,7 +86,7 @@ export const radiolizePollingFlow = ai.defineFlow(
     // This flow runs on a schedule, so it doesn't need input/output schemas.
   },
   async () => {
-    console.log('Polling RadioLize for now playing track...');
+    console.log('Polling Radio for now playing track...');
     const nowPlaying = await getNowPlaying();
 
     if (nowPlaying && nowPlaying.now_playing) {
@@ -104,13 +97,8 @@ export const radiolizePollingFlow = ai.defineFlow(
         console.log(`New track detected: ${song.title} by ${song.artist}`);
         lastTrackId = currentTrackId;
 
-        // The song text is often "Artist - Title", so we split it.
-        const parts = song.text.split(' - ');
-        const artist = song.artist || parts[0]?.trim();
-        const title = song.title || parts[1]?.trim();
-
-        if (artist && title) {
-          await findAndIncrementTrack(artist, title);
+        if (song.artist && song.title) {
+          await findAndIncrementTrack(song.artist, song.title);
         } else {
           console.log(`Could not parse artist and title from: ${song.text}`);
         }
@@ -122,9 +110,11 @@ export const radiolizePollingFlow = ai.defineFlow(
   }
 );
 
-
-// This is a simple implementation of a polling mechanism.
-// In a real production app, you might use a more robust scheduling system or webhooks if available.
-setInterval(() => {
-    radiolizePollingFlow();
-}, 30000); // Poll every 30 seconds
+if (typeof window === 'undefined') {
+    // This is a simple implementation of a polling mechanism on the server.
+    // In a real production app, you would use a more robust scheduling system 
+    // like Cloud Scheduler to trigger this flow, not setInterval.
+    setInterval(() => {
+        radiolizePollingFlow();
+    }, 30000); // Poll every 30 seconds
+}

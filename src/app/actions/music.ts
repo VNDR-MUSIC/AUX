@@ -63,21 +63,25 @@ export async function uploadTrackAction(
         const { db } = await getFirebaseAdmin();
         const worksCollection = collection(db, "works");
         
-        // In a real app, the audio would be uploaded to Cloud Storage, 
-        // and this URL would point to it. The `onWorkCreated` function
-        // would be triggered by that upload.
-        // For now, we use a placeholder and write directly to Firestore.
+        // This simulates the backend `onWorkCreated` trigger. In a real app,
+        // this data would be populated by separate serverless functions.
         const demoTrackUrl = "https://storage.googleapis.com/studiopublic/vndr/synthwave-track.mp3";
-        
         let coverArtUrl = coverArtDataUri;
-        // In a real app, if coverArtDataUri is present, we'd upload it to Cloud Storage
-        // and get back a public URL. For now, we can store the data URI directly
-        // if it's not too large, or use a placeholder if it's missing.
         if (!coverArtUrl) {
            coverArtUrl = `https://picsum.photos/seed/${trackTitle.replace(/\s/g, '-')}/400/400`;
         }
+        
+        // Simulate audio feature extraction
+        const simulatedAudioFeatures = {
+            bpm: 120,
+            key: 'Cmin',
+            loudness: -8.5,
+            energy: 0.75,
+            mood: ['dramatic', 'energetic'],
+            instrumentalRatio: 0.95
+        };
 
-        await addDoc(worksCollection, {
+        const newWorkRef = await addDoc(worksCollection, {
             title: trackTitle,
             artistId: artistId,
             artistName: artistName,
@@ -85,25 +89,38 @@ export async function uploadTrackAction(
             description: description,
             uploadDate: serverTimestamp(),
             status: "processing", // Initial status
-            trackUrl: demoTrackUrl, // Placeholder URL
+            trackUrl: demoTrackUrl,
             coverArtUrl: coverArtUrl,
             price: price || null,
-            
-            // These fields will be populated by the backend workers
-            audioFeatures: null,
-            musoCreditsFetched: false,
-            enrichedMetadata: null,
             plays: 0,
+            
+            // These fields would be populated by the backend workers, but we simulate them here.
+            audioFeatures: null, 
+            musoCreditsFetched: false,
+            acrCloudFingerprinted: false,
+            enrichedMetadata: null,
+            musoExposureScore: null,
         });
 
-        // In a real app, revalidation would happen after workers complete,
-        // often via a client-side listener or another trigger.
+        // Simulate async processing delay for a more realistic UX
+        setTimeout(async () => {
+            const { db: db2 } = await getFirebaseAdmin();
+            await updateDoc(doc(db2, "works", newWorkRef.id), {
+                audioFeatures: simulatedAudioFeatures,
+                musoCreditsFetched: true,
+                acrCloudFingerprinted: true,
+                musoExposureScore: Math.floor(Math.random() * 100),
+                status: "published",
+            });
+            revalidatePath('/dashboard/my-works');
+        }, 5000); // 5-second delay to simulate processing
+
         revalidatePath('/dashboard');
         revalidatePath('/dashboard/my-works');
         revalidatePath(`/profile/${artistId}`);
 
         return {
-            message: "Work uploaded successfully! Processing has begun.",
+            message: "Work uploaded! Autonomous processing has begun. Check 'My Works' for status updates.",
         };
 
     } catch (error) {
@@ -148,7 +165,10 @@ export async function trackPlays(trackId: string) {
     await updateDoc(trackRef, {
       plays: increment(1),
     });
+    // Revalidate paths that might show play counts
     revalidatePath('/dashboard');
+    revalidatePath('/dashboard/my-works');
+    revalidatePath('/admin');
     return { success: true };
   } catch (error) {
     console.error('Error incrementing track plays:', error);
