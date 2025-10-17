@@ -2,7 +2,7 @@
 'use client';
 
 import Link from "next/link";
-import { ArrowUpRight, Music, Upload, FileText, HandCoins } from "lucide-react";
+import { ArrowUpRight, Music, Upload, FileText, HandCoins, BarChart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -143,7 +143,7 @@ export default function DashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Exposure Score</CardTitle>
-            <BarChart3 className="h-4 w-4 text-muted-foreground" />
+            <BarChart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">N/A</div>
@@ -240,5 +240,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    
