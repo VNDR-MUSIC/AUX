@@ -2,33 +2,30 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { useUser, useFirebase, useCollection, useDoc, useMemoFirebase } from '@/firebase';
-import { collection, query, where, DocumentData } from 'firebase/firestore';
+import { useUser, useFirebase, useDoc, useMemoFirebase } from '@/firebase';
+import { doc } from 'firebase/firestore';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Search, ShieldX, Link as LinkIcon, Info, HardHat } from 'lucide-react';
+import { Search, ShieldX, Link as LinkIcon, HardHat } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Track } from '@/store/music-player-store';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 function AdminContent() {
-  // const { firestore } = useFirebase();
-
   // --- THIS CODE IS QUARANTINED ---
-  // The following query was attempting to fetch ALL works from the database.
-  // This is a broad query that is blocked by Firestore security rules for non-admin
-  // or improperly configured admin users, causing repeated "Missing or insufficient permissions" errors.
-  // It has been disabled to stabilize the application.
+  // The following query attempts to fetch ALL works from the database.
+  // This broad `list` query is blocked by Firestore security rules for all users,
+  // including admins, unless a specific rule allowing `allow list: if isAdmin();`
+  // is successfully deployed for the `works` collection. This query has been
+  // a persistent source of "Missing or insufficient permissions" errors and is now disabled.
   //
+  // const { firestore } = useFirebase();
   // const worksQuery = useMemoFirebase(() => (firestore ? query(collection(firestore, 'works')) : null), [firestore]);
   // const { data: works, isLoading: areWorksLoading } = useCollection<Track>(worksQuery);
   // --- END QUARANTINED CODE ---
 
-  // State for filters (kept for UI demonstration)
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('all');
 
@@ -67,7 +64,7 @@ function AdminContent() {
             <HardHat className="h-4 w-4" />
             <AlertTitle>Work Management Disabled</AlertTitle>
             <AlertDescription>
-                This section has been temporarily disabled due to recurring Firestore permission errors. The code was attempting to fetch all works from all users, which is blocked by security rules. To fix this, the security rules need to be updated to explicitly allow admins to perform list operations on the 'works' collection.
+                This section has been temporarily disabled due to recurring Firestore permission errors. The code was attempting to fetch all works from all users, which is blocked by security rules. To fix this, a specific security rule allowing admins to perform `list` operations on the 'works' collection must be implemented and deployed.
             </AlertDescription>
         </Alert>
         
