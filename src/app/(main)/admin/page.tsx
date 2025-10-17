@@ -3,7 +3,7 @@
 
 import { useState, useMemo } from 'react';
 import { useUser, useFirebase, useCollection, useDoc, useMemoFirebase } from '@/firebase';
-import { collection, doc, DocumentData } from 'firebase/firestore';
+import { collection, DocumentData } from 'firebase/firestore';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -14,14 +14,8 @@ import { Track } from '@/store/music-player-store';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
-export default function AdminPage() {
-  const { user } = useUser();
+function AdminContent() {
   const { firestore } = useFirebase();
-
-  // Admin role check
-  const adminRef = useMemoFirebase(() => (firestore && user ? doc(firestore, `roles_admin/${user.uid}`) : null), [firestore, user]);
-  const { data: adminDoc, isLoading: isAdminLoading } = useDoc(adminRef);
-  const isAdmin = !!adminDoc;
 
   // Data fetching
   const worksQuery = useMemoFirebase(() => (firestore ? collection(firestore, 'works') : null), [firestore]);
@@ -50,26 +44,110 @@ export default function AdminPage() {
         return selectedGenre === 'all' || track.genre === selectedGenre;
       });
   }, [works, searchTerm, selectedGenre]);
+
+  if (areWorksLoading) {
+    return (
+       <Card>
+        <CardHeader>
+            <Skeleton className="h-7 w-64" />
+            <Skeleton className="h-4 w-96" />
+        </CardHeader>
+        <CardContent>
+            <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                <Skeleton className="h-10 flex-1" />
+                <Skeleton className="h-10 w-full sm:w-48" />
+            </div>
+            <Skeleton className="h-64 w-full" />
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Work Management</CardTitle>
+        <CardDescription>View, search, and filter all works on the platform.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="flex flex-col sm:flex-row items-center gap-4 mb-6 p-4 border rounded-lg bg-card">
+          <div className="relative w-full sm:flex-1">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Search by title or artist..."
+              className="w-full pl-8"
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <div className="flex items-center gap-4 w-full sm:w-auto">
+               <Select value={selectedGenre} onValueChange={setSelectedGenre}>
+                  <SelectTrigger className="w-full sm:w-[180px]">
+                      <SelectValue placeholder="Filter by genre" />
+                  </SelectTrigger>
+                  <SelectContent>
+                      {genres.map(genre => (
+                          <SelectItem key={genre} value={genre} className="capitalize">{genre}</SelectItem>
+                      ))}
+                  </SelectContent>
+              </Select>
+          </div>
+        </div>
+        
+        <div className="border rounded-md overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Work</TableHead>
+                <TableHead>Artist</TableHead>
+                <TableHead>Genre</TableHead>
+                <TableHead className="text-center">Plays</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredWorks && filteredWorks.length > 0 ? (
+                filteredWorks.map(work => (
+                  <TableRow key={work.id}>
+                    <TableCell className="font-medium">{work.title}</TableCell>
+                    <TableCell>{work.artistName}</TableCell>
+                    <TableCell>{work.genre}</TableCell>
+                    <TableCell className="text-center">
+                      {work.plays || 0}
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={4} className="h-24 text-center">
+                    No works found matching your criteria.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+export default function AdminPage() {
+  const { user } = useUser();
+  const { firestore } = useFirebase();
+
+  // Admin role check
+  const adminRef = useMemoFirebase(() => (firestore && user ? doc(firestore, `roles_admin/${user.uid}`) : null), [firestore, user]);
+  const { data: adminDoc, isLoading: isAdminLoading } = useDoc(adminRef);
+  const isAdmin = !!adminDoc;
   
-  const isLoading = isAdminLoading || areWorksLoading;
+  const isLoading = isAdminLoading;
 
   if (isLoading) {
       return (
         <div className="container mx-auto py-8">
             <Skeleton className="h-8 w-48 mb-8" />
-            <Card>
-                <CardHeader>
-                    <Skeleton className="h-7 w-64" />
-                    <Skeleton className="h-4 w-96" />
-                </CardHeader>
-                <CardContent>
-                    <div className="flex flex-col sm:flex-row gap-4 mb-4">
-                        <Skeleton className="h-10 flex-1" />
-                        <Skeleton className="h-10 w-full sm:w-48" />
-                    </div>
-                    <Skeleton className="h-64 w-full" />
-                </CardContent>
-            </Card>
+            <Skeleton className="h-96 w-full" />
         </div>
       )
   }
@@ -99,71 +177,7 @@ export default function AdminPage() {
         </Button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Work Management</CardTitle>
-          <CardDescription>View, search, and filter all works on the platform.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col sm:flex-row items-center gap-4 mb-6 p-4 border rounded-lg bg-card">
-            <div className="relative w-full sm:flex-1">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search by title or artist..."
-                className="w-full pl-8"
-                value={searchTerm}
-                onChange={e => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <div className="flex items-center gap-4 w-full sm:w-auto">
-                 <Select value={selectedGenre} onValueChange={setSelectedGenre}>
-                    <SelectTrigger className="w-full sm:w-[180px]">
-                        <SelectValue placeholder="Filter by genre" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {genres.map(genre => (
-                            <SelectItem key={genre} value={genre} className="capitalize">{genre}</SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-            </div>
-          </div>
-          
-          <div className="border rounded-md overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Work</TableHead>
-                  <TableHead>Artist</TableHead>
-                  <TableHead>Genre</TableHead>
-                  <TableHead className="text-center">Plays</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredWorks && filteredWorks.length > 0 ? (
-                  filteredWorks.map(work => (
-                    <TableRow key={work.id}>
-                      <TableCell className="font-medium">{work.title}</TableCell>
-                      <TableCell>{work.artistName}</TableCell>
-                      <TableCell>{work.genre}</TableCell>
-                      <TableCell className="text-center">
-                        {work.plays || 0}
-                      </TableCell>
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={4} className="h-24 text-center">
-                      No works found matching your criteria.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
+      <AdminContent />
     </div>
   );
 }
