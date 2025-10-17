@@ -47,8 +47,14 @@ export function useSafeCollection<T>(collectionPath: string | null, filters?: Re
         });
 
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || `Failed to fetch data with status: ${response.status}`);
+            try {
+              // Try to parse the error response as JSON.
+              const errorData = await response.json();
+              throw new Error(errorData.error || `Server responded with status: ${response.status}`);
+            } catch (e) {
+              // If parsing fails, it's not a JSON response (e.g., HTML error page).
+              throw new Error(`An unexpected response was received from the server.`);
+            }
         }
 
         const result = await response.json();

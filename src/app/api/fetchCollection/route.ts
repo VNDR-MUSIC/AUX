@@ -87,8 +87,9 @@ export async function POST(request: Request) {
     return NextResponse.json(docs);
 
   } catch (error) {
-    console.error(`Error fetching collection:`, error);
-    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred on the server.";
+    const errorMessage = error instanceof Error ? error.message : "An unknown server error occurred.";
+    console.error(`[API /api/fetchCollection] Error:`, errorMessage);
+    // Ensure that even in the case of an unexpected error, a JSON response is sent.
     return NextResponse.json({ error: "Internal Server Error", details: errorMessage }, { status: 500 });
   }
 }
