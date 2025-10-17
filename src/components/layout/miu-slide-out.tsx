@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { GraduationCap, X, BookOpen, ShieldCheck, Cpu, Network } from 'lucide-react';
+import { GraduationCap, X, BookOpen, Cpu, Network } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
@@ -24,10 +24,9 @@ export default function MiuSlideOut() {
         {!isOpen && (
           <motion.div
             onClick={() => setIsOpen(true)}
-            className="fixed top-1/2 -translate-y-1/2 left-0 z-40 h-32 w-16 cursor-pointer group"
+            className="fixed top-1/2 -translate-y-1/2 -left-16 z-40 h-32 w-32 cursor-pointer group"
             aria-label="Open Music Industry University panel"
-            initial={{ x: 0 }}
-            exit={{ x: -80 }}
+            initial={{ rotate: 0 }}
             animate={{
               rotate: [0, -5, 5, -5, 0],
             }}
@@ -41,7 +40,7 @@ export default function MiuSlideOut() {
             }}
           >
             <div className="relative w-full h-full flex items-center justify-end">
-              <div className="relative w-20 h-20 transition-transform duration-300 group-hover:scale-105">
+              <div className="relative w-32 h-32 transition-transform duration-300 group-hover:scale-105">
                 <Image 
                     src="https://i.ibb.co/4gJqBfM8/MIU-logo-wt.png" 
                     alt="MIU Logo" 
@@ -76,7 +75,7 @@ export default function MiuSlideOut() {
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             >
               <div className="flex items-center justify-between p-4 border-b">
-                 <div className="relative h-16 w-32">
+                 <div className="relative h-20 w-full">
                   <Image 
                     src="https://i.ibb.co/4gJqBfM8/MIU-logo-wt.png" 
                     alt="MIU Logo" 
@@ -88,6 +87,7 @@ export default function MiuSlideOut() {
                   variant="ghost" 
                   size="icon" 
                   onClick={() => setIsOpen(false)} 
+                  className="absolute top-2 right-2"
                 >
                   <X className="h-5 w-5" />
                 </Button>
