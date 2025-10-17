@@ -5,6 +5,7 @@ import MusicPlayer from "@/components/layout/music-player";
 import { FirebaseClientProvider } from "@/firebase";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import SidebarNav from "@/components/layout/sidebar-nav";
+import SymbiChatWidget from "@/components/symbi/symbi-chat-widget";
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -21,6 +22,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                 </div>
                 <Footer />
                 <MusicPlayer />
+                <SymbiChatWidget />
             </div>
       </SidebarProvider>
     </FirebaseClientProvider>
