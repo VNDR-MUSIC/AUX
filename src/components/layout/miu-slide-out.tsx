@@ -22,17 +22,28 @@ export default function MiuSlideOut() {
       <AnimatePresence>
         {!isOpen && (
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.5, delay: 1 }}
+            initial={{ x: -80 }}
+            animate={{
+              x: [-48, -52, -48], // Creates a subtle side-to-side wobble
+            }}
+            exit={{ x: -80 }}
+            transition={{
+              type: 'spring',
+              stiffness: 300,
+              damping: 30,
+              delay: 1,
+              // Add repeat properties for the dormant animation
+              repeat: Infinity,
+              repeatType: "loop",
+              repeatDelay: 5, // Wait 5 seconds between each animation loop
+              duration: 2, // The wobble animation itself takes 2 seconds
+            }}
+            onClick={() => setIsOpen(true)}
+            className="fixed top-1/2 -translate-y-1/2 left-0 z-40 h-32 w-24 cursor-pointer group"
+            aria-label="Open Music Industry University panel"
           >
-            <button
-              onClick={() => setIsOpen(true)}
-              className="fixed top-1/2 -translate-y-1/2 left-0 z-40 h-32 w-16 rounded-r-lg bg-card border-y border-r border-border hover:bg-muted transition-colors duration-300 group overflow-hidden"
-              aria-label="Open Music Industry University panel"
-            >
-              <div className="absolute top-1/2 -translate-y-1/2 -left-16 h-32 w-32 transform transition-transform duration-300 group-hover:scale-105">
+            <div className="relative w-full h-full bg-card rounded-r-lg border-y border-r border-border shadow-lg flex items-center justify-end pr-2 transition-colors duration-300 hover:bg-muted">
+              <div className="relative w-20 h-20 transition-transform duration-300 group-hover:scale-105">
                 <Image 
                     src="https://i.ibb.co/4gJqBfM8/MIU-logo-wt.png" 
                     alt="MIU Logo" 
@@ -40,7 +51,7 @@ export default function MiuSlideOut() {
                     className="object-contain" 
                   />
               </div>
-            </button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
