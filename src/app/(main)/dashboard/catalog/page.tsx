@@ -18,6 +18,8 @@ import { Track } from '@/store/music-player-store';
 import { useOnboarding } from '@/hooks/use-onboarding';
 import { useSearchParams } from 'next/navigation';
 import { useUser } from '@/firebase';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 export default function CatalogPage() {
   const { user } = useUser();
@@ -106,17 +108,24 @@ export default function CatalogPage() {
                 </div>
             ))}
         </div>
-      ) : (
+      ) : works && works.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
           {filteredWorks?.map(work => (
             <TrackCard key={work.id} track={work} playlist={filteredWorks} />
           ))}
         </div>
+      ) : (
+         <div className="text-center py-16 text-muted-foreground">
+            <p>You haven't uploaded any music yet.</p>
+             <Button asChild size="sm" className="mt-4">
+              <Link href="/dashboard/upload">Upload Your First Track</Link>
+            </Button>
+        </div>
       )}
 
-      {!isLoading && filteredWorks?.length === 0 && (
+      {!isLoading && works && works.length > 0 && filteredWorks?.length === 0 && (
          <div className="text-center py-16 text-muted-foreground">
-            <p>You haven't uploaded any music that matches your criteria.</p>
+            <p>No music found that matches your criteria.</p>
         </div>
       )}
 

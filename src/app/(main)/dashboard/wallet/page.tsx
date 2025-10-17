@@ -25,6 +25,7 @@ import { Icons } from '@/components/icons';
 import { Separator } from '@/components/ui/separator';
 import { useFirebase } from '@/firebase/provider';
 import { useSafeCollection } from '@/hooks/use-safe-collection';
+import { useMemo } from 'react';
 
 type Transaction = {
   id: string;
@@ -75,7 +76,8 @@ export default function WalletPage() {
   }
 
   // Sort transactions client-side
-  const sortedTransactions = useMemoFirebase(() => {
+  const sortedTransactions = useMemo(() => {
+    if (!transactions) return [];
     return [...transactions].sort((a, b) => {
         const dateA = a.transactionDate?.toDate ? a.transactionDate.toDate().getTime() : 0;
         const dateB = b.transactionDate?.toDate ? b.transactionDate.toDate().getTime() : 0;
