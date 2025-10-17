@@ -14,6 +14,7 @@ import {
   Scale,
   Settings,
   Users,
+  LogOut,
 } from 'lucide-react';
 import { useUser } from '@/firebase';
 import {
@@ -69,10 +70,6 @@ export default function SidebarNav() {
   const router = useRouter();
   const { toast } = useToast();
 
-  // DEFINITIVE FIX: Rely on the custom claim attached to the user token.
-  // The 'roles_admin' collection is protected by rules that only allow admins to read it,
-  // so a client-side check will always fail for a user who doesn't already know they're an admin.
-  // The custom claim is the secure way for the client to be aware of the user's role.
   const isAdmin = (user as any)?.customClaims?.admin === true;
 
   const menuItems = useMemo(() => {
@@ -160,6 +157,16 @@ export default function SidebarNav() {
                     </div>
                 </div>
             ) : user ? (
+                <>
+                <SidebarMenu>
+                    <SidebarMenuItem>
+                        <SidebarMenuButton onClick={handleLogout} tooltip={{children: 'Log Out'}}>
+                            <LogOut />
+                            <span>Log Out</span>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                </SidebarMenu>
+                <SidebarSeparator />
                 <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="justify-start w-full p-2 h-auto">
@@ -188,6 +195,7 @@ export default function SidebarNav() {
                     </DropdownMenuItem>
                 </DropdownMenuContent>
                 </DropdownMenu>
+                </>
             ) : (
                  <SidebarMenu>
                     <SidebarMenuItem>
