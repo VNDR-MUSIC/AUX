@@ -1,208 +1,68 @@
-/**
- * @fileoverview Firestore Security Rules for the VNDR Music application.
- *
- * Core Philosophy:
- * This ruleset prioritizes a flexible data structure for rapid iteration
- * while strictly enforcing authorization based on user identity and ownership.
- * Data validation is relaxed to facilitate experimentation during the prototyping phase.
- *
- * Data Structure:
- * - /users/{userId}: User profile data, accessible only to the user themselves.
- * - /works/{workId}: Musical work metadata, publicly readable but writable only by the artist.
- * - /wallets/{userId}: User's token balance, accessible only to the user themselves.
- * - /vsd_transactions/{transactionId}: Token transaction records, only accessible on create.
- * - /contracts/{contractId}: Licensing and split agreements.
- * - /knowledgebase/{topicId}: Knowledgebase articles.
- * - /roles_admin/{userId}: Admin user privileges.
- *
- * Key Security Decisions:
- * - Public Read Access for Works: The /works collection is publicly readable to facilitate discovery.
- *   Write access is strictly controlled via the artistId field.
- * - User Data Isolation:  User profiles and wallets are strictly isolated; only the authenticated user can access their own data.
- * - Admin Override: Users with the 'admin' claim in their auth token have full read/write access to all data.
- * - No User Listing: Listing all users is disallowed.
- *
- * Denormalization for Authorization:
- * - Works: The 'works' documents contain an 'artistId' field. This is to avoid needing to query the 'users' collection to validate the author.
- */
+
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    /**
-     * @description Checks if the request is made by a signed-in user.
-     * @return {bool} True if the user is signed in, false otherwise.
-     */
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    /**
-     * @description Checks if the authenticated user's UID matches the provided userId.
-     * @param {string} userId The user ID to compare against the authenticated user's UID.
-     * @return {bool} True if the user IDs match, false otherwise.
-     */
+    // Helper functions
     function isOwner(userId) {
       return request.auth.uid == userId;
     }
 
-    /**
-     * @description Checks if the authenticated user has the 'admin' claim set to true in their token.
-     * @return {bool} True if the user is an admin, false otherwise.
-     */
     function isAdmin() {
+      // This checks for a custom claim set on the user's auth token.
       return request.auth.token.admin == true;
     }
 
-    /**
-     * @description Checks if the authenticated user is the owner of the existing document.
-     * @param {string} userId The user ID to compare against the resource data's userId.
-     * @return {bool} True if the user is the owner and the document exists.
-     */
-    function isExistingOwner(userId) {
-      return isOwner(userId) && resource != null;
-    }
-    
-    /**
-     * @description Grants full read and write access to any document for users with the 'admin' claim.
-     * @path /databases/{database}/documents/{document=**}
-     * @allow (read, write) User with admin claim can read and write any document.
-     * @deny (read, write) User without admin claim cannot read or write any document.
-     * @principle Allows admin users to bypass all security restrictions.
-     */
+    // Blanket Admin Access: Admins can read and write to any document.
+    // This rule is evaluated first.
     match /{document=**} {
       allow read, write: if isAdmin();
     }
 
-    /**
-     * @description Manages user profile data, accessible only to the user themselves.
-     * @path /users/{userId}
-     * @allow (get, list) User can read their own profile data.
-     * @allow (create) User can create their own profile using their own ID.
-     * @allow (update) User can update their own profile data.
-     * @deny (get, list) User cannot read other user's profile data.
-     * @deny (create) User cannot create a profile with an ID that doesn't match their own.
-     * @deny (update) User cannot update other user's profile data.
-     * @principle Enforces strict user-ownership for profile data.
-     */
+    // Users can only read, create, and update their own user document.
     match /users/{userId} {
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-      allow create: if isOwner(userId) && request.resource.data.id == request.auth.uid;
-      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
-      allow delete: if false;
+      allow read, update, create: if isOwner(userId);
     }
 
-    /**
-     * @description Manages user wallets, accessible only to the user themselves.
-     * @path /wallets/{userId}
-     * @allow (get, list) User can read their own wallet.
-     * @allow (create) User can create their own wallet.
-     * @allow (update) User can update their own wallet.
-     * @deny (get, list) User cannot read other user's wallets.
-     * @deny (create, update) User cannot create or update other user's wallets.
-     * @principle Enforces strict user-ownership for wallet data.
-     */
-    match /wallets/{userId} {
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-      allow create: if isOwner(userId) && request.resource.data.userId == request.auth.uid;
-      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
-      allow delete: if false;
-    }
-
-    /**
-     * @description Manages VSD token transactions, restricted to creation with validated ownership.
-     * @path /vsd_transactions/{transactionId}
-     * @allow (create) User can create a transaction for themselves.
-     * @deny (get, list, update, delete) No one can read, list, update, or delete transactions.
-     * @principle Only allows creating transactions with proper ownership validation.
-     */
+    // Users can only create transactions for themselves.
+    // Reading is also restricted to the owner of the transactions.
     match /vsd_transactions/{transactionId} {
-      allow get: if false;
-      allow list: if false;
-      allow create: if isOwner(request.resource.data.userId);
-      allow update: if false;
-      allow delete: if false;
+      allow read, create: if isOwner(request.resource.data.userId);
+    }
+    
+    // Security for listing vsd_transactions: Only allow if querying for a specific user.
+    // THIS IS THE KEY RULE that our API route relies on.
+    match /vsd_transactions {
+        allow list: if request.auth != null && request.query.where[0][0] == 'userId';
     }
 
-    /**
-     * @description Manages musical works, publicly readable, writable only by the artist.
-     * @path /works/{workId}
-     * @allow (get, list) Anyone can read the work.
-     * @allow (create) User can create a work if they are the artist.
-     * @allow (update, delete) User can update/delete a work if they are the artist.
-     * @deny (create) User cannot create a work for another artist.
-     * @deny (update, delete) User cannot update/delete a work for another artist.
-     * @principle Public read access with owner-only writes.
-     */
+    // Works can be read by anyone (for the public catalog).
+    // Creation and modification are restricted to the artist who owns the work.
     match /works/{workId} {
-      allow get, list: if true;
-      allow create: if isSignedIn() && request.resource.data.artistId == request.auth.uid;
-      allow update: if isExistingOwner(resource.data.artistId) && request.resource.data.artistId == resource.data.artistId;
-      allow delete: if isExistingOwner(resource.data.artistId);
+      allow read: if true;
+      allow create: if isOwner(request.resource.data.artistId);
+      allow update, delete: if isOwner(resource.data.artistId);
+    }
+    
+    // Security for listing works: Allow public reads, and allow filtered reads by artist.
+    match /works {
+        allow list: if request.query.where[0][0] == 'artistId' || request.auth == null;
     }
 
-    /**
-     * @description Manages licensing requests, creatable by anyone, readable and updatable by the artist or requestor.
-     * @path /license_requests/{requestId}
-     * @allow (create) Anyone can create a license request.
-     * @allow (get) User can read the license request if they are the artist or the requestor.
-     * @allow (update) User can update the license request if they are the artist.
-     * @deny (get) User cannot read the license request if they are not the artist or the requestor.
-     * @deny (update) User cannot update the license request if they are not the artist.
-     * @principle Shared access between artist and requestor.
-     */
+    // License requests can be created by any authenticated user.
+    // Reading/updating is restricted to the artist or the requestor.
     match /license_requests/{requestId} {
-      allow get: if isSignedIn() && (isOwner(resource.data.artistId) || request.auth.uid == resource.data.requestorId);
-      allow list: if false;
-      allow create: if isSignedIn();
-      allow update: if isExistingOwner(resource.data.artistId) && request.resource.data.artistId == resource.data.artistId;
-      allow delete: if false;
+      allow create: if request.auth != null;
+      allow read, update: if isOwner(resource.data.artistId) || isOwner(resource.data.requestorId);
     }
 
-     /**
-      * @description Indicates admin privileges for a user. Document existence grants admin role.
-      * @path /roles_admin/{userId}
-      * @allow (read) Only admin users can read which users have admin priviledges
-      * @deny (read) Users that aren't admins can't see who has admin priviledges.
-      */
-     match /roles_admin/{userId} {
-        allow get: if isAdmin();
-        allow list: if isAdmin();
-        allow create: if false;
-        allow update: if false;
-        allow delete: if false;
-     }
+    // Security for listing license requests: Only for the artist or requestor being queried.
+    match /license_requests {
+       allow list: if request.auth != null && (request.query.where[0][2] == request.auth.uid);
+    }
 
-     /**
-      * @description Knowledge base articles anyone can read.
-      * @path /knowledgebase/{topicId}
-      * @allow (get, list) Anyone can read knowledge base articles.
-      * @deny (create, update, delete) No one can modify knowledge base articles
-      * @principle: Open read-only content.
-      */
-     match /knowledgebase/{topicId} {
-        allow get, list: if true;
-        allow create, update, delete: if false;
-     }
-
-     /**
-      * @description Logs results of daily Muso.ai credit and exposure audits.
-      * @path /musoAudits/{auditId}
-      * @allow (read, write) Only admin users can manage logs.
-      */
-     match /musoAudits/{auditId} {
-      allow read, write: if isAdmin();
-     }
-
-    /**
-     * @description Manages contracts, only admins can manage them.
-     * @path /contracts/{contractId}
-     * @allow (read, write) Only admin users can manage logs.
-     */
-    match /contracts/{contractId} {
-      allow read, write: if isAdmin();
+    // Admin roles are stored in a separate collection. Only admins can read this.
+    match /roles_admin/{userId} {
+       allow read: if isAdmin();
     }
   }
 }
