@@ -10,10 +10,8 @@ import {getFirebaseAdmin} from '@/firebase/admin';
 import {collection, query, where, getDocs} from 'firebase/firestore';
 import {z} from 'zod';
 
-// Input schema for the tool
-const ArtistTracksInputSchema = z.object({
-  artistId: z.string().describe("The unique ID of the artist whose tracks are to be retrieved."),
-});
+// Input schema for the tool - no longer needs artistId here
+const ArtistTracksInputSchema = z.object({});
 
 // Output schema for the tool
 const TrackSchema = z.object({
@@ -29,16 +27,22 @@ const ArtistTracksOutputSchema = z.array(TrackSchema);
 export const getArtistTracks = ai.defineTool(
   {
     name: 'getArtistTracks',
-    description: "Retrieves a list of all tracks uploaded by a specific artist, including their title, genre, play count, and licensing price. Use this to answer questions about the user's own music catalog.",
+    description: "Retrieves a list of all tracks uploaded by the current user, including their title, genre, play count, and licensing price. Use this to answer questions about the user's own music catalog.",
     inputSchema: ArtistTracksInputSchema,
     outputSchema: ArtistTracksOutputSchema,
+    contextSchema: z.object({ artistId: z.string() })
   },
-  async input => {
+  async (input, context) => {
     try {
       const {db} = await getFirebaseAdmin();
-      // Corrected collection from 'tracks' to 'works'
+      const artistId = context.artistId;
+      
+      if (!artistId) {
+        throw new Error("Artist ID is missing from the context.");
+      }
+
       const tracksRef = collection(db, 'works');
-      const q = query(tracksRef, where('artistId', '==', input.artistId));
+      const q = query(tracksRef, where('artistId', '==', artistId));
       
       const querySnapshot = await getDocs(q);
       if (querySnapshot.empty) {

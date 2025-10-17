@@ -26,11 +26,7 @@ import { postToSocialMedia } from '../tools/post-to-social-media-tool';
 import { z } from 'zod';
 
 export async function symbiChat(input: SymbiChatInput): Promise<SymbiChatOutput> {
-  // We pass the artistId to the flow so it can be used by tools if needed.
-  return symbiChatFlow({
-    ...input,
-    artistId: input.userId,
-  });
+  return symbiChatFlow(input);
 }
 
 const systemPrompt = `You are Symbi, the single, unified AI assistant for the entire IMG ecosystem, which includes VNDR Music, IVtv, and ND Radio. You are a brand ambassador, and your persona is professional, knowledgeable, supportive, and consistent across all platforms.
@@ -48,36 +44,31 @@ You are having a conversation with a user. Use the provided conversation history
 Conversation History: 
 {{{jsonStringify history}}}`;
 
-// 1. Define the prompt at the top level, making tools available for the AI to use.
-const symbiPrompt = ai.definePrompt({
-  name: 'symbiChatPrompt',
-  system: systemPrompt,
-  tools: [getKnowledgeBase, getUserProfile, getArtistTracks, registerWorkWithPRO, updateLicenseRequestStatus, postToSocialMedia],
-  input: {
-    schema: z.object({
-      history: z.any(),
-      question: z.string(),
-    }),
-  },
-  output: { schema: SymbiChatOutputSchema },
-  prompt: 'User Question: {{{question}}}',
-});
-
-
 const symbiChatFlow = ai.defineFlow(
   {
     name: 'symbiChatFlow',
-    // The flow now also accepts artistId for the tools.
-    inputSchema: SymbiChatInputSchema.extend({ artistId: z.string() }),
+    inputSchema: SymbiChatInputSchema,
     outputSchema: SymbiChatOutputSchema,
   },
   async (input) => {
-    // 2. Invoke the pre-defined prompt with the user's question and history.
-    // The AI will decide if it needs to call any tools.
-    // The input to the prompt MUST match its defined input schema.
-    const { output } = await symbiPrompt({
-      history: input.history || [],
-      question: input.question,
+    // Correctly pass the artistId to the tools that need it.
+    // This is done by creating tool instances with the required context.
+    const contextualTools = [
+      getKnowledgeBase, 
+      getUserProfile.withContext({userId: input.userId}),
+      getArtistTracks.withContext({artistId: input.userId}),
+      registerWorkWithPRO,
+      updateLicenseRequestStatus.withContext({artistId: input.userId}),
+      postToSocialMedia
+    ];
+
+    const { output } = await ai.generate({
+      prompt: `User Question: ${input.question}`,
+      system: systemPrompt.replace('{{{jsonStringify history}}}', JSON.stringify(input.history || [])),
+      tools: contextualTools,
+      output: {
+        schema: SymbiChatOutputSchema,
+      },
     });
 
     return output!;

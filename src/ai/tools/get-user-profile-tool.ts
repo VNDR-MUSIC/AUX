@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -9,10 +10,8 @@ import {getFirebaseAdmin} from '@/firebase/admin';
 import {doc, getDoc, collection, query, where, getDocs, orderBy, limit} from 'firebase/firestore';
 import {z} from 'zod';
 
-// Input schema for the tool
-const UserProfileInputSchema = z.object({
-  userId: z.string().describe("The unique ID of the user."),
-});
+// Input schema for the tool - no longer needs userId
+const UserProfileInputSchema = z.object({});
 
 // Output schema for the tool
 const TransactionSchema = z.object({
@@ -35,16 +34,22 @@ const UserProfileSchema = z.object({
 export const getUserProfile = ai.defineTool(
   {
     name: 'getUserProfile',
-    description: "Retrieves a user's profile information, including their VSD token balance and a summary of their most recent transactions. Use this to provide personalized context in conversation.",
+    description: "Retrieves the current user's profile information, including their VSD token balance and a summary of their most recent transactions. Use this to provide personalized context in conversation.",
     inputSchema: UserProfileInputSchema,
     outputSchema: UserProfileSchema,
+    contextSchema: z.object({ userId: z.string() })
   },
-  async input => {
+  async (input, context) => {
     try {
       const {db} = await getFirebaseAdmin();
+      const userId = context.userId;
+
+      if (!userId) {
+        throw new Error("User ID is missing from context.");
+      }
       
       // 1. Fetch user document
-      const userRef = doc(db, 'users', input.userId);
+      const userRef = doc(db, 'users', userId);
       const userDoc = await getDoc(userRef);
 
       if (!userDoc.exists()) {
@@ -56,7 +61,7 @@ export const getUserProfile = ai.defineTool(
       const transRef = collection(db, 'vsd_transactions');
       const q = query(
           transRef, 
-          where('userId', '==', input.userId),
+          where('userId', '==', userId),
           orderBy('transactionDate', 'desc'),
           limit(5)
         );
@@ -88,7 +93,7 @@ export const getUserProfile = ai.defineTool(
         // In case of error, return a partial or empty object.
         // The LLM can then inform the user that it couldn't fetch the data.
         return {
-            id: input.userId,
+            id: context.userId,
             error: error instanceof Error ? error.message : "Unknown error occurred.",
         };
     }

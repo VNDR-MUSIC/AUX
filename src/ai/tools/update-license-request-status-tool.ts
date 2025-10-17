@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -13,7 +14,6 @@ import {z} from 'zod';
 const UpdateLicenseRequestInputSchema = z.object({
   licenseRequestId: z.string().describe("The unique ID of the license request to update."),
   status: z.enum(['approved', 'rejected']).describe("The new status for the license request."),
-  artistId: z.string().describe("The ID of the artist performing the action, for security verification."),
 });
 
 // Output schema for the tool
@@ -28,8 +28,10 @@ export const updateLicenseRequestStatus = ai.defineTool(
     description: "Updates the status of a music license request to either 'approved' or 'rejected'. This action can only be performed by the artist who owns the track. Use this when a user wants to accept or decline a licensing offer.",
     inputSchema: UpdateLicenseRequestInputSchema,
     outputSchema: UpdateLicenseRequestOutputSchema,
+    // Add context schema for artistId
+    contextSchema: z.object({ artistId: z.string() })
   },
-  async input => {
+  async (input, context) => { // context is now available
     try {
       const {db} = await getFirebaseAdmin();
       const requestRef = doc(db, 'license_requests', input.licenseRequestId);
@@ -43,9 +45,10 @@ export const updateLicenseRequestStatus = ai.defineTool(
       }
       
       const requestData = requestDoc.data();
+      const artistId = context.artistId;
 
       // Security Check: Ensure the user performing the action owns the request.
-      if (requestData.artistId !== input.artistId) {
+      if (requestData.artistId !== artistId) {
         return {
             success: false,
             message: "I can't perform this action. You are not the owner of the track associated with this license request.",
