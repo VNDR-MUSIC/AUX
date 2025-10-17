@@ -40,55 +40,34 @@ export default function ActionCards({ userData, user, isLoading }: ActionCardsPr
 
   if (isLoading) {
       return (
-          <div className="grid auto-rows-min gap-4">
-              <Skeleton className="h-40" />
-              <Skeleton className="h-40" />
-          </div>
+        <Card>
+            <CardHeader><Skeleton className="h-6 w-32" /></CardHeader>
+            <CardContent><Skeleton className="h-10 w-full" /></CardContent>
+        </Card>
       )
   }
 
   return (
-    <div className="grid auto-rows-min gap-4">
-      <Card>
+    <Card className='h-full'>
         <CardHeader>
-          <CardTitle className="font-headline flex items-center justify-between">
+        <CardTitle className="font-headline flex items-center justify-between">
             Daily Reward
-          </CardTitle>
+        </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
             Claim your daily VSD-lite credits just for being an active member
             of the VNDR community.
-          </p>
-          <Button
+        </p>
+        <Button
             className="w-full"
             onClick={handleClaimTokens}
             disabled={!canClaimTokens || !user}
-          >
+        >
             <HandCoins className="mr-2 h-4 w-4" />
             {canClaimTokens ? 'Claim 5 VSD-lite' : 'Daily Credits Claimed'}
-          </Button>
+        </Button>
         </CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle className="font-headline flex items-center justify-between">
-            Legal Eagle AI
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-sm text-muted-foreground">
-            Have questions? Our AI legal assistant can help you with
-            publishing, licensing, and more.
-          </p>
-          <Button className="w-full" variant="secondary" asChild>
-            <Link href="/dashboard/legal-eagle">
-              Ask Legal Eagle
-              <ArrowUpRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
-        </CardContent>
-      </Card>
-    </div>
+    </Card>
   );
 }

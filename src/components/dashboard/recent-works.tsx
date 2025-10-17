@@ -20,36 +20,15 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
-import { useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, where, orderBy, limit } from 'firebase/firestore';
-import { useFirebase } from '@/firebase/provider';
-import type { User } from 'firebase/auth';
 import { Track } from '@/store/music-player-store';
 import { Skeleton } from '@/components/ui/skeleton';
 
 interface RecentWorksProps {
-  user: User | null;
+  works: Track[] | null;
   isLoading: boolean;
 }
 
-export default function RecentWorks({ user, isLoading: isParentLoading }: RecentWorksProps) {
-  const { firestore } = useFirebase();
-
-  const worksQuery = useMemoFirebase(
-    () =>
-      firestore && user
-        ? query(
-            collection(firestore, 'works'),
-            where('artistId', '==', user.uid),
-            orderBy('uploadDate', 'desc'),
-            limit(5)
-          )
-        : null,
-    [firestore, user]
-  );
-  const { data: recentWorks, isLoading: areWorksLoading } = useCollection<Track>(worksQuery);
-  const isLoading = isParentLoading || areWorksLoading;
-
+export default function RecentWorks({ works, isLoading }: RecentWorksProps) {
   return (
     <Card className="col-span-4">
       <CardHeader className="flex flex-row items-center">
@@ -73,7 +52,7 @@ export default function RecentWorks({ user, isLoading: isParentLoading }: Recent
                 <Skeleton className="h-12 w-full" />
                 <Skeleton className="h-12 w-full" />
             </div>
-        ) : recentWorks && recentWorks.length > 0 ? (
+        ) : works && works.length > 0 ? (
           <Table>
             <TableHeader>
               <TableRow>
@@ -84,7 +63,7 @@ export default function RecentWorks({ user, isLoading: isParentLoading }: Recent
               </TableRow>
             </TableHeader>
             <TableBody>
-              {recentWorks.map((work) => (
+              {works.map((work) => (
                 <TableRow key={work.id}>
                   <TableCell>
                     <div className="font-medium">{work.title}</div>

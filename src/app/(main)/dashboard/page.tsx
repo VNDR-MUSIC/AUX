@@ -8,7 +8,7 @@ import ActionCards from '@/components/dashboard/action-cards';
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Upload } from "lucide-react";
+import { Upload, Music } from "lucide-react";
 import { useDoc } from "@/firebase";
 import { doc, collection, query, where, orderBy, limit } from "firebase/firestore";
 import { useFirebase } from "@/firebase/provider";
@@ -72,28 +72,38 @@ export default function DashboardPage() {
   const userDocRef = useMemoFirebase(() => (firestore && user ? doc(firestore, 'users', user.uid) : null), [firestore, user]);
   const { data: userData, isLoading: isUserDocLoading } = useDoc(userDocRef);
 
-  // This is the critical fix. The query now explicitly waits for `user.uid` to be available.
-  const worksQuery = useMemoFirebase(() =>
-    (firestore && user?.uid) // Check for user.uid specifically
-      ? query(
-          collection(firestore, 'works'),
-          where('artistId', '==', user.uid),
-          orderBy('plays', 'desc'),
-        )
-      : null, // Return null if firestore or user.uid is not ready
-  [firestore, user?.uid]); // Depend on user.uid
+  const worksQuery = useMemoFirebase(() => {
+    // THIS IS THE CRITICAL FIX: Do not create the query until user.uid is definitively available.
+    if (!firestore || !user?.uid) {
+      return null;
+    }
+    return query(
+      collection(firestore, 'works'),
+      where('artistId', '==', user.uid)
+    );
+  }, [firestore, user?.uid]); // Depend specifically on user.uid
 
-  const { data: topWorks, isLoading: areWorksLoading } = useCollection<Track>(worksQuery);
+  const { data: allWorks, isLoading: areWorksLoading } = useCollection<Track>(worksQuery);
   
+  const recentWorks = useMemo(() => allWorks?.sort((a, b) => (b.uploadDate as any) - (a.uploadDate as any)).slice(0, 5) || [], [allWorks]);
+  const topWorks = useMemo(() => allWorks?.sort((a, b) => (b.plays || 0) - (a.plays || 0)) || [], [allWorks]);
+
+  const totalPlays = useMemo(() => allWorks?.reduce((acc, work) => acc + (work.plays || 0), 0) || 0, [allWorks]);
+
   const isLoading = isUserLoading || isUserDocLoading || areWorksLoading;
   const username = userData?.username || user?.email?.split('@')[0];
 
   return (
     <div className="flex flex-col gap-8">
       <DashboardHeader username={username} isLoading={isLoading} />
-      <DashboardStats userData={userData} isLoading={isLoading} />
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-         <Card className="lg:col-span-3">
+      <DashboardStats 
+        userData={userData} 
+        isLoading={isLoading} 
+        totalWorks={allWorks?.length}
+        totalPlays={totalPlays}
+      />
+      <div className="grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-7">
+         <Card className="lg:col-span-3 row-span-1">
           <CardHeader>
             <CardTitle>AI Recommendations</CardTitle>
             <CardDescription>
@@ -104,7 +114,7 @@ export default function DashboardPage() {
             <RecommendationsClient />
           </CardContent>
         </Card>
-        <Card className="lg:col-span-4">
+        <Card className="lg:col-span-4 row-span-2">
             <CardHeader>
                 <CardTitle>Top Performing Tracks</CardTitle>
                 <CardDescription>
@@ -121,11 +131,11 @@ export default function DashboardPage() {
                 )}
             </CardContent>
         </Card>
-        <div className="lg:col-span-7">
-           <RecentWorks user={user} isLoading={isLoading} />
-        </div>
-        <div className="lg:col-span-7">
+         <Card className="lg:col-span-3 row-span-1">
             <ActionCards userData={userData} user={user} isLoading={isLoading} />
+        </Card>
+        <div className="lg:col-span-7">
+           <RecentWorks works={recentWorks} isLoading={isLoading} />
         </div>
       </div>
     </div>
