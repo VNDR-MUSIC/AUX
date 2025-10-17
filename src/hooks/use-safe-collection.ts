@@ -17,7 +17,6 @@ export function useSafeCollection<T>(collectionPath: string | null, filters?: Re
       return;
     }
 
-    // For public paths, don't wait for user loading to finish.
     const isPublicPath = collectionPath === 'works' && !filters;
     if (!isPublicPath && isUserLoading) {
       setIsLoading(true);
@@ -28,20 +27,21 @@ export function useSafeCollection<T>(collectionPath: string | null, filters?: Re
     setError(null);
     
     try {
-      // Server action now returns a Response object, which we need to parse.
       const response = await fetchCollectionAction({ collectionPath, filters });
+      
+      // The response is now a Next.js Response object, so we parse its JSON body.
       const result = await response.json();
 
       if (result.success) {
         setData(result.data as T[]);
       } else {
-        console.error(`🔥 useSafeCollection Error on '${collectionPath}':`, result.details);
-        setError(result.error || "An unexpected error occurred.");
+        console.error(`🔥 useSafeCollection Error on '${collectionPath}':`, result.error);
+        setError(result.error || "An unexpected server error occurred.");
         setData(null);
       }
     } catch (e: any) {
         console.error(`🔥 useSafeCollection Hard Fail on '${collectionPath}':`, e);
-        setError(e.message || "An unexpected error occurred during fetch.");
+        setError("Failed to communicate with the server. Please check your network connection.");
         setData(null);
     } finally {
       setIsLoading(false);

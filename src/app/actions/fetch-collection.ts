@@ -2,8 +2,8 @@
 
 import { getFirebaseAdmin } from '@/firebase/admin';
 import { cookies } from 'next/headers';
-import { CollectionReference, DocumentData } from 'firebase-admin/firestore';
-import { safeServerAction } from './safe-action';
+import { CollectionReference, DocumentData, Timestamp, GeoPoint, DocumentReference as AdminDocumentReference } from 'firebase-admin/firestore';
+import { safeServerAction, serializeFirestoreData } from './safe-action';
 
 export async function fetchCollectionAction({
   collectionPath,
@@ -12,7 +12,6 @@ export async function fetchCollectionAction({
   collectionPath: string;
   filters?: Record<string, any>;
 }) {
-  // Wrap the entire logic in the safe server action
   return safeServerAction(async () => {
     const cookieStore = cookies();
     const idToken = cookieStore.get('firebaseIdToken')?.value;
@@ -28,20 +27,17 @@ export async function fetchCollectionAction({
         isAdmin = decodedToken.admin === true;
     }
 
-    // Handle public 'works' collection fetch
     if (collectionPath === 'works' && !filters?.artistId && !idToken) {
       const publicWorksSnap = await db.collection(collectionPath).get();
       return publicWorksSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     }
 
-    // If not a public fetch and no user is logged in, return empty.
     if (!uid) {
         return [];
     }
     
     let query: CollectionReference<DocumentData> | FirebaseFirestore.Query<DocumentData> = db.collection(collectionPath);
     
-    // Apply user-based security filters if the user is not an admin
     if (!isAdmin) {
         if (collectionPath === 'license_requests') {
              const artistQuery = query.where('artistId', '==', uid);
@@ -59,7 +55,6 @@ export async function fetchCollectionAction({
              return Array.from(requestsById.values());
 
         } else if (collectionPath === 'works') {
-            // Non-admins can only query their own works.
             if (filters?.artistId && filters.artistId !== uid) {
                 throw new Error("Permission denied: You can only view your own works.");
             }
@@ -70,10 +65,8 @@ export async function fetchCollectionAction({
         }
     }
     
-    // Apply any additional developer-provided filters
     if (filters) {
       for (const key in filters) {
-        // This prevents redundantly applying the artistId filter for non-admins on the 'works' collection.
         if (collectionPath === 'works' && key === 'artistId' && !isAdmin) continue;
         
         if (Object.prototype.hasOwnProperty.call(filters, key)) {

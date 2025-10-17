@@ -1,6 +1,6 @@
 "use server";
 import { NextResponse } from "next/server";
-import { Timestamp, GeoPoint, DocumentReference } from "firebase/firestore";
+import { Timestamp, GeoPoint, DocumentReference } from "firebase-admin/firestore";
 
 /**
  * Recursively serialize Firestore data to JSON-safe values.
@@ -12,7 +12,7 @@ import { Timestamp, GeoPoint, DocumentReference } from "firebase/firestore";
  * - null and undefined
  * - Any unknown types -> string
  */
-function serializeFirestoreData(data: any): any {
+export function serializeFirestoreData(data: any): any {
   if (data === undefined) return null; // avoid undefined
   if (data === null) return null;
   if (data instanceof Timestamp) return data.toDate().toISOString();
@@ -20,13 +20,11 @@ function serializeFirestoreData(data: any): any {
   if (data instanceof DocumentReference) return data.path;
   if (Array.isArray(data)) return data.map(serializeFirestoreData);
   if (data && typeof data === "object") {
-    // This is the crucial part for nested objects.
-    // It creates a new object and recursively calls serializeFirestoreData for each value.
     const serialized: Record<string, any> = {};
     for (const key in data) {
-        if (Object.prototype.hasOwnProperty.call(data, key)) {
-            serialized[key] = serializeFirestoreData(data[key]);
-        }
+      if (Object.prototype.hasOwnProperty.call(data, key)) {
+          serialized[key] = serializeFirestoreData(data[key]);
+      }
     }
     return serialized;
   }
