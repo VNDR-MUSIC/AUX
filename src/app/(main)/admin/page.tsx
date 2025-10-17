@@ -8,9 +8,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Search, ShieldX } from 'lucide-react';
+import { Search, ShieldX, Link as LinkIcon } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Track } from '@/store/music-player-store';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 export default function AdminPage() {
   const { user } = useUser();
@@ -84,9 +86,17 @@ export default function AdminPage() {
 
   return (
     <div className="container mx-auto py-8">
-      <div className="mb-8">
-        <h1 className="font-headline text-3xl sm:text-4xl font-bold tracking-tighter md:text-5xl">Admin Dashboard</h1>
-        <p className="mt-2 text-muted-foreground">Platform oversight and data management.</p>
+      <div className="mb-8 flex items-center justify-between">
+        <div>
+          <h1 className="font-headline text-3xl sm:text-4xl font-bold tracking-tighter md:text-5xl">Admin Dashboard</h1>
+          <p className="mt-2 text-muted-foreground">Platform oversight and data management.</p>
+        </div>
+        <Button asChild variant="outline">
+          <Link href="/admin/subsidiaries">
+            <LinkIcon className="mr-2 h-4 w-4" />
+            Subsidiary Integration
+          </Link>
+        </Button>
       </div>
 
       <Card>
