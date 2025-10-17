@@ -280,6 +280,7 @@ export default function UploadForm() {
                         </Button>
                     </div>
                 </Card>
+                {uploadState.errors?.coverArtDataUri && <p className="text-sm text-destructive">{uploadState.errors.coverArtDataUri[0]}</p>}
             </div>
         </div>
         

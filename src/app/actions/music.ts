@@ -17,7 +17,7 @@ const uploadWorkSchema = z.object({
     artistName: z.string().min(1, "Artist name is required."),
     genre: z.string().min(1, "Genre is required."),
     description: z.string().optional(),
-    coverArtDataUri: z.string().optional(),
+    coverArtDataUri: z.string().min(1, "A cover art image is required."),
     price: z.preprocess(
         (val) => (val === "" ? undefined : Number(val)),
         z.number().min(0).optional()
@@ -30,6 +30,7 @@ type UploadWorkState = {
         trackTitle?: string[];
         artistName?: string[];
         genre?: string[];
+        coverArtDataUri?: string[];
         _form?: string[];
     }
 }
@@ -67,10 +68,6 @@ export async function uploadTrackAction(
         // This simulates the backend `onWorkCreated` trigger. In a real app,
         // this data would be populated by separate serverless functions.
         const demoTrackUrl = "https://storage.googleapis.com/studiopublic/vndr/synthwave-track.mp3";
-        let coverArtUrl = coverArtDataUri;
-        if (!coverArtUrl) {
-           coverArtUrl = `https://picsum.photos/seed/${trackTitle.replace(/\s/g, '-')}/400/400`;
-        }
         
         const newWorkData = {
             title: trackTitle,
@@ -81,7 +78,7 @@ export async function uploadTrackAction(
             uploadDate: serverTimestamp(), // This value exists only on the server
             status: "processing", // Initial status
             trackUrl: demoTrackUrl,
-            coverArtUrl: coverArtUrl,
+            coverArtUrl: coverArtDataUri,
             price: price || null,
             plays: 0,
             
