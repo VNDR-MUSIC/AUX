@@ -95,7 +95,7 @@ export const getUserProfile = ai.defineTool(
         return {
             id: context.userId,
             error: error instanceof Error ? error.message : "Unknown error occurred.",
-        };
+        } as any;
     }
   }
 );
