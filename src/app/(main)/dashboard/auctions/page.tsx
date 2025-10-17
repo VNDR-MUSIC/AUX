@@ -10,10 +10,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Gavel, PlusCircle } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import { useOnboarding } from "@/hooks/use-onboarding";
 import Link from "next/link";
-import { Icons } from "@/components/icons";
+import Image from "next/image";
 
 export default function AuctionsPage() {
   useOnboarding('auctions');
@@ -22,7 +22,14 @@ export default function AuctionsPage() {
     <div className="container mx-auto py-8">
       <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl">Audio Exchange</h1>
+            <div className="relative h-12 w-48 mb-2">
+                <Image 
+                    src="https://i.ibb.co/fVjNMVpk/logo2.png" 
+                    alt="Audio Exchange Logo"
+                    fill
+                    className="object-contain"
+                />
+            </div>
             <p className="mt-2 text-muted-foreground">
               Buy, sell, and trade music rights and royalties using VSD tokens.
             </p>
@@ -43,7 +50,14 @@ export default function AuctionsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center justify-center text-center py-16">
-          <Gavel className="h-24 w-24 text-muted-foreground/50 mb-6" />
+           <div className="relative h-24 w-64 mb-6 opacity-50">
+             <Image 
+                src="https://i.ibb.co/fVjNMVpk/logo2.png" 
+                alt="Audio Exchange Logo"
+                fill
+                className="object-contain"
+            />
+           </div>
           <p className="text-lg font-semibold">The Exchange is Warming Up</p>
           <p className="text-muted-foreground mt-2 max-w-md">
             Check back soon for active listings and the ability to trade rights and royalties.
