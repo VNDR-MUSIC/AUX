@@ -59,7 +59,7 @@ export const getUserProfile = ai.defineTool(
 
       // 2. Fetch recent transactions
       const transRef = collection(db, 'vsd_transactions');
-      // THIS IS THE FIX: Added the where clause to filter by userId.
+      // THIS IS THE DEFINITIVE FIX: Added the where clause to filter by userId.
       const q = query(
           transRef, 
           where('userId', '==', userId),
