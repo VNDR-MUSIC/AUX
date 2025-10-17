@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loader2, Send, Scale } from "lucide-react";
+import { Loader2, Send, BrainCircuit } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { legalEagleChat } from '@/ai/flows/legal-eagle-flow';
@@ -23,9 +23,9 @@ interface Message {
 
 const initialMessage = `***DISCLAIMER: I am an AI simulation and not a real attorney. This information is for educational and entertainment purposes only and does not constitute legal advice. You should consult with a qualified attorney for advice regarding your individual situation.***
 
-I am Legal Eagle, your simulated entertainment law adviser. Ask me general questions about contracts, copyright, licensing, and more. Each query costs 1 VSD lite token.`;
+I am Symbi, your AI-powered guide to the music industry. Ask me general questions about contracts, copyright, licensing, Muso.ai, VSD tokens, and more. Each query costs 1 VSD-lite.`;
 
-export default function LegalEaglePage() {
+export default function KnowledgebasePage() {
   const [messages, setMessages] = useState<Message[]>([
     { text: initialMessage, isUser: false }
   ]);
@@ -51,11 +51,11 @@ export default function LegalEaglePage() {
       const aiMessage: Message = { text: response, isUser: false };
       setMessages(prev => [...prev, aiMessage]);
       toast({
-        title: 'VSD Token Deducted',
-        description: '1 VSD token has been deducted for your query.',
+        title: 'VSD-lite Deducted',
+        description: '1 VSD-lite credit has been deducted for your query.',
       });
     } catch (error) {
-      console.error("Legal Eagle chat error:", error);
+      console.error("Knowledgebase chat error:", error);
       const errorMessageText = error instanceof Error ? error.message : "Sorry, I'm having trouble connecting right now. Please try again later.";
       const errorMessage: Message = { text: errorMessageText, isUser: false };
       setMessages(prev => [...prev, errorMessage]);
@@ -79,12 +79,12 @@ export default function LegalEaglePage() {
 
   return (
     <div className="container mx-auto py-8 flex h-[calc(100vh-10rem)] justify-center items-center">
-      <Card className="w-full max-w-2xl h-full flex flex-col">
+      <Card className="w-full max-w-3xl h-full flex flex-col">
         <CardHeader className="text-center">
-          <Scale className="mx-auto h-12 w-12 text-primary" />
-          <CardTitle className="font-headline text-3xl">Legal Eagle</CardTitle>
+          <BrainCircuit className="mx-auto h-12 w-12 text-primary" />
+          <CardTitle className="font-headline text-3xl">AI Knowledgebase</CardTitle>
           <CardDescription>
-            Your AI-Powered Simulated Entertainment Law Adviser
+            Your AI-Powered Guide to the Music Publishing Ecosystem
           </CardDescription>
         </CardHeader>
         <CardContent className="flex-1 flex flex-col gap-4">
@@ -94,10 +94,12 @@ export default function LegalEaglePage() {
                      <div key={index} className={`flex items-start gap-3 ${message.isUser ? 'justify-end' : ''}`}>
                         {!message.isUser && (
                             <Avatar>
-                                <AvatarFallback><Scale /></AvatarFallback>
+                                <AvatarFallback>
+                                    <div className="relative h-5 w-5"><Icons.logo /></div>
+                                </AvatarFallback>
                             </Avatar>
                         )}
-                        <div className={`p-3 rounded-lg max-w-sm ${message.isUser ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
+                        <div className={`p-3 rounded-lg max-w-lg ${message.isUser ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
                             {message.text.split('***').map((part, i) =>
                               i === 1 ? (
                                 <Alert key={i} variant="destructive" className="bg-destructive/20 my-2">
@@ -119,7 +121,9 @@ export default function LegalEaglePage() {
                    {isLoading && (
                        <div className="flex items-start gap-3">
                            <Avatar>
-                               <AvatarFallback><Scale /></AvatarFallback>
+                                <AvatarFallback>
+                                    <div className="relative h-5 w-5"><Icons.logo /></div>
+                                </AvatarFallback>
                             </Avatar>
                             <div className="bg-muted p-3 rounded-lg max-w-xs flex items-center">
                                 <Loader2 className="h-5 w-5 animate-spin" />
@@ -132,9 +136,9 @@ export default function LegalEaglePage() {
         <CardFooter>
             <form onSubmit={handleSubmit} className="w-full flex items-center gap-2">
                 <div className="relative flex-1">
-                    <Input placeholder="Ask a general question about entertainment law..." value={input} onChange={(e) => setInput(e.target.value)} disabled={isLoading || !user} />
+                    <Input placeholder="Ask about publishing, Muso.ai, VSD tokens..." value={input} onChange={(e) => setInput(e.target.value)} disabled={isLoading || !user} />
                     <div className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground flex items-center gap-1">
-                        1 <Link href="https://vsd.network" target="_blank" rel="noopener noreferrer"><Icons.vsd className="h-3 w-3"/></Link> Lite
+                        1 <Link href="/dashboard/wallet" rel="noopener noreferrer"><Icons.vsd className="h-3 w-3"/></Link>
                     </div>
                 </div>
                 <Button type="submit" disabled={isLoading || !input.trim() || !user}>
@@ -146,5 +150,3 @@ export default function LegalEaglePage() {
     </div>
   );
 }
-
-    

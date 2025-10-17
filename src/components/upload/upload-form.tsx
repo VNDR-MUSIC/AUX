@@ -4,12 +4,12 @@
 import { useActionState, useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 import Image from "next/image";
-import { generateCoverArtAction, recommendLicensingPriceAction, uploadTrackAction } from "@/app/actions/music";
+import { uploadTrackAction } from "@/app/actions/music";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Info, Loader2, Wand2, UploadCloud } from "lucide-react";
+import { Loader2, UploadCloud } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
   Select,
@@ -18,112 +18,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Icons } from "../icons";
-import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { useUser } from "@/firebase";
-import Link from "next/link";
-
-
-const initialCoverArtState = {
-  message: null,
-  coverArtDataUri: null,
-  errors: {},
-};
-
-const initialLicensingState = {
-    message: null,
-    recommendedPrice: null,
-    justification: null,
-    errors: {},
-};
 
 const initialUploadState = {
     message: null,
     errors: {},
 }
 
-function GenerateCoverArtButton() {
-  const { pending } = useFormStatus();
-  return (
-    <Button type="submit" disabled={pending} form="cover-art-form">
-      {pending ? (
-        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-      ) : (
-        <Wand2 className="mr-2 h-4 w-4" />
-      )}
-      {pending ? "Generating..." : "Generate AI Cover Art"}
-    </Button>
-  );
-}
-
-function RecommendPriceButton() {
-    const { pending } = useFormStatus();
-    return (
-        <Button type="submit" variant="outline" disabled={pending} form="licensing-price-form">
-        {pending ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-        ) : (
-            <Wand2 className="mr-2 h-4 w-4" />
-        )}
-        {pending ? "Analyzing..." : "Get AI Recommendation"}
-        </Button>
-    );
-}
-
 function UploadButton() {
     const { pending } = useFormStatus();
     return (
-        <Button className="w-full" type="submit" disabled={pending} form="upload-track-form">
+        <Button className="w-full" type="submit" disabled={pending}>
              {pending ? (
-                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Uploading...</>
-            ) : "Upload Track & Finalize"}
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Processing...</>
+            ) : (
+                <><UploadCloud className="mr-2 h-4 w-4" /> Upload & Process Work</>
+            )}
         </Button>
     )
 }
 
 export default function UploadForm() {
-  const [coverArtState, coverArtFormAction] = useActionState(generateCoverArtAction, initialCoverArtState);
-  const [licensingState, licensingFormAction] = useActionState(recommendLicensingPriceAction, initialLicensingState);
   const [uploadState, uploadFormAction] = useActionState(uploadTrackAction, initialUploadState);
   const { user } = useUser();
-  
-  const [pricingOption, setPricingOption] = useState("ai");
-  const [manualPrice, setManualPrice] = useState("");
   const { toast } = useToast();
-
-  const [trackTitle, setTrackTitle] = useState("");
-  const [genre, setGenre] = useState("");
-  const [description, setDescription] = useState("");
-
+  
   const mainFormRef = useRef<HTMLFormElement>(null);
-
-
-  // Toasts for form actions
-  useEffect(() => {
-    if (coverArtState.message) {
-      toast({
-        title: coverArtState.errors ? "Error" : "Success",
-        description: coverArtState.message,
-        variant: coverArtState.errors ? "destructive" : "default",
-      });
-    }
-  }, [coverArtState, toast]);
-
-  useEffect(() => {
-    if(licensingState.message && !licensingState.errors) {
-        toast({
-            title: "Recommendation Ready",
-            description: licensingState.message,
-        });
-    } else if (licensingState.message && licensingState.errors) {
-        toast({
-            title: "Error",
-            description: licensingState.message,
-            variant: "destructive",
-        });
-    }
-  }, [licensingState, toast]);
 
   useEffect(() => {
     if (uploadState.message) {
@@ -134,165 +54,76 @@ export default function UploadForm() {
         });
         if (!uploadState.errors) {
             mainFormRef.current?.reset();
-            setTrackTitle("");
-            setGenre("");
-            setDescription("");
-            setManualPrice("");
-            // Clear other states as well for a full form reset
         }
     }
   }, [uploadState, toast]);
 
-
-  // Determine the final price to be submitted
-  const finalPrice = pricingOption === 'ai' 
-    ? licensingState.recommendedPrice
-    : (manualPrice ? parseFloat(manualPrice) : undefined);
-    
   const artistName = user?.displayName || user?.email?.split('@')[0] || '';
 
   return (
     <>
-      {/* These forms are used to trigger specific server actions without submitting the main form and are placed outside the main form to prevent nesting errors. */}
-      <form id="cover-art-form" action={coverArtFormAction} className="hidden">
-        <input type="hidden" name="trackTitle" value={trackTitle} />
-        <input type="hidden" name="genre" value={genre} />
-      </form>
-      <form id="licensing-price-form" action={licensingFormAction} className="hidden">
-        <input type="hidden" name="genre" value={genre} />
-        <input type="hidden" name="description" value={description} />
-      </form>
-    
-      <div className="grid md:grid-cols-3 gap-8">
-        <div className="md:col-span-2">
-          {/* Main form for uploading the track */}
-          <form id="upload-track-form" action={uploadFormAction} ref={mainFormRef} className="space-y-6">
-            <div className="grid gap-2">
-              <Label htmlFor="trackTitle">Track Title</Label>
-              <Input id="trackTitle" name="trackTitle" placeholder="e.g., Midnight Bloom" required value={trackTitle} onChange={(e) => setTrackTitle(e.target.value)} />
-              {coverArtState.errors?.trackTitle && <p className="text-sm text-destructive">{coverArtState.errors.trackTitle[0]}</p>}
-            </div>
+      <form id="upload-track-form" action={uploadFormAction} ref={mainFormRef} className="space-y-6">
+        <div className="grid md:grid-cols-2 gap-6">
+            <div className="space-y-6">
+                <div className="grid gap-2">
+                <Label htmlFor="trackTitle">Work Title</Label>
+                <Input id="trackTitle" name="trackTitle" placeholder="e.g., Midnight Bloom" required />
+                {uploadState.errors?.trackTitle && <p className="text-sm text-destructive">{uploadState.errors.trackTitle[0]}</p>}
+                </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="grid gap-2">
-                <Label htmlFor="artistName">Artist Name</Label>
-                <Input id="artistName" name="artistName" placeholder="e.g., Synthwave Samurai" defaultValue={artistName} />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="genre">Genre</Label>
-                <Select name="genre" required value={genre} onValueChange={setGenre}>
-                  <SelectTrigger id="genre">
-                    <SelectValue placeholder="Select a genre"/>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Synthwave">Synthwave</SelectItem>
-                    <SelectItem value="Lofi Hip-Hop">Lofi Hip-Hop</SelectItem>
-                    <SelectItem value="Future Funk">Future Funk</SelectItem>
-                    <SelectItem value="Ambient">Ambient</SelectItem>
-                    <SelectItem value="Electronic">Electronic</SelectItem>
-                  </SelectContent>
-                </Select>
-                {coverArtState.errors?.genre && <p className="text-sm text-destructive">{coverArtState.errors.genre[0]}</p>}
-              </div>
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="description">Description (Optional)</Label>
-              <Textarea id="description" name="description" placeholder="Add a short description about your track. This helps the AI generate better cover art and pricing." value={description} onChange={(e) => setDescription(e.target.value)} />
-            </div>
-            
-            {/* Hidden inputs to pass all data to the final upload action */}
-            <input type="hidden" name="trackTitle" value={trackTitle} />
-            <input type="hidden" name="genre" value={genre} />
-            <input type="hidden" name="description" value={description} />
-            <input type="hidden" name="price" value={finalPrice || 0} />
-            <input type="hidden" name="coverArtDataUri" value={coverArtState.coverArtDataUri || ""} />
-            <input type="hidden" name="artistId" value={user?.uid || ''} />
-            <input type="hidden" name="artistName" value={artistName} />
-          </form>
-          
-          {/* Standalone UI components, not part of the main form submission */}
-          <div className="grid gap-4 p-4 border rounded-lg mt-6">
-              <h3 className="font-semibold">Licensing & Pricing</h3>
-              <RadioGroup value={pricingOption} onValueChange={setPricingOption} className="flex flex-col sm:flex-row gap-4">
-                  <Label htmlFor="pricing-ai" className="flex-1 flex items-center gap-2 p-4 border rounded-md has-[:checked]:border-primary cursor-pointer">
-                      <RadioGroupItem value="ai" id="pricing-ai"/>
-                      <span>Help me choose a price (AI-powered)</span>
-                  </Label>
-                  <Label htmlFor="pricing-manual" className="flex-1 flex items-center gap-2 p-4 border rounded-md has-[:checked]:border-primary cursor-pointer">
-                      <RadioGroupItem value="manual" id="pricing-manual"/>
-                      <span>Set my own price</span>
-                  </Label>
-              </RadioGroup>
-
-              {pricingOption === 'ai' && (
-                  <div className="space-y-4">
-                      <RecommendPriceButton />
-                      {licensingState.recommendedPrice && licensingState.justification && (
-                          <Alert>
-                              <Info className="h-4 w-4" />
-                              <AlertTitle className="flex items-center gap-2">
-                                  <span>AI Price Suggestion:</span> 
-                                  <span className="font-bold flex items-center gap-1"><Link href="https://vsd.network" target="_blank" rel="noopener noreferrer"><Icons.vsd className="h-4 w-4"/></Link> {licensingState.recommendedPrice}</span>
-                              </AlertTitle>
-                              <AlertDescription>
-                                  {licensingState.justification}
-                              </AlertDescription>
-                          </Alert>
-                      )}
-                  </div>
-              )}
-
-              {pricingOption === 'manual' && (
-                  <div className="grid gap-2">
-                      <Label htmlFor="manual-price" className="flex items-center gap-1">Licensing Price</Label>
-                      <div className="relative">
-                          <Link href="https://vsd.network" target="_blank" rel="noopener noreferrer" className="absolute left-2.5 top-2.5 h-5 w-5 text-muted-foreground"><Icons.vsd className="h-5 w-5" /></Link>
-                          <Input id="manual-price" type="number" placeholder="e.g., 250" className="pl-9" value={manualPrice} onChange={(e) => setManualPrice(e.target.value)} />
-                      </div>
-                  </div>
-              )}
-          </div>
-
-          <div className="mt-6">
-              <Label htmlFor="audio-file">Audio File</Label>
-              <div className="mt-2 flex justify-center rounded-lg border border-dashed border-input px-6 py-10">
-                  <div className="text-center">
-                      <UploadCloud className="mx-auto h-12 w-12 text-gray-400" />
-                      <div className="mt-4 flex text-sm leading-6 text-gray-600">
-                          <label htmlFor="audio-file" className="relative cursor-pointer rounded-md bg-background font-semibold text-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 hover:text-primary/80">
-                              <span>Upload a file</span>
-                              <input id="audio-file" name="audio-file" type="file" className="sr-only" />
-                          </label>
-                          <p className="pl-1">or drag and drop</p>
-                      </div>
-                      <p className="text-xs leading-5 text-gray-500">MP3, WAV, FLAC up to 25MB</p>
-                  </div>
-              </div>
-          </div>
-
-          <div className="flex justify-end gap-2 mt-6">
-              <GenerateCoverArtButton />
-          </div>
-
-        </div>
-
-        <div className="space-y-4">
-            <Label>Cover Art Preview</Label>
-            <div className="aspect-square w-full bg-muted rounded-lg flex items-center justify-center border border-dashed">
-                {coverArtState.coverArtDataUri ? (
-                    <Image src={coverArtState.coverArtDataUri} alt="Generated Cover Art" width={400} height={400} className="rounded-lg object-cover" />
-                ) : (
-                    <div className="text-center text-muted-foreground p-4">
-                        <Wand2 className="mx-auto h-12 w-12"/>
-                        <p className="mt-2 text-sm">Generated art will appear here.</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div className="grid gap-2">
+                        <Label htmlFor="artistName">Artist Name</Label>
+                        <Input id="artistName" name="artistName" defaultValue={artistName} />
                     </div>
-                )}
+                    <div className="grid gap-2">
+                        <Label htmlFor="genre">Primary Genre</Label>
+                        <Select name="genre" required>
+                        <SelectTrigger id="genre">
+                            <SelectValue placeholder="Select a genre"/>
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="Synthwave">Synthwave</SelectItem>
+                            <SelectItem value="Lofi Hip-Hop">Lofi Hip-Hop</SelectItem>
+                            <SelectItem value="Future Funk">Future Funk</SelectItem>
+                            <SelectItem value="Ambient">Ambient</SelectItem>
+                            <SelectItem value="Electronic">Electronic</SelectItem>
+                            <SelectItem value="Cinematic">Cinematic</SelectItem>
+                            <SelectItem value="Other">Other</SelectItem>
+                        </SelectContent>
+                        </Select>
+                    </div>
+                </div>
+
+                 <div className="grid gap-2">
+                    <Label htmlFor="description">Description (Optional)</Label>
+                    <Textarea id="description" name="description" placeholder="Describe your track. Include mood, instrumentation, and potential use cases." />
+                </div>
             </div>
-            <UploadButton />
-            {uploadState.errors?._form && <p className="text-sm text-destructive text-center">{uploadState.errors._form[0]}</p>}
+            <div className="space-y-2">
+                <Label htmlFor="audio-file">Audio File</Label>
+                <div className="flex justify-center items-center h-full rounded-lg border border-dashed border-input px-6 py-10">
+                    <div className="text-center">
+                        <UploadCloud className="mx-auto h-12 w-12 text-gray-400" />
+                        <div className="mt-4 flex text-sm leading-6 text-gray-600">
+                            <label htmlFor="audio-file" className="relative cursor-pointer rounded-md bg-background font-semibold text-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 hover:text-primary/80">
+                                <span>Click to upload</span>
+                                <input id="audio-file" name="audio-file" type="file" className="sr-only" required />
+                            </label>
+                            <p className="pl-1">or drag and drop</p>
+                        </div>
+                        <p className="text-xs leading-5 text-gray-500">MP3, WAV, FLAC up to 50MB</p>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
+        
+        <input type="hidden" name="artistId" value={user?.uid || ''} />
+        {uploadState.errors?._form && <p className="text-sm text-destructive">{uploadState.errors._form[0]}</p>}
+        <div className="flex justify-end pt-4">
+            <UploadButton />
+        </div>
+      </form>
     </>
   );
 }

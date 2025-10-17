@@ -2,8 +2,6 @@
 "use server";
 
 import { z } from "zod";
-import { generateCoverArt } from "@/ai/flows/ai-cover-art-generation";
-import { recommendLicensingPrice } from "@/ai/flows/ai-licensing-price-recommendation";
 import { getFirebaseAdmin } from "@/firebase/admin";
 import { collection, addDoc, serverTimestamp, doc, deleteDoc, updateDoc, query, where, getDocs, increment } from "firebase/firestore";
 import { revalidatePath } from "next/cache";
@@ -11,285 +9,94 @@ import { createVsdTransaction } from "./vsd-transaction";
 import { generateReport } from "@/ai/flows/generate-report-flow";
 
 
-const coverArtSchema = z.object({
-  trackTitle: z.string().min(1, "Track title is required."),
-  genre: z.string().min(1, "Genre is required."),
-});
-
-type CoverArtState = {
-  message?: string | null;
-  coverArtDataUri?: string | null;
-  errors?: {
-    trackTitle?: string[];
-    genre?: string[];
-    _form?: string[];
-  }
-}
-
-const licensingPriceSchema = z.object({
-  genre: z.string().min(1, "Genre is required."),
-  description: z.string().optional(),
-});
-
-type LicensingPriceState = {
-    message?: string | null;
-    recommendedPrice?: number | null;
-    justification?: string | null;
-    errors?: {
-        genre?: string[];
-        _form?: string[];
-    }
-}
-
-const uploadTrackSchema = z.object({
-    trackTitle: z.string().min(1, "Track title is required."),
+const uploadWorkSchema = z.object({
+    trackTitle: z.string().min(1, "Work title is required."),
     artistId: z.string().min(1, "Artist ID is required."),
     artistName: z.string().min(1, "Artist name is required."),
     genre: z.string().min(1, "Genre is required."),
     description: z.string().optional(),
-    price: z.number().optional(),
-    coverArtDataUri: z.string().min(1, "Cover art is required."),
 });
 
-type UploadTrackState = {
+type UploadWorkState = {
     message?: string | null;
     errors?: {
         trackTitle?: string[];
         artistName?: string[];
         genre?: string[];
-        price?: string[];
-        coverArtDataUri?: string[];
         _form?: string[];
     }
 }
 
-const licenseRequestSchema = z.object({
-  fullName: z.string().min(1, "Full name is required."),
-  email: z.string().email("Invalid email address."),
-  trackTitle: z.string().min(1, "Track title is required."),
-  artistName: z.string().min(1, "Artist name is required."),
-  usageType: z.string().min(1, "Intended use is required."),
-  description: z.string().min(1, "Project description is required."),
-  requestorId: z.string().min(1, "Requestor ID is required."),
-});
-
-type LicenseRequestState = {
-    message?: string | null;
-    errors?: {
-        fullName?: string[];
-        email?: string[];
-        trackTitle?: string[];
-        artistName?: string[];
-        usageType?: string[];
-        description?: string[];
-        _form?: string[];
-    }
-}
-
-export async function generateCoverArtAction(
-  prevState: CoverArtState,
-  formData: FormData
-): Promise<CoverArtState> {
-  const validatedFields = coverArtSchema.safeParse({
-    trackTitle: formData.get("trackTitle"),
-    genre: formData.get("genre"),
-  });
-
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: "Missing fields. Failed to generate cover art.",
-    };
-  }
-  
-  const { trackTitle, genre } = validatedFields.data;
-
-  try {
-    const result = await generateCoverArt({ trackTitle, genre });
-    if (result.coverArtDataUri) {
-      return {
-        message: "Cover art generated successfully!",
-        coverArtDataUri: result.coverArtDataUri,
-      }
-    }
-    throw new Error("Failed to get cover art data from AI.");
-
-  } catch (error) {
-    console.error(error);
-    return {
-        message: "An error occurred while generating cover art.",
-        errors: {
-            _form: ["AI generation failed. Please try again."],
-        }
-    }
-  }
-}
-
-export async function recommendLicensingPriceAction(
-    prevState: LicensingPriceState,
-    formData: FormData
-): Promise<LicensingPriceState> {
-    const validatedFields = licensingPriceSchema.safeParse({
-        genre: formData.get("genre"),
-        description: formData.get("description"),
-    });
-
-    if (!validatedFields.success) {
-        return {
-            errors: validatedFields.error.flatten().fieldErrors,
-            message: "Genre is required to recommend a price.",
-        };
-    }
-
-    const { genre, description } = validatedFields.data;
-
-    try {
-        const result = await recommendLicensingPrice({ genre, description });
-        if (result.recommendedPrice && result.justification) {
-            return {
-                message: "AI price recommendation generated!",
-                recommendedPrice: result.recommendedPrice,
-                justification: result.justification,
-            }
-        }
-        throw new Error("Failed to get price recommendation from AI.");
-    } catch (error) {
-        console.error(error);
-        return {
-            message: "An error occurred while recommending a price.",
-            errors: {
-                _form: ["AI price recommendation failed. Please try again."],
-            }
-        }
-    }
-}
 
 export async function uploadTrackAction(
-    prevState: UploadTrackState,
+    prevState: UploadWorkState,
     formData: FormData,
-): Promise<UploadTrackState> {
+): Promise<UploadWorkState> {
     
-    const rawPrice = formData.get("price");
-    const price = rawPrice ? Number(rawPrice) : undefined;
-    
-    const validatedFields = uploadTrackSchema.safeParse({
+    const validatedFields = uploadWorkSchema.safeParse({
         trackTitle: formData.get("trackTitle"),
         artistId: formData.get("artistId"),
         artistName: formData.get("artistName"),
         genre: formData.get("genre"),
         description: formData.get("description"),
-        coverArtDataUri: formData.get("coverArtDataUri"),
-        price: price,
     });
     
     if (!validatedFields.success) {
-        console.log(validatedFields.error.flatten().fieldErrors);
         return {
             errors: validatedFields.error.flatten().fieldErrors,
-            message: "Missing or invalid fields. Failed to upload track.",
+            message: "Missing or invalid fields. Failed to upload work.",
         };
     }
 
-    const { trackTitle, artistId, artistName, genre, description, coverArtDataUri } = validatedFields.data;
+    const { trackTitle, artistId, artistName, genre, description } = validatedFields.data;
 
     try {
         const { db } = await getFirebaseAdmin();
-        const tracksCollection = collection(db, "tracks");
+        const worksCollection = collection(db, "works");
         
-        const trackUrl = "https://storage.googleapis.com/studiopublic/vndr/synthwave-track.mp3";
+        // In a real app, the audio would be uploaded to Cloud Storage, 
+        // and this URL would point to it. The `onWorkCreated` function
+        // would be triggered by that upload.
+        // For now, we use a placeholder and write directly to Firestore.
+        const demoTrackUrl = "https://storage.googleapis.com/studiopublic/vndr/synthwave-track.mp3";
         
-        await addDoc(tracksCollection, {
+        await addDoc(worksCollection, {
             title: trackTitle,
             artistId: artistId,
             artistName: artistName,
             genre: genre,
             description: description,
             uploadDate: serverTimestamp(),
-            coverArtUrl: coverArtDataUri,
-            trackUrl: trackUrl,
-            price: price || 0,
+            status: "processing", // Initial status
+            trackUrl: demoTrackUrl, // Placeholder URL
+            
+            // These fields will be populated by the backend workers
+            coverArtUrl: "https://picsum.photos/seed/placeholder/400/400", // Placeholder
+            audioFeatures: null,
+            musoCreditsFetched: false,
+            enrichedMetadata: null,
             plays: 0,
         });
 
+        // In a real app, revalidation would happen after workers complete,
+        // often via a client-side listener or another trigger.
         revalidatePath('/dashboard');
+        revalidatePath('/dashboard/my-works');
         revalidatePath(`/profile/${artistId}`);
-        revalidatePath('/dashboard/catalog');
 
         return {
-            message: "Track uploaded successfully!",
+            message: "Work uploaded successfully! Processing has begun.",
         };
 
     } catch (error) {
         console.error(error);
         return {
             message: "An error occurred during upload.",
-            errors: { _form: ["Failed to save track to database. Please try again."] }
+            errors: { _form: ["Failed to save work to database. Please try again."] }
         }
     }
 }
 
-export async function submitLicenseRequestAction(
-    prevState: LicenseRequestState,
-    formData: FormData
-): Promise<LicenseRequestState> {
-    const validatedFields = licenseRequestSchema.safeParse(
-        Object.fromEntries(formData.entries())
-    );
-
-    if (!validatedFields.success) {
-        return {
-            errors: validatedFields.error.flatten().fieldErrors,
-            message: "Missing fields. Failed to submit request.",
-        };
-    }
-
-    const { trackTitle, artistName, usageType, description, fullName, email, requestorId } = validatedFields.data;
-
-    try {
-        const { db } = await getFirebaseAdmin();
-
-        const tracksRef = collection(db, "tracks");
-        const q = query(tracksRef, where("title", "==", trackTitle), where("artistName", "==", artistName));
-        const querySnapshot = await getDocs(q);
-
-        if (querySnapshot.empty) {
-            return {
-                message: "Could not find the specified track and artist.",
-                errors: { _form: ["The track or artist could not be found. Please check the spelling and try again."] }
-            };
-        }
-
-        const trackDoc = querySnapshot.docs[0];
-        const trackId = trackDoc.id;
-        const artistId = trackDoc.data().artistId;
-
-        const licenseRequestsCollection = collection(db, "license_requests");
-        await addDoc(licenseRequestsCollection, {
-            trackId,
-            artistId,
-            requestorId,
-            trackTitle,
-            artistName, 
-            usageType,
-            projectDescription: description,
-            requestorName: fullName,
-            requestorEmail: email,
-            requestDate: serverTimestamp(),
-            status: "pending",
-        });
-
-        revalidatePath('/dashboard/licensing');
-        return { message: "Your license request has been submitted successfully!" };
-    } catch (error) {
-        console.error("License request submission error:", error);
-        return {
-            message: "An error occurred while submitting your request.",
-            errors: {
-                _form: ["Could not save your request to the database. Please try again later."],
-            },
-        };
-    }
-}
 
 export async function deleteTrackAction(trackId: string, artistId: string) {
     if (!trackId || !artistId) {
@@ -298,43 +105,17 @@ export async function deleteTrackAction(trackId: string, artistId: string) {
 
     try {
         const { db } = await getFirebaseAdmin();
-        await deleteDoc(doc(db, 'tracks', trackId));
+        // Point to the 'works' collection now
+        await deleteDoc(doc(db, 'works', trackId));
 
         revalidatePath('/dashboard');
+        revalidatePath('/dashboard/my-works');
         revalidatePath(`/profile/${artistId}`);
-        revalidatePath('/dashboard/catalog');
 
-        return { message: 'Track deleted successfully.' };
+        return { message: 'Work deleted successfully.' };
     } catch (error) {
-        console.error('Error deleting track:', error);
-        return { error: 'Failed to delete track.' };
-    }
-}
-
-
-export async function approveLicenseRequestAction(requestId: string) {
-    try {
-        const { db } = await getFirebaseAdmin();
-        const requestRef = doc(db, 'license_requests', requestId);
-        await updateDoc(requestRef, { status: 'approved' });
-        revalidatePath('/dashboard/licensing');
-        return { success: true, message: 'Request approved successfully.' };
-    } catch (error) {
-        console.error('Error approving request:', error);
-        return { success: false, message: 'Failed to approve request.' };
-    }
-}
-
-export async function rejectLicenseRequestAction(requestId: string) {
-    try {
-        const { db } = await getFirebaseAdmin();
-        const requestRef = doc(db, 'license_requests', requestId);
-        await updateDoc(requestRef, { status: 'rejected' });
-        revalidatePath('/dashboard/licensing');
-        return { success: true, message: 'Request rejected successfully.' };
-    } catch (error) {
-        console.error('Error rejecting request:', error);
-        return { success: false, message: 'Failed to reject request.' };
+        console.error('Error deleting work:', error);
+        return { error: 'Failed to delete work.' };
     }
 }
 
@@ -345,13 +126,10 @@ export async function trackPlays(trackId: string) {
 
   try {
     const { db } = await getFirebaseAdmin();
-    const trackRef = doc(db, 'tracks', trackId);
+    const trackRef = doc(db, 'works', trackId);
     await updateDoc(trackRef, {
       plays: increment(1),
     });
-    // This revalidation is not strictly necessary for the client to see the change,
-    // as the real-time listener will update the UI. However, it's good practice
-    // for any Server Components that might depend on this data.
     revalidatePath('/dashboard');
     return { success: true };
   } catch (error) {
@@ -378,10 +156,10 @@ export async function generateReportAction(userId: string): Promise<{ success: b
       return { success: false, message: transactionResult.message };
     }
 
-    // 2. Fetch artist's tracks
+    // 2. Fetch artist's tracks from the 'works' collection
     const { db } = await getFirebaseAdmin();
-    const tracksRef = collection(db, "tracks");
-    const q = query(tracksRef, where("artistId", "==", userId));
+    const worksRef = collection(db, "works");
+    const q = query(worksRef, where("artistId", "==", userId));
     const querySnapshot = await getDocs(q);
     
     if (querySnapshot.empty) {
@@ -390,9 +168,9 @@ export async function generateReportAction(userId: string): Promise<{ success: b
           userId,
           amount: 25,
           type: 'deposit',
-          details: 'Refund for report generation (no tracks found)',
+          details: 'Refund for report generation (no works found)',
       });
-      return { success: false, message: "You don't have any tracks to generate a report for." };
+      return { success: false, message: "You don't have any works to generate a report for." };
     }
 
     const tracks = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));

@@ -2,20 +2,13 @@
 'use server';
 
 import { z } from 'zod';
-import { User, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/firebase/config';
-import { setDoc, doc, updateDoc } from 'firebase/firestore';
 import { getFirebaseAdmin } from '@/firebase/admin';
 import { createVsdTransaction } from './vsd-transaction';
+import { doc, setDoc, updateDoc } from 'firebase/firestore';
 
 const SignUpSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
-});
-
-const LoginSchema = z.object({
-  email: z.string().email(),
-  password: z.string(),
 });
 
 type AuthState = {
@@ -51,7 +44,6 @@ export async function signupAction(prevState: AuthState, formData: FormData): Pr
       email: email,
       role: 'artist',
       username: email.split('@')[0], // Default username
-      vsdBalance: 0, // Initial balance is 0, will be updated by transaction
       onboardingCompleted: {
         dashboard: false,
         upload: false,
@@ -61,6 +53,14 @@ export async function signupAction(prevState: AuthState, formData: FormData): Pr
         legalEagle: false,
         settings: false,
       },
+    });
+
+    // Create wallet document
+    const walletRef = doc(db, 'wallets', userCredential.uid);
+    await setDoc(walletRef, {
+        userId: userCredential.uid,
+        vsdLiteBalance: 0,
+        erc20Address: null,
     });
 
     // Grant initial tokens via a transaction
@@ -100,13 +100,6 @@ export async function signupAction(prevState: AuthState, formData: FormData): Pr
   }
 }
 
-export async function loginAction(prevState: AuthState, formData: FormData): Promise<AuthState> {
-  // This is a placeholder as client-side login is preferred
-  return {
-    message: 'Redirecting to dashboard...',
-  };
-}
-
 export async function completeOnboardingStepAction(
   userId: string,
   step: string
@@ -121,9 +114,6 @@ export async function completeOnboardingStepAction(
     await updateDoc(userRef, {
       [`onboardingCompleted.${step}`]: true,
     });
-    // This revalidation is not strictly needed for the client to see the change,
-    // but good practice for any Server Components that might depend on this data.
-    // revalidatePath('/dashboard');
     return { success: true };
   } catch (error) {
     console.error(`Error completing onboarding step "${step}":`, error);

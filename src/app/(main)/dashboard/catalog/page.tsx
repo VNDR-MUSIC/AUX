@@ -12,8 +12,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
 import { Search } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import TrackCard from '@/components/catalog/track-card';
@@ -24,51 +22,47 @@ import { useSearchParams } from 'next/navigation';
 export default function CatalogPage() {
   const { firestore } = useFirebase();
   const searchParams = useSearchParams();
-  const tracksQuery = useMemoFirebase(() => firestore ? collection(firestore, 'tracks') : null, [firestore]);
-  const { data: tracks, isLoading } = useCollection<DocumentData>(tracksQuery);
+  // Point to the new 'works' collection
+  const worksQuery = useMemoFirebase(() => firestore ? collection(firestore, 'works') : null, [firestore]);
+  const { data: works, isLoading } = useCollection<DocumentData>(worksQuery);
 
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
   const [selectedGenre, setSelectedGenre] = useState('All');
-  const [showLicensedOnly, setShowLicensedOnly] = useState(false);
 
   useOnboarding('catalog');
 
   const genres = useMemo(() => {
-    if (!tracks) return [];
-    const allGenres = tracks.map(track => track.genre).filter(Boolean);
+    if (!works) return [];
+    const allGenres = works.map(work => work.genre).filter(Boolean);
     return ['All', ...Array.from(new Set(allGenres))];
-  }, [tracks]);
+  }, [works]);
 
   useEffect(() => {
-    // Sync search term with URL query param
     const query = searchParams.get('q');
     if (query !== null) {
       setSearchTerm(query);
     }
   }, [searchParams]);
 
-  const filteredTracks = useMemo(() => {
-    return tracks
-      ?.filter(track => {
+  const filteredWorks = useMemo(() => {
+    return works
+      ?.filter(work => {
         const term = searchTerm.toLowerCase();
         return (
-          (track.title && track.title.toLowerCase().includes(term)) ||
-          (track.artistName && track.artistName.toLowerCase().includes(term))
+          (work.title && work.title.toLowerCase().includes(term)) ||
+          (work.artistName && work.artistName.toLowerCase().includes(term))
         );
       })
-      .filter(track => {
-        return selectedGenre === 'All' || track.genre === selectedGenre;
-      })
-      .filter(track => {
-        return !showLicensedOnly || (track.price && track.price > 0);
+      .filter(work => {
+        return selectedGenre === 'All' || work.genre === selectedGenre;
       }) as Track[] | undefined;
-  }, [tracks, searchTerm, selectedGenre, showLicensedOnly]);
+  }, [works, searchTerm, selectedGenre]);
 
   return (
     <div className="container mx-auto py-8">
       <div className="mb-8">
         <h1 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl">Music Catalog</h1>
-        <p className="mt-2 text-muted-foreground">Discover and license music from independent artists.</p>
+        <p className="mt-2 text-muted-foreground">Discover and license music from the VNDR ecosystem.</p>
       </div>
 
       <div className="mb-8 flex flex-col sm:flex-row items-center gap-4 p-4 border rounded-lg bg-card">
@@ -93,10 +87,6 @@ export default function CatalogPage() {
                 ))}
               </SelectContent>
             </Select>
-            <div className="flex items-center space-x-2">
-                <Checkbox id="licensed-only" checked={showLicensedOnly} onCheckedChange={(checked) => setShowLicensedOnly(Boolean(checked))} />
-                <Label htmlFor="licensed-only" className="whitespace-nowrap">For License</Label>
-            </div>
         </div>
       </div>
       
@@ -112,15 +102,15 @@ export default function CatalogPage() {
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
-          {filteredTracks?.map(track => (
-            <TrackCard key={track.id} track={track} playlist={filteredTracks} />
+          {filteredWorks?.map(work => (
+            <TrackCard key={work.id} track={work} playlist={filteredWorks} />
           ))}
         </div>
       )}
 
-      {!isLoading && filteredTracks?.length === 0 && (
+      {!isLoading && filteredWorks?.length === 0 && (
          <div className="text-center py-16 text-muted-foreground">
-            <p>No tracks found that match your criteria.</p>
+            <p>No works found that match your criteria.</p>
         </div>
       )}
 

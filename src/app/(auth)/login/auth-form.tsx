@@ -94,9 +94,6 @@ export default function AuthForm() {
     const provider = new GoogleAuthProvider();
     try {
       await signInWithRedirect(auth, provider);
-      // The user will be redirected to Google's sign-in page.
-      // After successful sign-in, they will be redirected back to the app.
-      // The onAuthStateChanged listener will then handle the user session and redirect to the dashboard.
     } catch (error) {
       console.error("Google sign-in error:", error);
       toast({
@@ -112,14 +109,14 @@ export default function AuthForm() {
   return (
     <Card className="mx-auto max-w-sm w-full">
       <CardHeader className="text-center">
-        <div className="mx-auto h-40 w-40 relative">
+        <div className="mx-auto h-32 w-32 sm:h-40 sm:w-40 relative">
             <Icons.logo />
         </div>
         <CardTitle className="font-headline text-xl sm:text-2xl font-bold">
-          Welcome to Your Artist Studio
+          VNDR Music
         </CardTitle>
         <CardDescription className="text-sm">
-          Sign in to manage your music, or sign up to claim your free tokens and start your journey.
+          The Autonomous Music Publishing Ecosystem
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -160,9 +157,26 @@ export default function AuthForm() {
             </form>
           </TabsContent>
         </Tabs>
-        <Button variant="outline" className="w-full mt-4" onClick={handleGoogleLogin} disabled={isGoogleLoading || isUserLoading}>
-            {isGoogleLoading ? <Loader2 className="animate-spin" /> : 'Login with Google'}
-        </Button>
+        <div className="relative my-4">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-background px-2 text-muted-foreground">
+              Or continue with
+            </span>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+            <Button variant="outline" className="w-full" onClick={handleGoogleLogin} disabled={isGoogleLoading || isUserLoading}>
+                {isGoogleLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 126 21.2 177 56.5L357 150c-24.3-23.4-58.3-37-99-37-73 0-132.3 59.3-132.3 132.3s59.3 132.3 132.3 132.3c76.5 0 119.5-52.2 123.3-78.2h-123.3v-63h240.2c2.4 12.6 3.8 26.3 3.8 40.8z"></path></svg>}
+                Google
+            </Button>
+            <Button variant="outline" className="w-full" disabled>
+                <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="wallet" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M461.2 128.4L282.8 12.8c-12.6-9.1-29-9.1-41.6 0L28.8 128.4c-12.6 9.1-12.6 29 0 38.2L124 224v176c0 13.3 10.7 24 24 24h192c13.3 0 24-10.7 24-24V224l95.2-57.4c12.6-9.1 12.6-29 0-38.2zM256 320c-35.3 0-64-28.7-64-64s28.7-64 64-64 64 28.7 64 64-28.7 64-64 64z"></path></svg>
+                Wallet
+            </Button>
+        </div>
       </CardContent>
     </Card>
   );

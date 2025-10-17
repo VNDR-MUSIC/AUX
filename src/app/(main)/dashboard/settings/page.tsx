@@ -1,7 +1,7 @@
 
 'use client';
 
-import { Bell, Mail, Smartphone } from "lucide-react";
+import { Bell, Mail, Smartphone, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,13 +16,13 @@ import { Separator } from "@/components/ui/separator";
 import { Icons } from "@/components/icons";
 import { useOnboarding } from "@/hooks/use-onboarding";
 import Link from "next/link";
+import { Input } from "@/components/ui/input";
 
 const notificationSettings = [
-  { id: 'licenseRequests', label: 'New License Requests', description: 'When a user requests to license one of your tracks.' },
-  { id: 'offers', label: 'Offers & Sales', description: 'When a user makes an offer or purchases a license.' },
-  { id: 'auctions', label: 'Auction Activity', description: 'When you are outbid, or an auction you are in is ending soon.' },
-  { id: 'vsdTokens', label: 'VSD Token Updates', description: 'Reminders for daily token claims and balance updates.' },
-  { id: 'comments', label: 'New Comments', description: 'When another user comments on your tracks or profile.' },
+  { id: 'licenseRequests', label: 'Licensing & Contracts', description: 'When you receive a license request or a contract needs your signature.' },
+  { id: 'sales', label: 'Sales & Payouts', description: 'When a license is purchased or a payout is initiated.' },
+  { id: 'workUpdates', label: 'Work Processing', description: 'Updates on your work: audio analysis, credit detection, and publishing.' },
+  { id: 'vsdTokens', label: 'VSD Token & Wallet', description: 'Reminders for daily rewards and significant wallet activity.' },
   { id: 'platformUpdates', label: 'Platform News', description: 'Updates, news, and announcements from the VNDR team.' },
 ];
 
@@ -33,7 +33,7 @@ export default function SettingsPage() {
     <div className="container mx-auto py-8">
        <div className="mb-8">
         <h1 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl">Settings</h1>
-        <p className="mt-2 text-muted-foreground">Manage your account and notification preferences.</p>
+        <p className="mt-2 text-muted-foreground">Manage your account, wallet, and notification preferences.</p>
       </div>
 
       <div className="grid gap-8 md:grid-cols-3">
@@ -51,7 +51,7 @@ export default function SettingsPage() {
                             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                                 <div className="mb-2 sm:mb-0">
                                     <Label htmlFor={setting.id} className="font-semibold flex items-center gap-2">
-                                        {setting.id === 'vsdTokens' ? <><Link href="https://vsd.network" target="_blank" rel="noopener noreferrer"><Icons.vsd className="h-4 w-4" /></Link> Token Updates</> : setting.label}
+                                        {setting.id === 'vsdTokens' ? <><Icons.vsd className="h-4 w-4" /> Token & Wallet</> : setting.label}
                                     </Label>
                                     <p className="text-sm text-muted-foreground">{setting.description}</p>
                                 </div>
@@ -65,7 +65,7 @@ export default function SettingsPage() {
                                         <Label htmlFor={`${setting.id}-email`}><Mail className="h-4 w-4" /></Label>
                                     </div>
                                      <div className="flex items-center space-x-2">
-                                        <Switch id={`${setting.id}-push`} />
+                                        <Switch id={`${setting.id}-push`} disabled />
                                         <Label htmlFor={`${setting.id}-push`}><Smartphone className="h-4 w-4" /></Label>
                                     </div>
                                 </div>
@@ -89,12 +89,15 @@ export default function SettingsPage() {
             </Card>
              <Card>
                 <CardHeader>
-                    <CardTitle>Billing</CardTitle>
-                    <CardDescription>Manage your subscription and payment methods.</CardDescription>
+                    <CardTitle className="flex items-center gap-2"><Wallet className="h-5 w-5"/> Wallet</CardTitle>
+                    <CardDescription>Connect your Web3 wallet to enable ERC-20 VSD token conversions.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                     <Button variant="outline" className="w-full">Manage Subscription</Button>
-                     <Button variant="outline" className="w-full">View Payment History</Button>
+                     <div className="grid gap-2">
+                        <Label htmlFor="wallet-address">ERC-20 Address</Label>
+                        <Input id="wallet-address" placeholder="0x..."/>
+                     </div>
+                     <Button variant="secondary" className="w-full">Connect Wallet</Button>
                 </CardContent>
             </Card>
         </div>
@@ -102,5 +105,3 @@ export default function SettingsPage() {
     </div>
   );
 }
-
-    
