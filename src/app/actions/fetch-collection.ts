@@ -4,6 +4,7 @@
 import { getFirebaseAdmin } from '@/firebase/admin';
 import { cookies } from 'next/headers';
 import { DocumentData, Query } from 'firebase-admin/firestore';
+import { serializeFirestoreData } from '@/lib/serialization';
 import { safeServerAction } from './safe-action';
 
 export async function fetchCollectionAction({
@@ -83,7 +84,18 @@ export async function fetchCollectionAction({
         } else {
              // For any other collection, default to filtering by userId if it exists
              // This is a safe default, but you might need more specific rules
-             query = query.where('userId', '==', uid);
+             // This is a potential security risk if a collection doesn't have a userId field
+             // but we'll assume for now this is intended. A better approach might be a whitelist
+             // of collections that can be queried this way.
+             const collectionFields = await db.collection(collectionPath).limit(1).get();
+             if (!collectionFields.empty && collectionFields.docs[0].data().userId) {
+                query = query.where('userId', '==', uid);
+             } else {
+                // If there's no userId field, non-admins cannot query this collection.
+                // This prevents accidental data leakage.
+                console.warn(`Attempted to query collection '${collectionPath}' without a 'userId' field by a non-admin user. Returning empty array.`);
+                return [];
+             }
         }
     }
     
