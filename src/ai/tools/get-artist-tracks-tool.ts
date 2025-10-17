@@ -11,7 +11,7 @@ import {z} from 'zod';
 
 // Input schema for the tool
 const ArtistTracksInputSchema = z.object({
-  artistId: z.string().describe("The unique ID of the artist."),
+  artistId: z.string().describe("The unique ID of the artist whose tracks are to be retrieved."),
 });
 
 // Output schema for the tool

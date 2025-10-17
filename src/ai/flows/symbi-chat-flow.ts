@@ -16,32 +16,27 @@ import {
   SymbiChatOutputSchema,
   type SymbiChatOutput,
 } from './symbi-chat-types';
+import { getUserProfile } from '../tools/get-user-profile-tool';
 
 export async function symbiChat(input: SymbiChatInput): Promise<SymbiChatOutput> {
   return symbiChatFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'symbiChatPrompt',
-  input: {schema: SymbiChatInputSchema},
-  output: {schema: SymbiChatOutputSchema},
-  // Register the tool with the prompt
-  tools: [getArtistTracks],
-  prompt: `You are Symbi, the friendly and knowledgeable AI assistant for VNDR Music. Your purpose is to help independent artists succeed. The user you are talking to has the ID: {{{userId}}}.
+const systemPrompt = `You are Symbi, the single, unified AI assistant for the entire IMG ecosystem, which includes VNDR Music, IVtv, and ND Radio. You are a brand ambassador, and your persona is professional, knowledgeable, supportive, and consistent across all platforms.
 
-**Your Persona:** You are encouraging, supportive, and an expert on the VNDR platform and the music industry. You should provide clear, concise, and actionable answers.
+You are aware of the user you are talking to, and you remember conversations with them across different websites. You have access to their user profile information, including their VSD balance and recent transactions, which you should use to provide personalized and context-aware responses.
 
-**Your Capabilities:**
-*   **Answer Questions:** You can answer questions about VNDR features, music royalties, career advice, and how to use the platform.
-*   **Access User Data:** You have the ability to access a user's own track data. If a user asks a question about their songs, plays, genres, or prices, use the 'getArtistTracks' tool to find the answer. You MUST pass the user's ID ({{{userId}}}) to this tool.
+Your Core Capabilities:
+- Answer questions about any IMG platform (VNDR, IVtv, ND Radio).
+- Access user data to provide personalized information. Use the 'getArtistTracks' tool to answer questions about a user's music catalog.
+- Maintain a consistent, helpful, and professional tone.
+- If you don't know an answer, admit it and offer to find out or point to support resources.
 
-If you don't know the answer, it's okay to say, "That's a great question. I don't have the specific details on that, but I can point you to our support resources."
+User Context:
+- User Profile: {{{jsonStringify userProfile}}}
+- Conversation History: {{{jsonStringify history}}}
 
-**User's Question:**
-{{{question}}}
-
-**Your Helpful Response:**`,
-});
+Based on this, provide a helpful response to the user's latest question.`;
 
 const symbiChatFlow = ai.defineFlow(
   {
@@ -50,8 +45,36 @@ const symbiChatFlow = ai.defineFlow(
     outputSchema: SymbiChatOutputSchema,
   },
   async input => {
-    // The prompt now needs the userId and the question.
-    const {output} = await prompt(input);
+    // 1. Fetch the user's full profile data, including VSD balance and transactions.
+    const userProfile = await getUserProfile({ userId: input.userId });
+
+    // 2. Define the prompt with all available context.
+    const prompt = ai.definePrompt({
+        name: 'symbiChatPrompt',
+        system: systemPrompt,
+        // Available tools for the LLM to use
+        tools: [getArtistTracks, getUserProfile], 
+        // We pass the full context object to the prompt.
+        // The handlebars in the system prompt will access these properties.
+        input: {
+            schema: z.object({
+                userProfile: z.any(),
+                history: z.any(),
+                question: z.string(),
+            })
+        },
+        output: { schema: SymbiChatOutputSchema },
+        // The main prompt is now just the user's immediate question.
+        prompt: 'User Question: {{{question}}}'
+    });
+
+    // 3. Invoke the prompt with the rich context.
+    const {output} = await prompt({
+        userProfile,
+        history: input.history || [],
+        question: input.question,
+    });
+
     return output!;
   }
 );

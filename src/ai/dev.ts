@@ -10,6 +10,7 @@ import '@/ai/flows/legal-eagle-flow.ts';
 import '@/ai/flows/radiolize-polling-flow.ts';
 import '@/ai/flows/generate-report-flow.ts';
 import '@/ai/tools/get-artist-tracks-tool.ts';
+import '@/ai/tools/get-user-profile-tool.ts';
 
 // Type definition files are for type safety and are not flows to be registered.
 // They don't need to be imported here.
