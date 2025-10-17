@@ -38,11 +38,12 @@ export default function WalletPage() {
   const { user } = useUser();
   const { firestore } = useFirebase();
 
-  const walletRef = useMemoFirebase(
-    () => (firestore && user ? doc(firestore, 'wallets', user.uid) : null),
+  // FIX: Point to the user document in the 'users' collection, not 'wallets'.
+  const userDocRef = useMemoFirebase(
+    () => (firestore && user ? doc(firestore, 'users', user.uid) : null),
     [firestore, user]
   );
-  const { data: wallet, isLoading: isWalletLoading } = useDoc(walletRef);
+  const { data: userData, isLoading: isUserDocLoading } = useDoc(userDocRef);
 
   const transactionsQuery = useMemoFirebase(
     () =>
@@ -57,7 +58,7 @@ export default function WalletPage() {
   );
   const { data: transactions, isLoading: areTransactionsLoading } = useCollection<Transaction>(transactionsQuery);
 
-  const isLoading = isWalletLoading || areTransactionsLoading;
+  const isLoading = isUserDocLoading || areTransactionsLoading;
 
   const formatDate = (timestamp: Timestamp | Date) => {
     const date = timestamp instanceof Timestamp ? timestamp.toDate() : timestamp;
@@ -107,7 +108,7 @@ export default function WalletPage() {
                     ) : (
                         <div className="flex items-center gap-2">
                              <Icons.vsd className="h-8 w-8" />
-                            <p className="text-4xl font-bold">{wallet?.vsdLiteBalance || 0}</p>
+                            <p className="text-4xl font-bold">{userData?.vsdBalance || 0}</p>
                         </div>
                     )}
                     <p className="text-xs text-muted-foreground">VSD-lite credits are used for platform services and can be converted to ERC-20 VSD tokens.</p>
