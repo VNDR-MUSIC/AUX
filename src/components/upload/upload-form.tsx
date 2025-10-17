@@ -169,95 +169,94 @@ export default function UploadForm() {
   return (
     <>
       <form id="upload-track-form" action={uploadFormAction} ref={mainFormRef} className="space-y-6">
-        <div className="grid md:grid-cols-2 gap-6">
-            <div className="space-y-6">
+        <div className="space-y-6">
+            <div className="grid gap-2">
+                <Label htmlFor="trackTitle">Work Title</Label>
+                <Input id="trackTitle" name="trackTitle" placeholder="e.g., Midnight Bloom" required value={trackTitle} onChange={(e) => setTrackTitle(e.target.value)} />
+                {uploadState.errors?.trackTitle && <p className="text-sm text-destructive">{uploadState.errors.trackTitle[0]}</p>}
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="grid gap-2">
-                    <Label htmlFor="trackTitle">Work Title</Label>
-                    <Input id="trackTitle" name="trackTitle" placeholder="e.g., Midnight Bloom" required value={trackTitle} onChange={(e) => setTrackTitle(e.target.value)} />
-                    {uploadState.errors?.trackTitle && <p className="text-sm text-destructive">{uploadState.errors.trackTitle[0]}</p>}
+                    <Label htmlFor="artistName">Artist Name</Label>
+                    <Input id="artistName" name="artistName" defaultValue={artistName} />
                 </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div className="grid gap-2">
-                        <Label htmlFor="artistName">Artist Name</Label>
-                        <Input id="artistName" name="artistName" defaultValue={artistName} />
-                    </div>
-                    <div className="grid gap-2">
-                        <Label htmlFor="genre">Primary Genre</Label>
-                        <Select name="genre" required value={genre} onValueChange={setGenre}>
-                            <SelectTrigger id="genre">
-                                <SelectValue placeholder="Select a genre"/>
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="Synthwave">Synthwave</SelectItem>
-                                <SelectItem value="Lofi Hip-Hop">Lofi Hip-Hop</SelectItem>
-                                <SelectItem value="Future Funk">Future Funk</SelectItem>
-                                <SelectItem value="Ambient">Ambient</SelectItem>
-                                <SelectItem value="Electronic">Electronic</SelectItem>
-                                <SelectItem value="Cinematic">Cinematic</SelectItem>
-                                <SelectItem value="Other">Other</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                </div>
-
-                 <div className="grid gap-2">
-                    <Label htmlFor="description">Description (Optional)</Label>
-                    <Textarea id="description" name="description" placeholder="Describe your track. Include mood, instrumentation, and potential use cases." value={description} onChange={e => setDescription(e.target.value)} />
+                <div className="grid gap-2">
+                    <Label htmlFor="genre">Primary Genre</Label>
+                    <Select name="genre" required value={genre} onValueChange={setGenre}>
+                        <SelectTrigger id="genre">
+                            <SelectValue placeholder="Select a genre"/>
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="Synthwave">Synthwave</SelectItem>
+                            <SelectItem value="Lofi Hip-Hop">Lofi Hip-Hop</SelectItem>
+                            <SelectItem value="Future Funk">Future Funk</SelectItem>
+                            <SelectItem value="Ambient">Ambient</SelectItem>
+                            <SelectItem value="Electronic">Electronic</SelectItem>
+                            <SelectItem value="Cinematic">Cinematic</SelectItem>
+                            <SelectItem value="Other">Other</SelectItem>
+                        </SelectContent>
+                    </Select>
                 </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                    <Label htmlFor="audio-file">Audio File</Label>
-                    <div className="flex justify-center items-center h-full rounded-lg border border-dashed border-input px-6 py-10">
-                        <div className="text-center">
-                            <UploadCloud className="mx-auto h-12 w-12 text-gray-400" />
-                            <div className="mt-4 flex text-sm leading-6 text-gray-600">
-                                <label htmlFor="audio-file" className="relative cursor-pointer rounded-md bg-background font-semibold text-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 hover:text-primary/80">
-                                    <span>Click to upload</span>
-                                    <input id="audio-file" name="audio-file" type="file" className="sr-only" required onChange={handleFileChange} ref={fileInputRef} accept="audio/*" />
-                                </label>
-                                <p className="pl-1">or drag and drop</p>
-                            </div>
-                            <p className="text-xs leading-5 text-gray-500">MP3, WAV, FLAC up to 50MB</p>
+
+            <div className="grid gap-2">
+                <Label htmlFor="description">Description (Optional)</Label>
+                <Textarea id="description" name="description" placeholder="Describe your track. Include mood, instrumentation, and potential use cases." value={description} onChange={e => setDescription(e.target.value)} />
+            </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+                <Label htmlFor="audio-file">Audio File</Label>
+                <div className="flex justify-center items-center h-full rounded-lg border border-dashed border-input px-6 py-10">
+                    <div className="text-center">
+                        <UploadCloud className="mx-auto h-12 w-12 text-gray-400" />
+                        <div className="mt-4 flex text-sm leading-6 text-gray-600">
+                            <label htmlFor="audio-file" className="relative cursor-pointer rounded-md bg-background font-semibold text-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 hover:text-primary/80">
+                                <span>Click to upload</span>
+                                <input id="audio-file" name="audio-file" type="file" className="sr-only" required onChange={handleFileChange} ref={fileInputRef} accept="audio/*" />
+                            </label>
+                            <p className="pl-1">or drag and drop</p>
                         </div>
+                        <p className="text-xs leading-5 text-gray-500">MP3, WAV, FLAC up to 50MB</p>
                     </div>
-                     {selectedFile && (
-                        <div className="mt-2 flex items-center justify-between rounded-lg border bg-muted p-2 text-sm">
-                            <div className="flex items-center gap-2 truncate">
-                                <FileIcon className="h-4 w-4 shrink-0" />
-                                <span className="truncate">{selectedFile.name}</span>
-                                <span className="text-muted-foreground text-xs shrink-0">({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)</span>
-                            </div>
-                            <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0" onClick={handleRemoveFile}>
-                                <X className="h-4 w-4" />
-                            </Button>
-                        </div>
-                    )}
                 </div>
-                 <div className="space-y-2">
-                    <Label>Cover Art</Label>
-                    <Card className="h-full flex flex-col items-center justify-center p-4 gap-4">
-                        <div className="aspect-square w-full max-w-[200px] bg-muted rounded-md relative overflow-hidden">
-                            {isArtLoading && (
-                                <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-10">
-                                    <Loader2 className="h-8 w-8 animate-spin" />
-                                </div>
-                            )}
-                            {coverArtDataUri ? (
-                                <Image src={coverArtDataUri} alt="AI Generated Cover Art" fill />
-                            ) : (
-                                <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
-                                    AI Art Preview
-                                </div>
-                            )}
+                {selectedFile && (
+                    <div className="mt-2 flex items-center justify-between rounded-lg border bg-muted p-2 text-sm">
+                        <div className="flex items-center gap-2 truncate">
+                            <FileIcon className="h-4 w-4 shrink-0" />
+                            <span className="truncate">{selectedFile.name}</span>
+                            <span className="text-muted-foreground text-xs shrink-0">({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)</span>
                         </div>
-                        <Button variant="outline" className="w-full" type="button" onClick={handleGenerateArt} disabled={isArtLoading}>
-                            {isArtLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
-                            Generate with AI
+                        <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0" onClick={handleRemoveFile}>
+                            <X className="h-4 w-4" />
                         </Button>
-                    </Card>
-                </div>
+                    </div>
+                )}
+            </div>
+            <div className="space-y-2">
+                <Label>Cover Art</Label>
+                <Card className="h-full flex flex-col items-center justify-center p-4 gap-4">
+                    <div className="aspect-square w-full max-w-[200px] bg-muted rounded-md relative overflow-hidden">
+                        {isArtLoading && (
+                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-10">
+                                <Loader2 className="h-8 w-8 animate-spin" />
+                            </div>
+                        )}
+                        {coverArtDataUri ? (
+                            <Image src={coverArtDataUri} alt="AI Generated Cover Art" fill />
+                        ) : (
+                            <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
+                                AI Art Preview
+                            </div>
+                        )}
+                    </div>
+                    <Button variant="outline" className="w-full" type="button" onClick={handleGenerateArt} disabled={isArtLoading}>
+                        {isArtLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
+                        Generate with AI
+                    </Button>
+                </Card>
             </div>
         </div>
         
