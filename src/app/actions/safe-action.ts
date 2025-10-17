@@ -1,13 +1,12 @@
-
 "use server";
-import { getFirebaseAdmin } from "@/firebase/admin";
+import { NextResponse } from "next/server";
 import { Timestamp } from "firebase-admin/firestore";
 
 /**
  * Recursively serialize Firestore data to JSON-safe values.
  * Converts Timestamp -> ISO string, handles arrays and nested objects.
  */
-export function serializeFirestoreData(data: any): any {
+function serializeFirestoreData(data: any): any {
   if (data === null || data === undefined || typeof data !== 'object') {
     return data;
   }
@@ -23,6 +22,7 @@ export function serializeFirestoreData(data: any): any {
   return serialized;
 }
 
+
 /**
  * Master Safe Server Action Wrapper
  * @param action - async function containing your server logic
@@ -31,8 +31,8 @@ export function serializeFirestoreData(data: any): any {
 export async function safeServerAction(action: () => Promise<any>): Promise<{ success: boolean; data?: any; error?: string; details?: string; }> {
   try {
     const result = await action();
-    const serializedResult = serializeFirestoreData(result);
-    return { success: true, data: serializedResult };
+    // The serialization should now happen inside the action that calls this wrapper.
+    return { success: true, data: serializeFirestoreData(result) };
   } catch (error: any) {
     console.error("🔥 Server Action Error:", error);
     return {
