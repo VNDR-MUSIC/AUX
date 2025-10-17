@@ -3,7 +3,7 @@
 
 import { getFirebaseAdmin } from '@/firebase/admin';
 import { cookies } from 'next/headers';
-import { CollectionReference, DocumentData } from 'firebase-admin/firestore';
+import { DocumentData, Query } from 'firebase-admin/firestore';
 import { safeServerAction } from './safe-action';
 
 export async function fetchCollectionAction({
@@ -30,24 +30,34 @@ export async function fetchCollectionAction({
     }
 
     // Publicly viewable 'works' collection (e.g., for the main catalog page)
-    if (collectionPath === 'works' && !filters?.artistId && !idToken) {
-      const publicWorksSnap = await db.collection(collectionPath).get();
+    if (collectionPath === 'works' && !filters?.artistId) {
+       let publicQuery: Query<DocumentData> = db.collection(collectionPath);
+       if (filters) {
+          for (const key in filters) {
+            if (Object.prototype.hasOwnProperty.call(filters, key)) {
+                if (filters[key] === null || filters[key] === undefined) continue;
+                publicQuery = publicQuery.where(key, '==', filters[key]);
+            }
+          }
+       }
+      const publicWorksSnap = await publicQuery.get();
       return publicWorksSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     }
 
     // All other requests require a user to be authenticated
     if (!uid) {
+        // Return empty array if user is not logged in for protected collections
         return [];
     }
     
-    let query: CollectionReference<DocumentData> | FirebaseFirestore.Query<DocumentData> = db.collection(collectionPath);
+    let query: Query<DocumentData> = db.collection(collectionPath);
     
     // Non-admins have specific rules applied
     if (!isAdmin) {
         if (collectionPath === 'license_requests') {
              // Users can see requests they've made OR requests for their tracks
-             const artistQuery = query.where('artistId', '==', uid);
-             const requestorQuery = query.where('requestorId', '==', uid);
+             const artistQuery = db.collection(collectionPath).where('artistId', '==', uid);
+             const requestorQuery = db.collection(collectionPath).where('requestorId', '==', uid);
 
              const [artistSnap, requestorSnap] = await Promise.all([
                  artistQuery.get(),
@@ -61,9 +71,8 @@ export async function fetchCollectionAction({
              return Array.from(requestsById.values());
 
         } else if (collectionPath === 'works') {
-            // Users can only view their own works unless it's a public query
+            // If filtering by artistId, it MUST be the current user's ID
             if (filters?.artistId && filters.artistId !== uid) {
-                // This will be caught by safeServerAction
                 throw new Error("Permission denied: You can only view your own works.");
             }
             query = query.where('artistId', '==', uid);
@@ -71,14 +80,19 @@ export async function fetchCollectionAction({
         } else if (collectionPath === 'vsd_transactions') {
             // Users can only view their own transactions
             query = query.where('userId', '==', uid);
+        } else {
+             // For any other collection, default to filtering by userId if it exists
+             // This is a safe default, but you might need more specific rules
+             query = query.where('userId', '==', uid);
         }
     }
     
-    // Apply any additional filters passed from the client
+    // Apply any additional filters passed from the client for admins
+    // or for collections that don't have the strict non-admin rules above
     if (filters) {
       for (const key in filters) {
-        // Skip artistId filter for non-admins as it's already applied
-        if (collectionPath === 'works' && key === 'artistId' && !isAdmin) continue;
+        // Skip artistId filter for non-admins on 'works' as it's already applied
+        if (!isAdmin && collectionPath === 'works' && key === 'artistId') continue;
         
         if (Object.prototype.hasOwnProperty.call(filters, key)) {
           if (filters[key] === null || filters[key] === undefined) continue;
