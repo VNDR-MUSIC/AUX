@@ -17,6 +17,7 @@ import {
   type SymbiChatOutput,
 } from './symbi-chat-types';
 import { getUserProfile } from '../tools/get-user-profile-tool';
+import { z } from 'zod';
 
 export async function symbiChat(input: SymbiChatInput): Promise<SymbiChatOutput> {
   return symbiChatFlow(input);

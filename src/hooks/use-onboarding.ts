@@ -39,9 +39,9 @@ const tourSteps: Record<OnboardingStep, Shepherd.Step.StepOptions[]> = {
     },
     {
       id: 'dashboard-vsd-wallet',
-      title: 'Your VSD Wallet',
-      text: 'This is your VSD token balance. You get free tokens daily just for being a member! Use them for AI tools or other platform features.',
-      attachTo: { element: '.font-headline:contains("VSD Token Wallet")', on: 'top' },
+      title: 'Daily VSD Reward',
+      text: 'This is your daily VSD token reward. You get free tokens daily just for being a member! Use them for AI tools or other platform features.',
+      attachTo: { element: 'button:has(> svg.lucide-hand-coins)', on: 'top' },
       buttons: [
         { text: 'Back', action: () => Shepherd.activeTour?.back(), secondary: true },
         { text: 'Finish', action: () => Shepherd.activeTour?.complete() },
@@ -60,7 +60,7 @@ const tourSteps: Record<OnboardingStep, Shepherd.Step.StepOptions[]> = {
       id: 'upload-ai-art',
       title: 'AI Cover Art',
       text: 'No cover art? No problem. Once you fill in the title and genre, click here to generate unique, AI-powered cover art for your track.',
-      attachTo: { element: 'form#cover-art-form + button', on: 'left' },
+      attachTo: { element: 'button:has(> svg.lucide-sparkles)', on: 'left' },
       buttons: [
         { text: 'Back', action: () => Shepherd.activeTour?.back(), secondary: true },
         { text: 'Next', action: () => Shepherd.activeTour?.next() },

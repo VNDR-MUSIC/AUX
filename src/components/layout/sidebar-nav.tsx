@@ -122,8 +122,7 @@ export default function SidebarNav() {
                     <SidebarMenuButton
                     asChild
                     isActive={
-                        pathname.startsWith(item.href) &&
-                        (item.href !== '/dashboard' || pathname === '/dashboard')
+                        item.href === '/dashboard' ? pathname === item.href : pathname.startsWith(item.href)
                     }
                     tooltip={{ children: item.label }}
                     >
