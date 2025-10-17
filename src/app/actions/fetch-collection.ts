@@ -1,9 +1,8 @@
-
 'use server';
 
 import { getFirebaseAdmin } from '@/firebase/admin';
 import { cookies } from 'next/headers';
-import { CollectionReference, DocumentData, Timestamp } from 'firebase-admin/firestore';
+import { CollectionReference, DocumentData } from 'firebase-admin/firestore';
 import { safeServerAction } from './safe-action';
 
 export async function fetchCollectionAction({

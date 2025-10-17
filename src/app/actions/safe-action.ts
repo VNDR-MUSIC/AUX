@@ -1,4 +1,3 @@
-
 "use server";
 import { NextResponse } from "next/server";
 import { Timestamp, GeoPoint, DocumentReference } from "firebase/firestore";
@@ -39,12 +38,13 @@ function serializeFirestoreData(data: any): any {
   return data;
 }
 
+
 /**
  * Master Safe Server Action Wrapper
  * @param action - async function containing your server logic
  * Returns a JSON-safe response with success/error handling
  */
-export async function safeServerAction(action: () => Promise<any>): Promise<NextResponse> {
+export async function safeServerAction(action: () => Promise<any>) {
   try {
     const result = await action();
     const serializedResult = serializeFirestoreData(result);

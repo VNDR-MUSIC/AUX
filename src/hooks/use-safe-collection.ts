@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -28,19 +27,25 @@ export function useSafeCollection<T>(collectionPath: string | null, filters?: Re
     setIsLoading(true);
     setError(null);
     
-    // Server action now returns a Response object, which we need to parse.
-    const response = await fetchCollectionAction({ collectionPath, filters });
-    const result = await response.json();
+    try {
+      // Server action now returns a Response object, which we need to parse.
+      const response = await fetchCollectionAction({ collectionPath, filters });
+      const result = await response.json();
 
-    if (result.success) {
-      setData(result.data as T[]);
-    } else {
-      console.error(`🔥 useSafeCollection Error on '${collectionPath}':`, result.details);
-      setError(result.error || "An unexpected error occurred.");
-      setData(null);
+      if (result.success) {
+        setData(result.data as T[]);
+      } else {
+        console.error(`🔥 useSafeCollection Error on '${collectionPath}':`, result.details);
+        setError(result.error || "An unexpected error occurred.");
+        setData(null);
+      }
+    } catch (e: any) {
+        console.error(`🔥 useSafeCollection Hard Fail on '${collectionPath}':`, e);
+        setError(e.message || "An unexpected error occurred during fetch.");
+        setData(null);
+    } finally {
+      setIsLoading(false);
     }
-    
-    setIsLoading(false);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [collectionPath, user, isUserLoading, JSON.stringify(filters)]);
 
