@@ -17,6 +17,7 @@ import { Icons } from "@/components/icons";
 import { useOnboarding } from "@/hooks/use-onboarding";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
+import { useWeb3Store } from "@/store/web3-store";
 
 const notificationSettings = [
   { id: 'licenseRequests', label: 'Licensing & Contracts', description: 'When you receive a license request or a contract needs your signature.' },
@@ -28,6 +29,7 @@ const notificationSettings = [
 
 export default function SettingsPage() {
   useOnboarding('settings');
+  const { isWeb3Enabled, toggleWeb3 } = useWeb3Store();
   
   return (
     <div className="container mx-auto py-8">
@@ -89,15 +91,19 @@ export default function SettingsPage() {
             </Card>
              <Card>
                 <CardHeader>
-                    <CardTitle className="flex items-center gap-2"><Wallet className="h-5 w-5"/> Wallet</CardTitle>
+                    <CardTitle className="flex items-center gap-2"><Wallet className="h-5 w-5"/> Web3 Integration</CardTitle>
                     <CardDescription>Connect your Web3 wallet to enable ERC-20 VSD token conversions.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between rounded-lg border p-3">
+                        <Label htmlFor="web3-toggle">Enable Web3 Features</Label>
+                        <Switch id="web3-toggle" checked={isWeb3Enabled} onCheckedChange={toggleWeb3} />
+                    </div>
                      <div className="grid gap-2">
-                        <Label htmlFor="wallet-address">ERC-20 Address</Label>
-                        <Input id="wallet-address" placeholder="0x..."/>
+                        <Label htmlFor="wallet-address" className={!isWeb3Enabled ? "text-muted-foreground" : ""}>ERC-20 Address</Label>
+                        <Input id="wallet-address" placeholder="0x..." disabled={!isWeb3Enabled}/>
                      </div>
-                     <Button variant="secondary" className="w-full">Connect Wallet</Button>
+                     <Button variant="secondary" className="w-full" disabled={!isWeb3Enabled}>Connect Wallet</Button>
                 </CardContent>
             </Card>
         </div>

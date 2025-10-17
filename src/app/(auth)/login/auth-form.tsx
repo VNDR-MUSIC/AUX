@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { useFirebase, initiateEmailSignIn, useUser } from "@/firebase";
 import { Loader2 } from "lucide-react";
 import { GoogleAuthProvider, signInWithRedirect } from "firebase/auth";
+import { useWeb3Store } from "@/store/web3-store";
 
 const initialState = {
   message: null,
@@ -38,6 +39,7 @@ export default function AuthForm() {
   const router = useRouter();
   const { auth } = useFirebase();
   const { user, isUserLoading } = useUser();
+  const { isWeb3Enabled } = useWeb3Store();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -106,8 +108,15 @@ export default function AuthForm() {
   };
 
   const handleWalletLogin = () => {
-    // 'window' is a browser-specific object.
-    // Check if a Web3 wallet (like MetaMask) has injected the ethereum provider.
+    // Only check for wallet if the feature is enabled by the user
+    if (!isWeb3Enabled) {
+       toast({
+        title: "Web3 Disabled",
+        description: "Please enable Web3 integration in your settings to connect a wallet.",
+      });
+      return;
+    }
+
     if (typeof (window as any).ethereum === 'undefined') {
       toast({
         duration: 8000,
