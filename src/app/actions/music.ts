@@ -8,6 +8,7 @@ import { revalidatePath } from "next/cache";
 import { createVsdTransaction } from "./vsd-transaction";
 import { generateReport } from "@/ai/flows/generate-report-flow";
 import { Track, TrackSchema } from "@/store/music-player-store";
+import { getMusoExposureScore } from "@/services/muso";
 
 
 const uploadWorkSchema = z.object({
@@ -71,16 +72,6 @@ export async function uploadTrackAction(
            coverArtUrl = `https://picsum.photos/seed/${trackTitle.replace(/\s/g, '-')}/400/400`;
         }
         
-        // Simulate audio feature extraction
-        const simulatedAudioFeatures = {
-            bpm: 120,
-            key: 'Cmin',
-            loudness: -8.5,
-            energy: 0.75,
-            mood: ['dramatic', 'energetic'],
-            instrumentalRatio: 0.95
-        };
-
         const newWorkRef = await addDoc(worksCollection, {
             title: trackTitle,
             artistId: artistId,
@@ -94,7 +85,6 @@ export async function uploadTrackAction(
             price: price || null,
             plays: 0,
             
-            // These fields would be populated by the backend workers, but we simulate them here.
             audioFeatures: null, 
             musoCreditsFetched: false,
             acrCloudFingerprinted: false,
@@ -102,18 +92,8 @@ export async function uploadTrackAction(
             musoExposureScore: null,
         });
 
-        // Simulate async processing delay for a more realistic UX
-        setTimeout(async () => {
-            const { db: db2 } = await getFirebaseAdmin();
-            await updateDoc(doc(db2, "works", newWorkRef.id), {
-                audioFeatures: simulatedAudioFeatures,
-                musoCreditsFetched: true,
-                acrCloudFingerprinted: true,
-                musoExposureScore: Math.floor(Math.random() * 100),
-                status: "published",
-            });
-            revalidatePath('/dashboard/my-works');
-        }, 5000); // 5-second delay to simulate processing
+        // Start the enrichment process asynchronously (don't block the UI response)
+        enrichWork(newWorkRef.id, artistName, trackTitle);
 
         revalidatePath('/dashboard');
         revalidatePath('/dashboard/my-works');
@@ -129,6 +109,56 @@ export async function uploadTrackAction(
             message: "An error occurred during upload.",
             errors: { _form: ["Failed to save work to database. Please try again."] }
         }
+    }
+}
+
+/**
+ * Asynchronous function to enrich a work document with data from external APIs.
+ * This simulates a backend cloud function trigger.
+ * @param workId The ID of the work document in Firestore.
+ * @param artistName The name of the artist.
+ * @param trackTitle The title of the track.
+ */
+async function enrichWork(workId: string, artistName: string, trackTitle: string) {
+    try {
+        const { db } = await getFirebaseAdmin();
+        const workRef = doc(db, "works", workId);
+
+        // 1. Fetch data from Muso.AI
+        const exposureScore = await getMusoExposureScore(artistName, trackTitle);
+
+        // 2. Simulate other processing steps (like audio analysis)
+        await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate 2-second delay for ACRCloud, etc.
+        const simulatedAudioFeatures = {
+            bpm: 120,
+            key: 'Cmin',
+            loudness: -8.5,
+            energy: 0.75,
+            mood: ['dramatic', 'energetic'],
+            instrumentalRatio: 0.95
+        };
+
+        // 3. Update the document in Firestore with all enriched data
+        await updateDoc(workRef, {
+            musoExposureScore: exposureScore,
+            musoCreditsFetched: true,
+            audioFeatures: simulatedAudioFeatures,
+            acrCloudFingerprinted: true,
+            status: "published",
+        });
+
+        console.log(`Successfully enriched work ID: ${workId}`);
+        // Revalidate paths after enrichment is complete to show the "Published" status
+        revalidatePath('/dashboard/my-works');
+
+    } catch (error) {
+        console.error(`Failed to enrich work ID ${workId}:`, error);
+        // Optional: Update the work document to an "error" status
+        const { db } = await getFirebaseAdmin();
+        await updateDoc(doc(db, "works", workId), {
+            status: 'error',
+            errorDetails: 'Failed during enrichment process.',
+        });
     }
 }
 

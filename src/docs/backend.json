@@ -14,7 +14,7 @@
         "genre": { "type": "string" },
         "description": { "type": "string" },
         "uploadDate": { "type": "string", "format": "date-time" },
-        "status": { "type": "string", "enum": ["pending", "processing", "published", "archived"], "description": "Processing status of the work."},
+        "status": { "type": "string", "enum": ["pending", "processing", "published", "archived", "error"], "description": "Processing status of the work."},
         "trackUrl": { "type": "string", "description": "Public URL for the streamable audio." },
         "coverArtUrl": { "type": "string", "description": "URL for the cover art." },
         "price": { "type": "number", "description": "Licensing price in VSD-lite tokens." },
@@ -24,8 +24,10 @@
           "properties": { "bpm": { "type": "number" }, "key": { "type": "string" } }
         },
         "musoCreditsFetched": { "type": "boolean", "default": false },
+        "musoExposureScore": { "type": "number" },
         "acrCloudFingerprinted": { "type": "boolean", "default": false },
-        "enrichedMetadata": { "type": "object" }
+        "enrichedMetadata": { "type": "object" },
+        "errorDetails": { "type": "string", "description": "Stores error messages from processing." }
       },
       "required": ["artistId", "title", "uploadDate", "status"]
     },
@@ -41,7 +43,8 @@
             "role": { "type": "string", "enum": ["artist", "admin"] },
             "onboardingCompleted": { "type": "object" },
             "vsdBalance": { "type": "number", "default": 0 },
-            "dailyTokenClaimed": { "type": "string", "format": "date" }
+            "dailyTokenClaimed": { "type": "string", "format": "date" },
+            "averageMusoExposureScore": { "type": "number", "description": "The average Muso.AI score across all of the artist's tracks." }
         },
         "required": ["id", "email", "vsdBalance"]
     },

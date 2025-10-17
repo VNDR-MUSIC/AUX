@@ -39,6 +39,11 @@ function StatCard({ title, value, icon, description, isLoading }: { title: strin
 }
 
 export default function DashboardStats({ userData, isLoading, totalWorks, totalPlays }: DashboardStatsProps) {
+
+  // Since we are now fetching a real score, we can display it.
+  const musoExposureScore = userData?.musoExposureScore;
+  const averageScore = userData?.averageMusoExposureScore || 'N/A';
+
   return (
     <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
       <StatCard
@@ -64,9 +69,9 @@ export default function DashboardStats({ userData, isLoading, totalWorks, totalP
       />
       <StatCard
         title="Exposure Score"
-        value="N/A"
+        value={averageScore}
         icon={<BarChart className="h-4 w-4 text-muted-foreground" />}
-        description="Calculated by Muso.ai"
+        description="Avg. score from Muso.ai"
         isLoading={isLoading}
       />
     </div>
