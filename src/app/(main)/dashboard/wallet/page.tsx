@@ -2,7 +2,7 @@
 'use client';
 
 import { useUser, useCollection } from '@/firebase';
-import { query, orderBy, Timestamp } from 'firebase/firestore';
+import { query, orderBy, Timestamp, where } from 'firebase/firestore';
 import {
   Card,
   CardContent,
@@ -47,9 +47,11 @@ export default function WalletPage() {
   const { data: userData, isLoading: isUserDocLoading } = useDoc(userDocRef);
 
   // The new useCollection hook takes the collection path and an optional query builder.
+  // We provide the query builder to ensure the `userId` filter is applied.
   const queryBuilder = useMemo(() => {
-    return (q: Query) => query(q, orderBy('transactionDate', 'desc'));
-  }, []);
+    if (!user) return null;
+    return (q: Query) => query(q, where('userId', '==', user.uid), orderBy('transactionDate', 'desc'));
+  }, [user]);
   
   const { data: transactions, isLoading: areTransactionsLoading } = useCollection<Transaction>('vsd_transactions', queryBuilder);
 

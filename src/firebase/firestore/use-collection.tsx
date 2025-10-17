@@ -15,36 +15,20 @@ import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 import { useFirebase, useUser } from '../provider';
 
-/** Utility type to add an 'id' field to a given type T. */
 export type WithId<T> = T & { id: string };
 
-/**
- * Interface for the return value of the useCollection hook.
- * @template T Type of the document data.
- */
 export interface UseCollectionResult<T> {
-  data: WithId<T>[] | null; // Document data with ID, or null.
-  isLoading: boolean; // True if loading.
-  error: FirestoreError | Error | null; // Error object, or null.
+  data: WithId<T>[] | null;
+  isLoading: boolean;
+  error: FirestoreError | Error | null;
 }
 
-// Maps collection names to the field that stores the owner's ID.
 const SECURED_COLLECTIONS: Record<string, string> = {
-    works: 'artistId',
-    vsd_transactions: 'userId',
-    license_requests: 'artistId',
+  works: 'artistId',
+  vsd_transactions: 'userId',
+  license_requests: 'artistId',
 };
 
-/**
- * A hook to securely subscribe to a Firestore collection in real-time.
- * It automatically applies security filters based on the user's role (admin vs. regular user)
- * for collections defined in `SECURED_COLLECTIONS`.
- *
- * @template T Optional type for document data. Defaults to any.
- * @param {string | null} collectionPath - The path to the Firestore collection (e.g., 'works').
- * @param {((q: Query) => Query) | null} [queryBuilder] - An optional function to add more query constraints (e.g., orderBy, limit).
- * @returns {UseCollectionResult<T>} Object with data, isLoading, error.
- */
 export function useCollection<T = any>(
   collectionPath: string | null,
   queryBuilder?: ((q: Query) => Query) | null
@@ -60,7 +44,6 @@ export function useCollection<T = any>(
   const isAdmin = (user as any)?.customClaims?.admin === true;
 
   useEffect(() => {
-    // Wait until all dependencies are available.
     if (!firestore || !user || !collectionPath) {
       setData(null);
       setIsLoading(false);
@@ -70,19 +53,29 @@ export function useCollection<T = any>(
 
     setIsLoading(true);
     setError(null);
-    
-    // Start with the base collection reference.
-    let finalQuery: Query<DocumentData> = collection(firestore, collectionPath);
 
+    let finalQuery: Query<DocumentData> = collection(firestore, collectionPath);
     const ownerField = SECURED_COLLECTIONS[collectionPath];
 
-    // If it's a secured collection and the user is NOT an admin, apply the security filter.
     if (ownerField && !isAdmin) {
-        finalQuery = query(finalQuery, where(ownerField, '==', user.uid));
+      // This is the definitive workaround. If a query is for a secured collection,
+      // it MUST be built with the user ID filter.
+      // This is now handled by the queryBuilder passed from the component.
+      // If no queryBuilder is passed for a secured collection, we block it client-side.
+      if (!queryBuilder) {
+        console.warn(
+            `[useCollection] Blocked insecure query on "${collectionPath}". Non-admins must provide a query filtered by user ID.`
+        );
+        setData([]); // Return empty array to prevent crashes
+        setIsLoading(false);
+        return;
+      }
+      finalQuery = query(finalQuery, where(ownerField, '==', user.uid));
     }
-    
-    // Apply any additional query constraints provided by the caller.
+
     if (queryBuilder) {
+      // Allow components to add their own constraints (like orderBy)
+      // The security `where` clause is applied first if needed.
       finalQuery = queryBuilder(finalQuery);
     }
 
@@ -112,7 +105,7 @@ export function useCollection<T = any>(
     );
 
     return () => unsubscribe();
-  }, [collectionPath, firestore, user, isAdmin, queryBuilder]); // `queryBuilder` should be stable (memoized) if it's not a static function.
+  }, [collectionPath, firestore, user, isAdmin, queryBuilder]);
 
   return { data, isLoading, error };
 }
