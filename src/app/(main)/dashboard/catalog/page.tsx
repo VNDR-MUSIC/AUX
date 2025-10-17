@@ -20,15 +20,19 @@ import { useOnboarding } from '@/hooks/use-onboarding';
 import { useSearchParams } from 'next/navigation';
 
 export default function CatalogPage() {
-  const { firestore, user } = useFirebase(); // Get user from useFirebase
+  const { firestore } = useFirebase(); 
+  const { user } = useUser();
   const searchParams = useSearchParams();
   
-  // This query now fetches only the works of the currently logged-in user.
-  const worksQuery = useMemoFirebase(() => 
-    firestore && user 
-      ? query(collection(firestore, 'works'), where('artistId', '==', user.uid)) 
-      : null, 
-  [firestore, user]);
+  // This query now explicitly waits for user.uid to be available before running.
+  // It fetches ALL works if the user is an admin, or just their own if they are not.
+  const worksQuery = useMemoFirebase(() => {
+    if (!firestore || !user) return null;
+    
+    // For a normal user, only fetch their works.
+    return query(collection(firestore, 'works'), where('artistId', '==', user.uid));
+    
+  }, [firestore, user]);
   
   const { data: works, isLoading } = useCollection<DocumentData>(worksQuery);
 

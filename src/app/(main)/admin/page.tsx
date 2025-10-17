@@ -52,7 +52,7 @@ function AdminContent() {
             <HardHat className="h-4 w-4" />
             <AlertTitle>Work Management Disabled</AlertTitle>
             <AlertDescription>
-                This section has been temporarily disabled due to recurring Firestore permission errors. The code was attempting to fetch all works from all users, which is blocked by security rules. To fix this, a specific security rule allowing admins to perform `list` operations on the 'works' collection must be implemented and deployed.
+                This section has been temporarily disabled due to recurring Firestore permission errors. The code was attempting to fetch all works from all users, which is blocked by security rules. A secure, paginated backend for administrators needs to be built to support this feature. For now, all other admin functions are available.
             </AlertDescription>
         </Alert>
         
