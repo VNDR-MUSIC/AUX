@@ -12,11 +12,11 @@ import {
   Wallet,
   Gavel,
   Scale,
-  DollarSign,
   Settings,
   Users,
 } from 'lucide-react';
-import { useUser } from '@/firebase';
+import { useDoc, useUser } from '@/firebase';
+import { doc } from 'firebase/firestore';
 
 import {
   SidebarHeader,
@@ -42,7 +42,7 @@ import {
 import { Button } from '../ui/button';
 import { Avatar, AvatarFallback } from '../ui/avatar';
 import { signOut } from 'firebase/auth';
-import { useFirebase } from '@/firebase/provider';
+import { useFirebase, useMemoFirebase } from '@/firebase/provider';
 import { useToast } from '@/hooks/use-toast';
 
 
@@ -67,19 +67,22 @@ const adminMenuItem = { href: '/admin', icon: Shield, label: 'Admin' };
 export default function SidebarNav() {
   const pathname = usePathname();
   const { user, isUserLoading } = useUser();
-  const { auth } = useFirebase();
+  const { auth, firestore } = useFirebase();
   const router = useRouter();
   const { toast } = useToast();
-  const isAdmin = (user as any)?.customClaims?.admin === true;
+
+  const adminRef = useMemoFirebase(() => (firestore && user ? doc(firestore, `roles_admin/${user.uid}`) : null), [firestore, user]);
+  const { data: adminDoc, isLoading: isAdminLoading } = useDoc(adminRef);
+  const isAdmin = !!adminDoc;
 
   const menuItems = useMemo(() => {
-    if (isUserLoading) return [];
+    if (isUserLoading || isAdminLoading) return [];
     let items = user ? [...authenticatedMenuItems] : [...publicMenuItems];
     if (user && isAdmin) {
       items.push(adminMenuItem);
     }
     return items;
-  }, [user, isAdmin, isUserLoading]);
+  }, [user, isAdmin, isUserLoading, isAdminLoading]);
 
   const handleLogout = async () => {
     if (!auth) return;
@@ -114,7 +117,7 @@ export default function SidebarNav() {
         </Link>
       </SidebarHeader>
       <SidebarContent>
-        {isUserLoading ? (
+        {isUserLoading || isAdminLoading ? (
             <div className='p-2 space-y-2'>
                 <Skeleton className="h-8 w-full" />
                 <Skeleton className="h-8 w-full" />
