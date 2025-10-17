@@ -33,7 +33,7 @@ export default function SymbiChatWidget() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isLoading) return;
+    if (!input.trim() || isLoading || !user) return;
 
     const userMessage: Message = { text: input, isUser: true };
     setMessages(prev => [...prev, userMessage]);
@@ -41,7 +41,8 @@ export default function SymbiChatWidget() {
     setIsLoading(true);
 
     try {
-      const response = await symbiChat(input);
+      // Pass both userId and the question to the flow
+      const response = await symbiChat({ userId: user.uid, question: input });
       const aiMessage: Message = { text: response, isUser: false };
       setMessages(prev => [...prev, aiMessage]);
     } catch (error) {
@@ -139,13 +140,13 @@ export default function SymbiChatWidget() {
         <footer className="p-4 border-t border-border/50">
           <form onSubmit={handleSubmit} className="flex items-center gap-2">
             <Input
-              placeholder="Ask me anything..."
+              placeholder="Ask about your tracks..."
               value={input}
               onChange={e => setInput(e.target.value)}
-              disabled={isLoading}
+              disabled={isLoading || !user}
               autoComplete="off"
             />
-            <Button type="submit" size="icon" disabled={isLoading || !input.trim()}>
+            <Button type="submit" size="icon" disabled={isLoading || !input.trim() || !user}>
               {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             </Button>
           </form>
