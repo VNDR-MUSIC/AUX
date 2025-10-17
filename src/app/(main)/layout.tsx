@@ -1,3 +1,4 @@
+
 'use client';
 import Footer from "@/components/layout/footer";
 import MusicPlayer from "@/components/layout/music-player";
