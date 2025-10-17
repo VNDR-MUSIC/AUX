@@ -9,6 +9,7 @@ import Image from "next/image";
 import IVtvModal from "./ivtv-modal";
 import NDRadioModal from "./nd-radio-modal";
 import AudioExchangeModal from "./audio-exchange-modal";
+import { MapPin } from "lucide-react";
 
 const socialLinks = [
     { name: "Twitter", href: "#" },
@@ -56,6 +57,12 @@ export default function Footer() {
                     </div>
                 </Link>
                 <p className="mt-4 text-sm text-muted-foreground">The future of music licensing and streaming.</p>
+                 <div className="mt-4 text-xs text-muted-foreground space-y-1">
+                    <p className="flex items-start gap-2">
+                        <MapPin className="h-4 w-4 flex-shrink-0 mt-0.5" />
+                        <span>3110 1ST AVENUE NORTH SUITE 2M PMB 1122 ST, SAINT PETERSBURG, FL 33713</span>
+                    </p>
+                </div>
             </div>
             
             {!isUserLoading && user && (
