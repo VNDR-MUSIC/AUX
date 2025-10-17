@@ -51,21 +51,26 @@ const symbiChatFlow = ai.defineFlow(
     outputSchema: SymbiChatOutputSchema,
   },
   async (input) => {
-    // Correctly pass the artistId to the tools that need it.
-    // This is done by creating tool instances with the required context.
-    const contextualTools = [
+    // All available tools for the agent.
+    const availableTools = [
       getKnowledgeBase, 
-      getUserProfile.withContext({userId: input.userId}),
-      getArtistTracks.withContext({artistId: input.userId}),
+      getUserProfile,
+      getArtistTracks,
       registerWorkWithPRO,
-      updateLicenseRequestStatus.withContext({artistId: input.userId}),
+      updateLicenseRequestStatus,
       postToSocialMedia
     ];
 
     const { output } = await ai.generate({
       prompt: `User Question: ${input.question}`,
       system: systemPrompt.replace('{{{jsonStringify history}}}', JSON.stringify(input.history || [])),
-      tools: contextualTools,
+      tools: availableTools,
+      // Provide the context needed by the tools. Genkit will pass this to any tool
+      // with a matching contextSchema.
+      context: { 
+        userId: input.userId,
+        artistId: input.userId // The artistId is the same as the userId
+      },
       output: {
         schema: SymbiChatOutputSchema,
       },
