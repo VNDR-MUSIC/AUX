@@ -158,15 +158,6 @@ export default function SidebarNav() {
                 </div>
             ) : user ? (
                 <>
-                <SidebarMenu>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton onClick={handleLogout} tooltip={{children: 'Log Out'}}>
-                            <LogOut />
-                            <span>Log Out</span>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                </SidebarMenu>
-                <SidebarSeparator />
                 <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="justify-start w-full p-2 h-auto">
@@ -191,7 +182,8 @@ export default function SidebarNav() {
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleLogout}>
-                    Log out
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Log Out</span>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
                 </DropdownMenu>
