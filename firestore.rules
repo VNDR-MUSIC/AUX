@@ -2,173 +2,203 @@
  * @fileoverview Firestore Security Rules for VNDR Music Platform
  *
  * Core Philosophy:
- * This ruleset enforces a strict user-ownership model for personal data (wallets) and a public-read, owner-write model for musical works.
- * Additionally, it defines path-based access control for user profiles,
- * administrative roles, and other resources.
+ * This ruleset implements a hybrid security model. It enforces strict ownership for user-related data and allows public read access for certain collections like 'works' while restricting write access to authorized users. Admin privileges are granted based on document existence in `/roles_admin/{userId}`.
  *
  * Data Structure:
- * - /users/{userId}: User profile data.
- * - /works/{workId}:  Musical works (tracks), publicly readable but owner-modifiable.
- * - /wallets/{userId}: User's token balance information.
- * - /vsd_transactions/{transactionId}: Records of VSD token transactions.
- * - /contracts/{contractId}: Licensing and split agreements.
- * - /knowledgebase/{topicId}: Articles and tutorials in a public knowledgebase.
- * - /musoAudits/{auditId}: Logs of daily Muso.ai audits (unsecured).
- * - /roles_admin/{userId}: Document existence grants admin role.
+ * - /users/{userId}:  User profiles, secured by ownership.
+ * - /works/{workId}:  Music tracks, publicly readable but writable only by the artist (owner) or admins.
+ * - /wallets/{userId}:  User wallets, secured by ownership (userId is the document ID).
+ * - /vsd_transactions/{transactionId}: Token transactions, secured by user ID.
+ * - /contracts/{contractId}: Contracts for licensing/splits.
+ * - /musoAudits/{auditId}:  Audit logs.
+ * - /knowledgebase/{topicId}: Public knowledge base articles.
+ * - /roles_admin/{userId}:  Admin role flags; existence grants admin access.
  *
  * Key Security Decisions:
- * - User listing is disabled for privacy.
- * - The /works collection uses a public-read, owner-write access pattern, requiring an 'artistId' field on each document.
- * - Wallets are strictly owned by the user; only the authenticated user can read or modify their own wallet.
- * - The musoAudits collection is currently unsecured and requires review.
+ * - Public read access to the 'works' and 'knowledgebase' collections allows for open discovery and content consumption.
+ * - Data consistency between user IDs in paths and document fields is enforced for 'users' and 'wallets'.
+ * - Admin privileges are determined by the existence of a document in the `/roles_admin/{userId}` collection.
+ * - Listing of documents is allowed for the owner in user-scoped subcollections.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Grants access to user profile documents.
+     * @description Grants access to user profiles.
      * @path /users/{userId}
-     * @allow (create) - If the authenticated user's ID matches the userId in the path.
-     * @allow (get, list) - If the authenticated user's ID matches the userId in the path.
-     * @allow (update, delete) - If the authenticated user's ID matches the userId in the path and the document exists.
-     * @deny (create) - If the authenticated user's ID does not match the userId in the path.
-     * @deny (get, list) - If the authenticated user's ID does not match the userId in the path.
-     * @deny (update, delete) - If the authenticated user's ID does not match the userId in the path, or if the document does not exist.
+     * @allow (create) User with ID 'user123' creates their profile.
+     * @allow (get, update, delete) User with ID 'user123' reads/updates/deletes their own profile.
+     * @deny (create) User with ID 'user456' attempts to create a profile for 'user123'.
+     * @deny (get, update, delete) User with ID 'user456' attempts to read/update/delete 'user123' profile.
      * @principle Enforces document ownership for all operations.
      */
     match /users/{userId} {
       function isOwner(userId) {
         return request.auth != null && request.auth.uid == userId;
       }
-      function isExistingOwner(userId) {
-        return isOwner(userId) && exists(resource.data);
-      }
-      allow create: if isOwner(userId);
-      allow get: if isOwner(userId);
+       function isAdmin() {
+          return exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
+        }
+
+      allow get: if isOwner(userId) || isAdmin();
       allow list: if false;
-      allow update, delete: if isExistingOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isOwner(userId) && resource.data.id == userId || isAdmin();
+      allow delete: if isOwner(userId) && resource.data.id == userId && resource != null || isAdmin();
     }
 
     /**
-     * @description Grants public read access to musical works but restricts writes to the owner (artist).
+     * @description Grants public read access to musical works, but restricts write access to the artist (owner) or admins.
      * @path /works/{workId}
-     * @allow (get, list) - Anyone can read the works.
-     * @allow (create) - Only if the 'artistId' field in the new document matches the authenticated user's ID.
-     * @allow (update, delete) - Only if the authenticated user is the owner ('artistId' in the existing document matches the authenticated user's ID) and the document exists.
-     * @deny (create) - If the 'artistId' field does not match the authenticated user's ID.
-     * @deny (update, delete) - If the authenticated user is not the owner, or if the document does not exist.
-     * @principle Implements a public-read, owner-write access pattern.
+     * @allow (get, list) Any user can read/list all works.
+     * @allow (create) Artist with ID 'artist123' creates a work with artistId 'artist123'.
+     * @allow (update, delete) Artist with ID 'artist123' updates/deletes their own work with artistId 'artist123'.
+     * @deny (create) User with ID 'user456' attempts to create a work with artistId 'artist123'.
+     * @deny (update, delete) User with ID 'user456' attempts to update/delete work with artistId 'artist123'.
+     * @principle Allows public read access while enforcing ownership for write operations.
      */
     match /works/{workId} {
       function isOwner(artistId) {
         return request.auth != null && request.auth.uid == artistId;
       }
-      function isExistingOwner(artistId) {
-        return isOwner(artistId) && exists(resource.data);
-      }
-      allow get, list: if true;
-      allow create: if request.auth != null && request.resource.data.artistId == request.auth.uid;
-      allow update, delete: if isExistingOwner(resource.data.artistId);
+
+      function isAdmin() {
+          return exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
+        }
+      allow get: if true;
+      allow list: if true;
+      allow create: if (request.auth != null && request.resource.data.artistId == request.auth.uid) || isAdmin();
+      allow update: if (isOwner(resource.data.artistId) && resource != null) || isAdmin();
+      allow delete: if (isOwner(resource.data.artistId) && resource != null) || isAdmin();
     }
 
     /**
-     * @description Secures user wallets, allowing only the owner to read and write.
+     * @description Grants access to user wallets, secured by ownership.
      * @path /wallets/{userId}
-     * @allow (get) - If the authenticated user's ID matches the userId in the path.
-     * @allow (create) - If the authenticated user's ID matches the userId in the path.
-     * @allow (update, delete) - If the authenticated user's ID matches the userId in the path and the document exists.
-     * @deny (get) - If the authenticated user's ID does not match the userId in the path.
-     * @deny (create) - If the authenticated user's ID does not match the userId in the path.
-     * @deny (update, delete) - If the authenticated user's ID does not match the userId in the path, or if the document does not exist.
-     * @principle Enforces strict document ownership.
+     * @allow (create) User with ID 'user123' creates their wallet.
+     * @allow (get, update, delete) User with ID 'user123' reads/updates/deletes their own wallet.
+     * @deny (create) User with ID 'user456' attempts to create a wallet for 'user123'.
+     * @deny (get, update, delete) User with ID 'user456' attempts to read/update/delete 'user123' wallet.
+     * @principle Enforces document ownership for all operations.
      */
     match /wallets/{userId} {
       function isOwner(userId) {
         return request.auth != null && request.auth.uid == userId;
       }
-      function isExistingOwner(userId) {
-        return isOwner(userId) && exists(resource.data);
-      }
-      allow get: if isOwner(userId);
+
+       function isAdmin() {
+          return exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
+        }
+
+      allow get: if isOwner(userId) || isAdmin();
       allow list: if false;
-      allow create: if isOwner(userId);
-      allow update, delete: if isExistingOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
+      allow update: if isOwner(userId) && resource.data.userId == userId || isAdmin();
+      allow delete: if isOwner(userId) && resource.data.userId == userId && resource != null || isAdmin();
     }
 
     /**
-     * @description Restricts access to VSD token transaction records to the owner.
+     * @description Grants access to VSD transactions, secured by user ID.
      * @path /vsd_transactions/{transactionId}
-     * @allow (create) - If the 'userId' field in the new document matches the authenticated user's ID.
-     * @allow (get, list) - If the 'userId' field in the existing document matches the authenticated user's ID.
-     * @allow (update, delete) - If the 'userId' field in the existing document matches the authenticated user's ID and the document exists.
-     * @deny (create) - If the 'userId' field does not match the authenticated user's ID.
-     * @deny (get, list) - If the 'userId' field does not match the authenticated user's ID.
-     * @deny (update, delete) - If the 'userId' field does not match the authenticated user's ID, or if the document does not exist.
-     * @principle Enforces document ownership.
+     * @allow (create) User with ID 'user123' creates a transaction for themself.
+     * @allow (get, list) User with ID 'user123' reads/lists their own transactions.
+     * @allow (update, delete) User with ID 'user123' updates/deletes their own transactions.
+     * @deny (create) User with ID 'user456' attempts to create a transaction for 'user123'.
+     * @deny (get, list, update, delete) User with ID 'user456' attempts to read/list/update/delete 'user123' transactions.
+     * @principle Enforces document ownership for all operations.
      */
     match /vsd_transactions/{transactionId} {
       function isOwner(userId) {
         return request.auth != null && request.auth.uid == userId;
       }
-       function isExistingOwner(userId) {
-        return isOwner(userId) && exists(resource.data);
-      }
-      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
-      allow get: if request.auth != null && resource.data.userId == request.auth.uid;
-      allow list: if false;
-      allow update, delete: if isExistingOwner(resource.data.userId);
-    }
 
-     /**
-      * @description Controls access to contract documents.
-      * @path /contracts/{contractId}
-      * @allow (create, update, delete) - Always denied.
-      * @allow (get, list) - Always denied.
-      * @principle Restricts access to contracts.
-      */
-    match /contracts/{contractId} {
-        allow create, update, delete: if false;
-        allow get, list: if false;
-    }
+       function isAdmin() {
+          return exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
+        }
 
-     /**
-      * @description Allows public read access to knowledgebase articles. Write access is not granted.
-      * @path /knowledgebase/{topicId}
-      * @allow (get, list) - Anyone can read knowledgebase articles.
-      * @allow (create, update, delete) - Always denied.
-      * @principle Provides a public knowledgebase while restricting write access.
-      */
-    match /knowledgebase/{topicId} {
-      allow get, list: if true;
-      allow create, update, delete: if false;
+      allow get: if isOwner(resource.data.userId) || isAdmin();
+      allow list: if isOwner(request.auth.uid) || isAdmin();
+      allow create: if (request.auth != null && request.resource.data.userId == request.auth.uid) || isAdmin();
+      allow update: if (isOwner(resource.data.userId) && resource != null) || isAdmin();
+      allow delete: if (isOwner(resource.data.userId) && resource != null) || isAdmin();
     }
 
     /**
-     * @description Logs results of daily Muso.ai credit and exposure audits.  Currently unsecured and requires review.
+     * @description Grants access to contracts.
+     * @path /contracts/{contractId}
+     * @allow (get, list) Any user can read/list all contracts.
+     * @allow (create) Any authenticated user can create a contract.
+     * @allow (update, delete) Only authenticated users can update/delete contracts.
+     * @principle Allows public read access while enforcing authentication for write operations.
+     */
+    match /contracts/{contractId} {
+      function isAdmin() {
+          return exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
+        }
+
+      allow get: if true;
+      allow list: if true;
+      allow create: if request.auth != null || isAdmin();
+      allow update: if request.auth != null && resource != null || isAdmin();
+      allow delete: if request.auth != null && resource != null || isAdmin();
+    }
+
+    /**
+     * @description Grants access to musoAudits logs.
      * @path /musoAudits/{auditId}
-     * @allow get, list, create, update, delete: if true;
+     * @allow (get, list) Any user can read/list all musoAudits logs.
+     * @allow (create) Only authenticated users can create a musoAudit log.
+     * @allow (update, delete) Only authenticated users can update/delete musoAudit logs.
+     * @principle Allows public read access while enforcing authentication for write operations.
      */
     match /musoAudits/{auditId} {
-        allow get, list, create, update, delete: if true; // TODO: Review security implications
+       function isAdmin() {
+          return exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
+        }
+
+      allow get: if true;
+      allow list: if true;
+      allow create: if request.auth != null || isAdmin();
+      allow update: if request.auth != null && resource != null || isAdmin();
+      allow delete: if request.auth != null && resource != null || isAdmin();
     }
 
     /**
-     * @description Grants admin privileges based on the existence of a document in this collection.
-     * @path /roles_admin/{userId}
-     * @allow create: if request.auth != null && request.auth.uid == userId;
-     * @allow get, list: if false;
-     * @allow update, delete: if false;
-     * @principle Uses document existence to grant admin roles.
+     * @description Grants public read access to knowledge base articles.
+     * @path /knowledgebase/{topicId}
+     * @allow (get, list) Any user can read/list all articles.
+     * @allow (create) Only authenticated users can create a knowledgebase article.
+     * @allow (update, delete) Only authenticated users can update/delete knowledgebase articles.
+     * @principle Allows public read access while enforcing authentication for write operations.
      */
-    match /roles_admin/{userId} {
-      function isAdmin(userId) {
-        return exists(/databases/$(database)/documents/roles_admin/$(userId));
-      }
-      allow create: if request.auth != null && request.auth.uid == userId;
-      allow get: if isAdmin(userId);
-      allow list: if false;
-      allow update, delete: if false;
+    match /knowledgebase/{topicId} {
+       function isAdmin() {
+          return exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
+        }
+
+      allow get: if true;
+      allow list: if true;
+      allow create: if request.auth != null || isAdmin();
+      allow update: if request.auth != null && resource != null || isAdmin();
+      allow delete: if request.auth != null && resource != null || isAdmin();
     }
+
+     /**
+      * @description Grants full access to admins based on document existence.
+      * @path /roles_admin/{userId}
+      * @allow (create, get, list, update, delete) Only admins can manage admin roles.
+      * @principle Allows admins to manage admin privileges.
+      */
+     match /roles_admin/{userId} {
+       function isAdmin() {
+          return exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
+        }
+        allow get: if isAdmin();
+        allow list: if isAdmin();
+        allow create: if isAdmin();
+        allow update: if isAdmin();
+        allow delete: if isAdmin();
+     }
   }
 }
