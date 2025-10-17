@@ -320,8 +320,8 @@ export default function NDRadioModal({ isOpen, onClose }: NDRadioModalProps) {
       }
 
       playerRef.current = new RadioPlayer(containerRef.current, {
-        streamUrl: 'https://s123.radiolize.com:8070/radio.mp3',
-        apiUrl: 'https://s123.radiolize.com/api/nowplaying/13',
+        streamUrl: 'https://demo.azuracast.com/listen/azuratest/radio.mp3',
+        apiUrl: 'https://demo.azuracast.com/api/nowplaying/1',
         borderColor: 'transparent'
       });
 
