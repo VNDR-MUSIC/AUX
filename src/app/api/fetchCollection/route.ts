@@ -16,37 +16,31 @@ async function verifyToken(auth: Auth, idToken: string) {
 }
 
 export async function POST(request: Request) {
-  const { collectionPath, filters } = await request.json();
-  
-  if (!collectionPath) {
-     return NextResponse.json({ error: 'Collection path is required.' }, { status: 400 });
-  }
-
-  const headersList = headers();
-  const authorization = headersList.get('Authorization');
-  const idToken = authorization?.split('Bearer ')[1];
-  
-  // Public, unauthenticated access is allowed ONLY for the 'works' collection without filters.
-  // This is for the main public catalog page.
-  if (collectionPath === 'works' && !filters && !idToken) {
-     try {
-       const { db } = await getFirebaseAdmin();
-       const publicWorksSnap = await db.collection(collectionPath).get();
-       const publicWorks = publicWorksSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-       return NextResponse.json(publicWorks);
-     } catch (error) {
-       console.error(`Error fetching public collection ${collectionPath}:`, error);
-       const errorMessage = error instanceof Error ? error.message : "An unknown error occurred on the server.";
-       return NextResponse.json({ error: "Internal Server Error", details: errorMessage }, { status: 500 });
-     }
-  }
-
-  // All other requests require authentication.
-  if (!idToken) {
-    return NextResponse.json({ error: 'Unauthorized: A valid user token is required for this request.' }, { status: 401 });
-  }
-
   try {
+    const { collectionPath, filters } = await request.json();
+    
+    if (!collectionPath) {
+      return NextResponse.json({ error: 'Collection path is required.' }, { status: 400 });
+    }
+
+    const headersList = headers();
+    const authorization = headersList.get('Authorization');
+    const idToken = authorization?.split('Bearer ')[1];
+    
+    // Public, unauthenticated access is allowed ONLY for the 'works' collection without filters.
+    // This is for the main public catalog page.
+    if (collectionPath === 'works' && !filters && !idToken) {
+      const { db } = await getFirebaseAdmin();
+      const publicWorksSnap = await db.collection(collectionPath).get();
+      const publicWorks = publicWorksSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      return NextResponse.json(publicWorks);
+    }
+
+    // All other requests require authentication.
+    if (!idToken) {
+      return NextResponse.json({ error: 'Unauthorized: A valid user token is required for this request.' }, { status: 401 });
+    }
+
     const { auth: adminAuth, db } = await getFirebaseAdmin();
     const decodedToken = await verifyToken(adminAuth, idToken);
     
@@ -93,7 +87,7 @@ export async function POST(request: Request) {
     return NextResponse.json(docs);
 
   } catch (error) {
-    console.error(`Error fetching collection ${collectionPath}:`, error);
+    console.error(`Error fetching collection:`, error);
     const errorMessage = error instanceof Error ? error.message : "An unknown error occurred on the server.";
     return NextResponse.json({ error: "Internal Server Error", details: errorMessage }, { status: 500 });
   }
