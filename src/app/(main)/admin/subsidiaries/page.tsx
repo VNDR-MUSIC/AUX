@@ -4,11 +4,12 @@
 import { useUser, useFirebase, useDoc, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ShieldX, KeyRound, Copy } from 'lucide-react';
+import { ShieldX, KeyRound, Copy, Link as LinkIcon } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import Link from 'next/link';
 
 export default function SubsidiaryPage() {
   const { user } = useUser();
@@ -35,7 +36,7 @@ const response = await fetch('https://your-vndr-app-url.apphosting.dev/api/vsd-b
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': \`Bearer ${apiKey}\`,
+    'Authorization': \`Bearer \${process.env.VSD_INTERNAL_API_KEY}\`,
   },
   body: JSON.stringify({
     trackId: 'track_123',
@@ -69,9 +70,17 @@ console.log(result);
 
   return (
     <div className="container mx-auto py-8">
-      <div className="mb-8">
-        <h1 className="font-headline text-3xl sm:text-4xl font-bold tracking-tighter md:text-5xl">Subsidiary Integration</h1>
-        <p className="mt-2 text-muted-foreground">Use this information to connect other platforms to the VNDR ecosystem.</p>
+      <div className="mb-8 flex items-center justify-between">
+        <div>
+            <h1 className="font-headline text-3xl sm:text-4xl font-bold tracking-tighter md:text-5xl">Subsidiary Integration</h1>
+            <p className="mt-2 text-muted-foreground">Use this information to connect other platforms to the VNDR ecosystem.</p>
+        </div>
+        <Button asChild variant="outline">
+            <Link href="/admin/subsidiary-status">
+                <LinkIcon className="mr-2 h-4 w-4" />
+                View Subsidiary Status
+            </Link>
+        </Button>
       </div>
 
       <div className="grid gap-8">
@@ -124,4 +133,3 @@ console.log(result);
     </div>
   );
 }
-

@@ -1,0 +1,65 @@
+
+{
+    "subsidiaries": [
+        {
+            "id": "vndr",
+            "name": "VNDR Music",
+            "description": "Core music distribution, rights management, and artist analytics platform.",
+            "logoUrl": "https://i.ibb.co/LzYSVCtz/Background-Eraser-20251014-181324183.png",
+            "healthCheckUrl": "/api/health",
+            "functions": [
+                "Work Upload & Metadata Processing",
+                "AI Analytics & Reporting",
+                "Artist Profile Management"
+            ]
+        },
+        {
+            "id": "audio_exchange",
+            "name": "Audio Exchange",
+            "description": "Marketplace for buying, selling, and trading tokenized music rights and royalties.",
+            "logoUrl": "https://i.ibb.co/fVjNMVpk/logo2.png",
+            "healthCheckUrl": "https://audio.exchange/api/health",
+            "functions": [
+                "Fractional Share Trading",
+                "Album NFT Marketplace",
+                "Escrow & Contract Settlement"
+            ]
+        },
+        {
+            "id": "vsd_network",
+            "name": "VSD Network",
+            "description": "The token and payment backbone for the ecosystem, handling all transactions.",
+            "logoUrl": "https://i.ibb.co/Kpg55CcY/Adobe-Express-20250422-1254090-1.png",
+            "healthCheckUrl": "https://vsd.network/api/health",
+            "functions": [
+                "VSD-lite & ERC-20 Token Transactions",
+                "Immutable Ledger Management",
+                "KYC & Wallet Gating"
+            ]
+        },
+        {
+            "id": "ivtv",
+            "name": "IVtv",
+            "description": "Indie Videos TV. Music video streaming and distribution network.",
+            "logoUrl": "https://i.ibb.co/FqwXfkL9/Screenshot-20250914-224236-Facebook.jpg",
+            "healthCheckUrl": "https://indievideos.tv/api/health",
+            "functions": [
+                "Video Upload & Hosting",
+                "Live Channel Streaming",
+                "Audience Analytics"
+            ]
+        },
+        {
+            "id": "nd_radio",
+            "name": "ND Radio",
+            "description": "Partner radio station for promoting and tracking music plays.",
+            "logoUrl": "https://i.ibb.co/4wvZ1Mzq/ND-Radio-transparent.png",
+            "healthCheckUrl": "https://indieradio.live/api/health",
+            "functions": [
+                "Live Radio Streaming",
+                "Music Submission & Curation",
+                "Real-time Play Tracking"
+            ]
+        }
+    ]
+}
