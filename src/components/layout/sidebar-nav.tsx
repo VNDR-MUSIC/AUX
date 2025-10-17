@@ -13,6 +13,8 @@ import {
   Gavel,
   Scale,
   DollarSign,
+  Settings,
+  Users,
 } from 'lucide-react';
 import { useUser } from '@/firebase';
 
@@ -52,8 +54,12 @@ const authenticatedMenuItems = [
   { href: '/dashboard/auctions', icon: Gavel, label: 'Auctions' },
   { href: '/dashboard/reports', icon: BarChart, label: 'Analytics' },
   { href: '/dashboard/legal-eagle', icon: Scale, label: 'Legal Eagle' },
-  { href: '/vsd-demo', icon: DollarSign, label: 'VSD Demo' },
 ];
+
+const publicMenuItems = [
+    { href: '/', icon: Home, label: 'Home' },
+    { href: '/catalog', icon: Library, label: 'Music Catalog' },
+]
 
 const adminMenuItem = { href: '/admin', icon: Shield, label: 'Admin' };
 
@@ -67,12 +73,13 @@ export default function SidebarNav() {
   const isAdmin = (user as any)?.customClaims?.admin === true;
 
   const menuItems = useMemo(() => {
-    let items = user ? [...authenticatedMenuItems] : [];
+    if (isUserLoading) return [];
+    let items = user ? [...authenticatedMenuItems] : [...publicMenuItems];
     if (user && isAdmin) {
       items.push(adminMenuItem);
     }
     return items;
-  }, [user, isAdmin]);
+  }, [user, isAdmin, isUserLoading]);
 
   const handleLogout = async () => {
     if (!auth) return;
@@ -121,6 +128,7 @@ export default function SidebarNav() {
                     <SidebarMenuButton
                     asChild
                     isActive={
+                        item.href === '/' ? pathname === item.href :
                         item.href === '/dashboard' ? pathname === item.href : pathname.startsWith(item.href)
                     }
                     tooltip={{ children: item.label }}
@@ -135,39 +143,57 @@ export default function SidebarNav() {
             </SidebarMenu>
         )}
       </SidebarContent>
-      {user && (
-         <SidebarFooter>
+      <SidebarFooter>
             <SidebarSeparator />
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="justify-start w-full p-2 h-auto">
-                    <div className="flex items-center gap-3">
-                        <Avatar className="h-8 w-8">
-                            <AvatarFallback>{user.email?.[0].toUpperCase()}</AvatarFallback>
-                        </Avatar>
-                        <div className="text-left leading-tight truncate">
-                            <p className="font-semibold text-sm truncate">{user.displayName || user.email}</p>
-                        </div>
+            {isUserLoading ? (
+                 <div className="flex items-center gap-3 p-2">
+                    <Skeleton className="h-8 w-8 rounded-full" />
+                    <div className="flex-1 space-y-1">
+                        <Skeleton className="h-4 w-24" />
                     </div>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56 mb-2" align="start">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link href={`/profile/${user.uid}`}>Profile</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/dashboard/settings">Settings</Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout}>
-                  Log out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                </div>
+            ) : user ? (
+                <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="justify-start w-full p-2 h-auto">
+                        <div className="flex items-center gap-3">
+                            <Avatar className="h-8 w-8">
+                                <AvatarFallback>{user.email?.[0].toUpperCase()}</AvatarFallback>
+                            </Avatar>
+                            <div className="text-left leading-tight truncate">
+                                <p className="font-semibold text-sm truncate">{user.displayName || user.email}</p>
+                            </div>
+                        </div>
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56 mb-2" align="start">
+                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                    <Link href={`/profile/${user.uid}`}><Users className="mr-2 h-4 w-4" />Profile</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                    <Link href="/dashboard/settings"><Settings className="mr-2 h-4 w-4" />Settings</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleLogout}>
+                    Log out
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+                </DropdownMenu>
+            ) : (
+                 <SidebarMenu>
+                    <SidebarMenuItem>
+                        <SidebarMenuButton asChild>
+                            <Link href="/login">
+                                <Users />
+                                <span>Login / Sign Up</span>
+                            </Link>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                </SidebarMenu>
+            )}
         </SidebarFooter>
-      )}
     </>
   );
 }
