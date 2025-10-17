@@ -2,8 +2,7 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
-import { useCollection, useFirebase, useMemoFirebase, useUser } from '@/firebase';
-import { collection, query, DocumentData } from 'firebase/firestore';
+import { useSafeCollection } from '@/hooks/use-safe-collection';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -18,20 +17,17 @@ import TrackCard from '@/components/catalog/track-card';
 import { Track } from '@/store/music-player-store';
 import { useOnboarding } from '@/hooks/use-onboarding';
 import { useSearchParams } from 'next/navigation';
+import { useUser } from '@/firebase';
 
 export default function CatalogPage() {
-  const { firestore } = useFirebase(); 
   const { user } = useUser();
   const searchParams = useSearchParams();
   
-  // The useCollection hook now automatically applies security rules.
-  // We just need to define the base collection we're interested in.
-  const worksQuery = useMemoFirebase(() => {
-    if (!firestore || !user) return null;
-    return query(collection(firestore, 'works'));
-  }, [firestore, user]);
-  
-  const { data: works, isLoading } = useCollection<DocumentData>(worksQuery);
+  // Use the new, secure hook which automatically filters by user ID.
+  const { data: works, isLoading } = useSafeCollection<Track>(
+    'works',
+    { artistId: user?.uid }
+  );
 
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
   const [selectedGenre, setSelectedGenre] = useState('All');
@@ -41,7 +37,7 @@ export default function CatalogPage() {
   const genres = useMemo(() => {
     if (!works) return [];
     const allGenres = works.map(work => work.genre).filter(Boolean);
-    return ['All', ...Array.from(new Set(allGenres))];
+    return ['All', ...Array.from(new Set(allGenres as string[]))];
   }, [works]);
 
   useEffect(() => {
