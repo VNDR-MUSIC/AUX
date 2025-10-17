@@ -20,26 +20,27 @@ export async function createVsdTransaction(params: CreateVsdTransactionParams): 
 
     try {
         const { db } = await getFirebaseAdmin();
-        const walletRef = doc(db, 'wallets', userId);
+        // The transaction now operates on the main user document
+        const userRef = doc(db, 'users', userId); 
         const vsdTransactionsCollection = collection(db, 'vsd_transactions');
 
         await runTransaction(db, async (transaction) => {
-            const walletDoc = await transaction.get(walletRef);
-            if (!walletDoc.exists()) {
-                throw new Error("User wallet does not exist!");
+            const userDoc = await transaction.get(userRef);
+            if (!userDoc.exists()) {
+                throw new Error("User document does not exist!");
             }
 
-            const currentBalance = walletDoc.data().vsdLiteBalance || 0;
+            const currentBalance = userDoc.data().vsdBalance || 0;
             const newBalance = currentBalance + amount;
 
             if (newBalance < 0) {
                 throw new Error("Insufficient VSD-lite balance for this transaction.");
             }
 
-            // Update user's balance in their wallet
-            transaction.update(walletRef, { vsdLiteBalance: newBalance });
+            // Update user's balance directly on their user document
+            transaction.update(userRef, { vsdBalance: newBalance });
 
-            // Create a new transaction document for the ledger
+            // Create a new transaction document for the ledger (this remains unchanged)
             const transactionRef = doc(vsdTransactionsCollection);
             transaction.set(transactionRef, {
                 userId,
@@ -53,7 +54,6 @@ export async function createVsdTransaction(params: CreateVsdTransactionParams): 
         });
 
         revalidatePath('/dashboard'); // Revalidate to show new balance
-        revalidatePath('/dashboard/wallet');
         return { success: true, message: 'Transaction completed successfully.' };
 
     } catch (error: any) {
@@ -70,23 +70,25 @@ export async function claimDailyTokensAction(userId: string): Promise<{ message:
 
   try {
     const { db } = await getFirebaseAdmin();
-    const walletRef = doc(db, 'wallets', userId);
+    // The transaction now operates on the main user document
+    const userRef = doc(db, 'users', userId);
     
     const today = new Date().toISOString().split('T')[0];
 
     // Use a transaction to ensure atomicity
     const result = await runTransaction(db, async (transaction) => {
-      const walletDoc = await transaction.get(walletRef);
-      if (!walletDoc.exists()) {
-        throw new Error("User wallet not found.");
+      const userDoc = await transaction.get(userRef);
+      if (!userDoc.exists()) {
+        throw new Error("User document not found.");
       }
 
-      if (walletDoc.data().dailyTokenClaimed === today) {
+      if (userDoc.data().dailyTokenClaimed === today) {
         return { success: false, message: 'You have already claimed your credits for today.' };
       }
 
       // If we are here, it means the tokens can be claimed.
-      transaction.update(walletRef, { dailyTokenClaimed: today });
+      // Update the claim date on the user document itself.
+      transaction.update(userRef, { dailyTokenClaimed: today });
       
       return { success: true, isNewClaim: true };
     });

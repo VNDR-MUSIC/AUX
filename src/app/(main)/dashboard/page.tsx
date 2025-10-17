@@ -62,19 +62,16 @@ export default function DashboardPage() {
   const userDocRef = useMemoFirebase(() => (firestore && user ? doc(firestore, 'users', user.uid) : null), [firestore, user]);
   const { data: userData, isLoading: isUserDocLoading } = useDoc(userDocRef);
 
-  const walletRef = useMemoFirebase(() => (firestore && user ? doc(firestore, 'wallets', user.uid) : null), [firestore, user]);
-  const { data: walletData, isLoading: isWalletLoading } = useDoc(walletRef);
-
-  const isLoading = isUserLoading || isUserDocLoading || isWalletLoading;
+  const isLoading = isUserLoading || isUserDocLoading;
   const username = userData?.username || user?.email?.split('@')[0];
 
   return (
     <div className="flex flex-col gap-8">
       <DashboardHeader username={username} isLoading={isLoading} />
-      <DashboardStats walletData={walletData} user={user} isLoading={isLoading} />
+      <DashboardStats userData={userData} user={user} isLoading={isLoading} />
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <RecentWorks user={user} isLoading={isLoading} />
-        <ActionCards walletData={walletData} user={user} isLoading={isLoading} />
+        <ActionCards userData={userData} user={user} isLoading={isLoading} />
       </div>
     </div>
   );

@@ -17,12 +17,12 @@ import type { DocumentData } from 'firebase/firestore';
 import { Skeleton } from '@/components/ui/skeleton';
 
 interface ActionCardsProps {
-  walletData: DocumentData | null;
+  userData: DocumentData | null;
   user: User | null;
   isLoading: boolean;
 }
 
-export default function ActionCards({ walletData, user, isLoading }: ActionCardsProps) {
+export default function ActionCards({ userData, user, isLoading }: ActionCardsProps) {
   const { toast } = useToast();
 
   const handleClaimTokens = async () => {
@@ -36,7 +36,7 @@ export default function ActionCards({ walletData, user, isLoading }: ActionCards
   };
 
   const today = new Date().toISOString().split('T')[0];
-  const canClaimTokens = walletData?.dailyTokenClaimed !== today;
+  const canClaimTokens = userData?.dailyTokenClaimed !== today;
 
   if (isLoading) {
       return (

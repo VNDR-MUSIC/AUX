@@ -12,7 +12,7 @@ import type { User } from 'firebase/auth';
 import type { DocumentData } from 'firebase/firestore';
 
 interface DashboardStatsProps {
-    walletData: DocumentData | null;
+    userData: DocumentData | null;
     user: User | null;
     isLoading: boolean;
 }
@@ -41,7 +41,7 @@ function StatCard({ title, value, icon, description, isLoading }: { title: strin
     );
 }
 
-export default function DashboardStats({ walletData, user, isLoading: isParentLoading }: DashboardStatsProps) {
+export default function DashboardStats({ userData, user, isLoading: isParentLoading }: DashboardStatsProps) {
   const { firestore } = useFirebase();
 
   const worksQuery = useMemoFirebase(() => (firestore && user ? query(collection(firestore, 'works'), where('artistId', '==', user.uid)) : null), [firestore, user]);
@@ -56,7 +56,7 @@ export default function DashboardStats({ walletData, user, isLoading: isParentLo
     <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
       <StatCard
         title="VSD-lite Balance"
-        value={walletData?.vsdLiteBalance ?? 0}
+        value={userData?.vsdBalance ?? 0}
         icon={<Icons.vsd className="h-4 w-4 text-muted-foreground" />}
         description="Used for platform services"
         isLoading={isLoading}

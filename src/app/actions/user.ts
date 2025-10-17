@@ -1,5 +1,5 @@
 
-'use server';
+"use server";
 
 import { z } from 'zod';
 import { getFirebaseAdmin } from '@/firebase/admin';
@@ -37,7 +37,7 @@ export async function signupAction(prevState: AuthState, formData: FormData): Pr
     const { db, auth: adminAuth } = await getFirebaseAdmin();
     const userCredential = await adminAuth.createUser({ email, password });
 
-    // Create user document in Firestore
+    // Create user document in Firestore, now including vsdBalance
     const userRef = doc(db, 'users', userCredential.uid);
     await setDoc(userRef, {
       id: userCredential.uid,
@@ -54,19 +54,11 @@ export async function signupAction(prevState: AuthState, formData: FormData): Pr
         legalEagle: false,
         settings: false,
       },
-      vsdBalance: 0, // Add vsdBalance directly to the user document
+      vsdBalance: 0, // Initialize balance directly on the user document
+      dailyTokenClaimed: null, // Track daily claims on user document
     });
 
-    // Create wallet document
-    const walletRef = doc(db, 'wallets', userCredential.uid);
-    await setDoc(walletRef, {
-        userId: userCredential.uid,
-        vsdLiteBalance: 0,
-        erc20Address: null,
-        dailyTokenClaimed: null, // Initialize as null
-    });
-
-    // Grant initial tokens via a transaction
+    // Grant initial tokens via a transaction (which now updates the user doc)
     await createVsdTransaction({
       userId: userCredential.uid,
       amount: 10,
