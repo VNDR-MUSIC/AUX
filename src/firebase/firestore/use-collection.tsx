@@ -71,7 +71,8 @@ export function useCollection<T = any>(
     }
 
     let finalQuery: Query<DocumentData> = originalQuery;
-    const collectionPath = (originalQuery as any)._query.path.segments.join('/');
+    // THIS IS THE DEFINITIVE FIX: Use the internal `_path` property which is reliable.
+    const collectionPath = (originalQuery as any)._path?.segments[0] ?? '';
     const ownerField = SECURED_COLLECTIONS[collectionPath];
 
     // If it's a secured collection and the user is NOT an admin, apply the security filter.
@@ -96,7 +97,7 @@ export function useCollection<T = any>(
       (err: FirestoreError) => {
         const contextualError = new FirestorePermissionError({
           operation: 'list',
-          path: (finalQuery as any)._query.path.segments.join('/'),
+          path: (finalQuery as any)._query?.path.segments.join('/') || collectionPath,
         });
 
         setError(contextualError);

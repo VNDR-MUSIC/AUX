@@ -2,7 +2,7 @@
 'use client';
 
 import { useUser, useFirebase, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, orderBy, Timestamp } from 'firebase/firestore';
+import { collection, query, orderBy, Timestamp, where } from 'firebase/firestore';
 import {
   Card,
   CardContent,
@@ -45,6 +45,7 @@ export default function WalletPage() {
   const { data: userData, isLoading: isUserDocLoading } = useDoc(userDocRef);
 
   // The useCollection hook now automatically applies where('userId', '==', user.uid)
+  // We only need to specify the collection and ordering.
   const transactionsQuery = useMemoFirebase(
     () =>
       firestore && user
