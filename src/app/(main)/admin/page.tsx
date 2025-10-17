@@ -14,18 +14,6 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 function AdminContent() {
-  // --- THIS CODE IS QUARANTINED ---
-  // The following query attempts to fetch ALL works from the database.
-  // This broad `list` query is blocked by Firestore security rules for all users,
-  // including admins, unless a specific rule allowing `allow list: if isAdmin();`
-  // is successfully deployed for the `works` collection. This query has been
-  // a persistent source of "Missing or insufficient permissions" errors and is now disabled.
-  //
-  // const { firestore } = useFirebase();
-  // const worksQuery = useMemoFirebase(() => (firestore ? query(collection(firestore, 'works')) : null), [firestore]);
-  // const { data: works, isLoading: areWorksLoading } = useCollection<Track>(worksQuery);
-  // --- END QUARANTINED CODE ---
-
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('all');
 
