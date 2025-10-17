@@ -21,6 +21,7 @@ import { getKnowledgeBase } from '../tools/get-knowledge-base-tool';
 import { getArtistTracks } from '../tools/get-artist-tracks-tool';
 import { registerWorkWithPRO } from '../tools/register-work-with-pro-tool';
 import { updateLicenseRequestStatus } from '../tools/update-license-request-status-tool';
+import { postToSocialMedia } from '../tools/post-to-social-media-tool';
 import { z } from 'zod';
 
 export async function symbiChat(input: SymbiChatInput): Promise<SymbiChatOutput> {
@@ -39,6 +40,7 @@ You have access to a suite of tools to answer user questions and perform actions
 - Use 'getArtistTracks' to answer questions about the user's music catalog, like play counts or their most popular songs.
 - Use 'registerWorkWithPRO' when a user explicitly asks you to register one of their works with a Performing Rights Organization (e.g., ASCAP, BMI).
 - Use 'updateLicenseRequestStatus' when a user wants to approve or reject a specific license request. You will need the request ID.
+- Use 'postToSocialMedia' when a user asks you to post a message to their social media channels to promote their music or share an update.
 
 You are having a conversation with a user. Use the provided conversation history to maintain context and avoid asking for information the user has already provided. If you don't know an answer, admit it and offer to find out or point to support resources.
 
@@ -58,7 +60,7 @@ const symbiChatFlow = ai.defineFlow(
     const prompt = ai.definePrompt({
       name: 'symbiChatPrompt',
       system: systemPrompt,
-      tools: [getKnowledgeBase, getUserProfile, getArtistTracks, registerWorkWithPRO, updateLicenseRequestStatus],
+      tools: [getKnowledgeBase, getUserProfile, getArtistTracks, registerWorkWithPRO, updateLicenseRequestStatus, postToSocialMedia],
       input: {
         schema: z.object({
           history: z.any(),
