@@ -12,7 +12,7 @@ export default function MiuSlideOut() {
   const [isOpen, setIsOpen] = useState(false);
 
   const variants = {
-    closed: { x: '-240px' }, // Width of content (288px) minus visible area (48px)
+    closed: { x: '-215px' }, // Width of content (288px) minus visible area (73px)
     open: { x: 0 },
   };
 
