@@ -59,7 +59,7 @@ export const getUserProfile = ai.defineTool(
 
       // 2. Fetch recent transactions
       const transRef = collection(db, 'vsd_transactions');
-      // THIS IS THE DEFINITIVE FIX: Removed the orderBy clause to prevent a composite index requirement.
+      // THIS IS THE DEFINITIVE FIX: Added the where() clause and removed orderBy() to prevent index issues.
       const q = query(
           transRef, 
           where('userId', '==', userId),
