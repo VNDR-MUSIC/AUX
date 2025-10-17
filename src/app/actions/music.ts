@@ -72,13 +72,13 @@ export async function uploadTrackAction(
            coverArtUrl = `https://picsum.photos/seed/${trackTitle.replace(/\s/g, '-')}/400/400`;
         }
         
-        const newWorkRef = await addDoc(worksCollection, {
+        const newWorkData = {
             title: trackTitle,
             artistId: artistId,
             artistName: artistName,
             genre: genre,
             description: description,
-            uploadDate: serverTimestamp(),
+            uploadDate: serverTimestamp(), // This value exists only on the server
             status: "processing", // Initial status
             trackUrl: demoTrackUrl,
             coverArtUrl: coverArtUrl,
@@ -90,7 +90,9 @@ export async function uploadTrackAction(
             acrCloudFingerprinted: false,
             enrichedMetadata: null,
             musoExposureScore: null,
-        });
+        };
+
+        const newWorkRef = await addDoc(worksCollection, newWorkData);
 
         // Start the enrichment process asynchronously (don't block the UI response)
         enrichWork(newWorkRef.id, artistName, trackTitle);
@@ -98,7 +100,9 @@ export async function uploadTrackAction(
         revalidatePath('/dashboard');
         revalidatePath('/dashboard/my-works');
         revalidatePath(`/profile/${artistId}`);
-
+        
+        // Return a simple, serializable object. Do NOT return the newWorkData object
+        // because it contains serverTimestamp(), which is not serializable.
         return {
             message: "Work uploaded! Autonomous processing has begun. Check 'My Works' for status updates.",
         };
@@ -385,3 +389,5 @@ export async function rejectLicenseRequestAction(requestId: string): Promise<{ s
     return { success: false, message: 'Failed to reject request.' };
   }
 }
+
+    
