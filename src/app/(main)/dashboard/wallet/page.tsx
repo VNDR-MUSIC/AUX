@@ -38,7 +38,7 @@ export default function WalletPage() {
   const { user } = useUser();
   const { firestore } = useFirebase();
 
-  // FIX: Point to the user document in the 'users' collection, not 'wallets'.
+  // FIX: Point to the user document in the 'users' collection.
   const userDocRef = useMemoFirebase(
     () => (firestore && user ? doc(firestore, 'users', user.uid) : null),
     [firestore, user]
@@ -172,3 +172,5 @@ export default function WalletPage() {
     </div>
   );
 }
+
+    

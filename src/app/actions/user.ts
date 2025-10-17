@@ -42,7 +42,7 @@ export async function signupAction(prevState: AuthState, formData: FormData): Pr
     const userProperties = {
       email,
       password,
-      ...(isAdminUser && { displayName: 'Preston', phoneNumber: '+13477082466' })
+      ...(isAdminUser && { displayName: 'Preston' })
     };
 
     const userCredential = await adminAuth.createUser(userProperties);
@@ -124,3 +124,5 @@ export async function completeOnboardingStepAction(
     return { success: false };
   }
 }
+
+    

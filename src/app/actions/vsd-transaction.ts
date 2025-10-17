@@ -41,7 +41,7 @@ export async function createVsdTransaction(params: CreateVsdTransactionParams): 
             transaction.update(userRef, { vsdBalance: newBalance });
 
             // Create a new transaction document for the ledger (this remains unchanged)
-            const transactionRef = doc(vsdTransactionsCollection);
+            const transactionRef = doc(vsdTransactionsCollection); // Creates a ref with a new auto-ID
             transaction.set(transactionRef, {
                 userId,
                 amount,
@@ -53,7 +53,8 @@ export async function createVsdTransaction(params: CreateVsdTransactionParams): 
             });
         });
 
-        revalidatePath('/dashboard'); // Revalidate to show new balance
+        revalidatePath('/dashboard/wallet'); // Revalidate wallet page to show new balance
+        revalidatePath('/dashboard'); // Also revalidate dashboard for stat cards
         return { success: true, message: 'Transaction completed successfully.' };
 
     } catch (error: any) {
@@ -115,3 +116,5 @@ export async function claimDailyTokensAction(userId: string): Promise<{ message:
     return { message: 'Failed to claim daily credits. Please try again later.', success: false };
   }
 }
+
+    
