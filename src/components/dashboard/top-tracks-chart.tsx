@@ -22,18 +22,19 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export default function TopTracksChart({ data }: TopTracksChartProps) {
-  const chartData = data.slice(0, 6).map(track => ({
-    name: track.title.length > 15 ? `${track.title.substring(0, 15)}...` : track.title,
-    plays: track.plays || 0,
-  }));
-  
-  if (data.length === 0) {
+  // Ensure data exists and has items before processing
+  if (!data || data.length === 0) {
     return (
-      <div className="flex items-center justify-center h-full text-muted-foreground">
+      <div className="flex items-center justify-center h-full text-muted-foreground min-h-[200px]">
         No track data available to display chart.
       </div>
     );
   }
+  
+  const chartData = data.slice(0, 6).map(track => ({
+    name: track.title.length > 15 ? `${track.title.substring(0, 15)}...` : track.title,
+    plays: track.plays || 0,
+  }));
 
   return (
     <ChartContainer config={chartConfig} className="min-h-[200px] w-full h-full">
@@ -54,6 +55,7 @@ export default function TopTracksChart({ data }: TopTracksChartProps) {
           axisLine={false}
           tick={{ fontSize: 12 }}
           interval={0}
+          width={100}
         />
         <XAxis type="number" hide />
         <ChartTooltip cursor={{ fill: "hsl(var(--muted)/0.5)"}} content={<ChartTooltipContent />} />

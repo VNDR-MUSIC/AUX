@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useUser } from "@/firebase";
+import { useUser, useCollection, useMemoFirebase } from "@/firebase";
 import { useOnboarding } from "@/hooks/use-onboarding";
 import DashboardStats from '@/components/dashboard/dashboard-stats';
 import ActionCards from '@/components/dashboard/action-cards';
@@ -9,9 +9,20 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Upload } from "lucide-react";
-import { useDoc, useMemoFirebase } from "@/firebase";
-import { doc } from "firebase/firestore";
+import { useDoc } from "@/firebase";
+import { doc, collection, query, where, orderBy, limit } from "firebase/firestore";
 import { useFirebase } from "@/firebase/provider";
+import RecentWorks from "@/components/dashboard/recent-works";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import TopTracksChart from "@/components/dashboard/top-tracks-chart";
+import { Track } from "@/store/music-player-store";
+import RecommendationsClient from "@/components/dashboard/recommendations-client";
 
 function DashboardHeader({
   username,
@@ -61,7 +72,20 @@ export default function DashboardPage() {
   const userDocRef = useMemoFirebase(() => (firestore && user ? doc(firestore, 'users', user.uid) : null), [firestore, user]);
   const { data: userData, isLoading: isUserDocLoading } = useDoc(userDocRef);
 
-  const isLoading = isUserLoading || isUserDocLoading;
+  // This is the critical fix. The query now explicitly waits for `user.uid` to be available.
+  const worksQuery = useMemoFirebase(() =>
+    (firestore && user?.uid) // Check for user.uid specifically
+      ? query(
+          collection(firestore, 'works'),
+          where('artistId', '==', user.uid),
+          orderBy('plays', 'desc'),
+        )
+      : null, // Return null if firestore or user.uid is not ready
+  [firestore, user?.uid]); // Depend on user.uid
+
+  const { data: topWorks, isLoading: areWorksLoading } = useCollection<Track>(worksQuery);
+  
+  const isLoading = isUserLoading || isUserDocLoading || areWorksLoading;
   const username = userData?.username || user?.email?.split('@')[0];
 
   return (
@@ -69,8 +93,39 @@ export default function DashboardPage() {
       <DashboardHeader username={username} isLoading={isLoading} />
       <DashboardStats userData={userData} isLoading={isLoading} />
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <div className="col-span-4 lg:col-span-4">
-           <ActionCards userData={userData} user={user} isLoading={isLoading} />
+         <Card className="lg:col-span-3">
+          <CardHeader>
+            <CardTitle>AI Recommendations</CardTitle>
+            <CardDescription>
+              Personalized suggestions based on your listening habits.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <RecommendationsClient />
+          </CardContent>
+        </Card>
+        <Card className="lg:col-span-4">
+            <CardHeader>
+                <CardTitle>Top Performing Tracks</CardTitle>
+                <CardDescription>
+                    Your most played tracks this month.
+                </CardDescription>
+            </CardHeader>
+            <CardContent className="pl-2">
+                {isLoading ? (
+                    <div className="flex items-center justify-center h-full">
+                       <Skeleton className="h-[200px] w-full" />
+                    </div>
+                ) : (
+                    <TopTracksChart data={topWorks || []} />
+                )}
+            </CardContent>
+        </Card>
+        <div className="lg:col-span-7">
+           <RecentWorks user={user} isLoading={isLoading} />
+        </div>
+        <div className="lg:col-span-7">
+            <ActionCards userData={userData} user={user} isLoading={isLoading} />
         </div>
       </div>
     </div>
