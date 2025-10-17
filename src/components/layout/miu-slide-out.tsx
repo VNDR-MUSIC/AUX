@@ -6,56 +6,91 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { GraduationCap, ChevronLeft, ChevronRight } from 'lucide-react';
+import { GraduationCap, X } from 'lucide-react';
+
+const panelVariants = {
+  hidden: { x: '-100%' },
+  visible: { x: 0 },
+};
 
 export default function MiuSlideOut() {
   const [isOpen, setIsOpen] = useState(false);
 
-  const variants = {
-    closed: { x: '-215px' }, // Width of content (288px) minus visible area (73px)
-    open: { x: 0 },
-  };
-
   return (
-    <motion.div
-      className="fixed top-1/2 -translate-y-1/2 left-0 z-40"
-      initial="closed"
-      animate={isOpen ? 'open' : 'closed'}
-      variants={variants}
-      transition={{ type: 'spring', stiffness: 200, damping: 25 }}
-    >
-      <div className="relative flex items-center">
-        {/* Main Content Box */}
-        <div className="bg-card p-6 rounded-r-lg shadow-lg w-72 border-y border-r border-border flex flex-col items-center text-center">
-          <div className="relative h-20 w-40 mb-4">
-            <Image 
+    <>
+      {/* Clickable Logo Tab */}
+      <button
+        onClick={() => setIsOpen(true)}
+        className="fixed top-1/2 -translate-y-1/2 left-0 z-40 h-28 w-24 rounded-r-lg bg-card border-y border-r border-border hover:bg-muted transition-colors duration-300 group"
+        aria-label="Open Music Industry University panel"
+      >
+        <div className="absolute top-1/2 -translate-y-1/2 left-0 h-20 w-full transform transition-transform duration-300 group-hover:scale-105">
+           <Image 
               src="https://i.ibb.co/4gJqBfM8/MIU-logo-wt.png" 
               alt="MIU Logo" 
               layout="fill" 
               className="object-contain" 
             />
-          </div>
-          <h3 className="font-headline text-lg font-semibold">Music Industry University</h3>
-          <p className="text-sm text-muted-foreground mt-2 mb-4">
-            Master the business of music with courses and resources from industry experts.
-          </p>
-          <Button asChild size="sm" className="w-full">
-            <Link href="https://musicindustry.university" target="_blank" rel="noopener noreferrer">
-              <GraduationCap className="mr-2 h-4 w-4" />
-              Explore Courses
-            </Link>
-          </Button>
         </div>
+      </button>
 
-        {/* Clickable Tab Handle */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="absolute top-1/2 -translate-y-1/2 right-0 translate-x-full h-24 w-12 bg-card rounded-r-lg border-y border-r border-border flex items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors"
-          aria-label={isOpen ? 'Close MIU tab' : 'Open MIU tab'}
-        >
-          {isOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
-        </button>
-      </div>
-    </motion.div>
+      {/* Slide-out Content Panel */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            className="fixed inset-0 z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            {/* Backdrop */}
+            <div
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              onClick={() => setIsOpen(false)}
+            />
+
+            {/* Content */}
+            <motion.div
+              className="fixed top-0 left-0 h-full w-72 bg-card border-r border-border shadow-2xl flex flex-col p-6"
+              variants={panelVariants}
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            >
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => setIsOpen(false)} 
+                className="absolute top-4 right-4"
+              >
+                <X className="h-5 w-5" />
+              </Button>
+              
+              <div className="flex flex-col items-center text-center mt-8">
+                <div className="relative h-20 w-40 mb-4">
+                  <Image 
+                    src="https://i.ibb.co/4gJqBfM8/MIU-logo-wt.png" 
+                    alt="MIU Logo" 
+                    layout="fill" 
+                    className="object-contain" 
+                  />
+                </div>
+                <h3 className="font-headline text-lg font-semibold">Music Industry University</h3>
+                <p className="text-sm text-muted-foreground mt-2 mb-6">
+                  Master the business of music with courses and resources from industry experts.
+                </p>
+                <Button asChild size="sm" className="w-full">
+                  <Link href="https://musicindustry.university" target="_blank" rel="noopener noreferrer" onClick={() => setIsOpen(false)}>
+                    <GraduationCap className="mr-2 h-4 w-4" />
+                    Explore Courses
+                  </Link>
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
