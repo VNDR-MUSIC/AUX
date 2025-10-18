@@ -45,7 +45,7 @@ export default function ManageLicenseRequests() {
   const formatDate = (timestamp: Timestamp | Date | any) => {
       // The data from the safe collection hook is JSON, so the timestamp will be a string
       if (!timestamp) return 'N/A';
-      const date = new Date(timestamp.seconds ? timestamp.toDate() : timestamp);
+      const date = new Date(timestamp);
       return date.toLocaleDateString();
   }
 
