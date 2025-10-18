@@ -1,15 +1,13 @@
 
 'use client';
 
-import { useUser, useFirebase, useDoc, useMemoFirebase } from '@/firebase';
-import { doc } from 'firebase/firestore';
+import { useUser } from '@/firebase';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ShieldX, Link as LinkIcon, HardHat, Crown } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { useMemo } from 'react';
 
 function AdminContent() {
   return (
@@ -34,7 +32,7 @@ function AdminContent() {
 export default function AdminPage() {
   const { user, isUserLoading: isAuthLoading } = useUser();
   
-  // Directly use the property attached in the Firebase provider
+  // The admin property is now correctly attached to the user object by the Firebase provider.
   const isAdmin = (user as any)?.admin === true;
   const isSuperAdmin = user?.email === 'support@vndrmusic.com';
   

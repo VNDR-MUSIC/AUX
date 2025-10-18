@@ -1,8 +1,7 @@
 
 'use client';
 
-import { useUser, useFirebase, useDoc, useMemoFirebase } from '@/firebase';
-import { doc } from 'firebase/firestore';
+import { useUser } from '@/firebase';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ShieldX, KeyRound, Copy, Link as LinkIcon } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -12,16 +11,12 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import Link from 'next/link';
 
 export default function SubsidiaryPage() {
-  const { user } = useUser();
-  const { firestore } = useFirebase();
+  const { user, isUserLoading } = useUser();
   const { toast } = useToast();
 
   const apiKey = process.env.NEXT_PUBLIC_VSD_INTERNAL_API_KEY || "supersecretkey";
 
-  // Admin role check
-  const adminRef = useMemoFirebase(() => (firestore && user ? doc(firestore, `roles_admin/${user.uid}`) : null), [firestore, user]);
-  const { data: adminDoc, isLoading: isAdminLoading } = useDoc(adminRef);
-  const isAdmin = !!adminDoc;
+  const isAdmin = (user as any)?.admin === true;
 
   const handleCopyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -49,7 +44,7 @@ const result = await response.json();
 console.log(result);
   `;
 
-  if (isAdminLoading) {
+  if (isUserLoading) {
       return (
         <div className="container mx-auto py-8">
             <Skeleton className="h-8 w-48 mb-8" />

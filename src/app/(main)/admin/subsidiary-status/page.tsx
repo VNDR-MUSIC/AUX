@@ -4,8 +4,7 @@
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useUser, useFirebase, useDoc, useMemoFirebase } from '@/firebase';
-import { doc } from 'firebase/firestore';
+import { useUser } from '@/firebase';
 import { Loader2, ShieldX, Signal, SignalHigh, SignalLow } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { subsidiaries } from '@/lib/subsidiaries';
@@ -20,16 +19,13 @@ interface SubsidiaryStatus {
 }
 
 export default function SubsidiaryStatusPage() {
-  const { user } = useUser();
-  const { firestore } = useFirebase();
+  const { user, isUserLoading } = useUser();
 
   const [statuses, setStatuses] = useState<SubsidiaryStatus[]>(
     subsidiaries.map(sub => ({ id: sub.id, status: 'pending' }))
   );
 
-  const adminRef = useMemoFirebase(() => (firestore && user ? doc(firestore, `roles_admin/${user.uid}`) : null), [firestore, user]);
-  const { data: adminDoc, isLoading: isAdminLoading } = useDoc(adminRef);
-  const isAdmin = !!adminDoc;
+  const isAdmin = (user as any)?.admin === true;
 
   useEffect(() => {
     // We don't have real health check endpoints, so we'll simulate them.
@@ -64,7 +60,7 @@ export default function SubsidiaryStatusPage() {
     }
   };
   
-  if (isAdminLoading) {
+  if (isUserLoading) {
     return (
       <div className="container mx-auto py-8">
         <Skeleton className="h-96 w-full" />
