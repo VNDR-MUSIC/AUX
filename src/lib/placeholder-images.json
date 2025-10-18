@@ -3,127 +3,127 @@
     {
       "id": "hero-1",
       "description": "A cheering crowd at a music concert",
-      "imageUrl": "https://picsum.photos/seed/hero-a/1920/1080",
+      "imageUrl": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxtdXNpYyUyMGNvbmNlcnR8ZW58MHx8fHwxNzYwNzMyMzg3fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "music concert"
     },
     {
       "id": "hero-2",
       "description": "Abstract visualization of sound waves",
-      "imageUrl": "https://picsum.photos/seed/hero-b/1920/1080",
+      "imageUrl": "https://images.unsplash.com/photo-1673260839682-87746c4d28d5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxhdWRpbyUyMHNvdW5kd2F2ZXxlbnwwfHx8fDE3NjA3NDk2NTV8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "audio soundwave"
     },
     {
       "id": "hero-3",
       "description": "A music producer working at a mixing console",
-      "imageUrl": "https://picsum.photos/seed/hero-c/1920/1080",
+      "imageUrl": "https://images.unsplash.com/photo-1618233981844-b8dc84829894?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxhdWRpbyUyMHByb2R1Y3Rpb258ZW58MHx8fHwxNzYwNzQ5NjU1fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "audio production"
     },
     {
       "id": "hero-4",
       "description": "A guitarist performing on stage with dramatic lighting",
-      "imageUrl": "https://picsum.photos/seed/hero-d/1920/1080",
+      "imageUrl": "https://images.unsplash.com/photo-1706990492474-0f9865925c5f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxtdXNpY2lhbiUyMHN0YWdlfGVufDB8fHx8MTc2MDc0OTY1Nnww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "musician stage"
     },
     {
       "id": "hero-5",
       "description": "A close-up of a vinyl record playing on a turntable",
-      "imageUrl": "https://picsum.photos/seed/hero-e/1920/1080",
+      "imageUrl": "https://images.unsplash.com/photo-1669801158950-f663cf15298c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHx2aW55bCUyMHJlY29yZHxlbnwwfHx8fDE3NjA3MzQ1NjJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "vinyl record"
     },
     {
       "id": "hero-6",
-      "description": "A person listening to music with headphones",
-      "imageUrl": "https://picsum.photos/seed/hero-f/1920/1080",
+      "description": "A person listening to music with headphones, against a city skyline",
+      "imageUrl": "https://images.unsplash.com/photo-1693841114924-92ac9abde8f6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8bXVzaWMlMjBoZWFkcGhvbmVzfGVufDB8fHx8MTc2MDc0OTY1NXww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "music headphones"
     },
     {
       "id": "hero-7",
-      "description": "A futuristic visual with neon music notes",
-      "imageUrl": "https://picsum.photos/seed/hero-g/1920/1080",
+      "description": "A futuristic visual with neon music notes and equalizers",
+      "imageUrl": "https://images.unsplash.com/photo-1516113954001-34f54448a01f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxmdXR1cmlzdGljJTIwbXVzaWN8ZW58MHx8fHwxNzYwNzQxNDE3fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "futuristic music"
     },
     {
       "id": "album-1",
-      "description": "Abstract colorful album art",
-      "imageUrl": "https://picsum.photos/seed/ab1/400/400",
+      "description": "Abstract colorful album art for an electronic track",
+      "imageUrl": "https://images.unsplash.com/photo-1690018592059-d2e0a66cceb3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8ZWxlY3Ryb25pYyUyMGFsYnVtfGVufDB8fHx8MTc2MDc0OTY1Nnww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "electronic album"
     },
     {
       "id": "album-2",
-      "description": "Synthwave sunset over a city",
-      "imageUrl": "https://picsum.photos/seed/ab2/400/400",
+      "description": "Synthwave sunset over a retro-futuristic city for a synthwave track",
+      "imageUrl": "https://images.unsplash.com/photo-1739287818734-7f2edf965a88?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxzeW50aHdhdmUlMjBhbGJ1bXxlbnwwfHx8fDE3NjA3NDk2NTV8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "synthwave album"
     },
     {
       "id": "album-3",
-      "description": "An acoustic guitar leaning against a rustic wall",
-      "imageUrl": "https://picsum.photos/seed/ab3/400/400",
+      "description": "An acoustic guitar leaning against a rustic wall for an ambient track",
+      "imageUrl": "https://images.unsplash.com/photo-1747654805004-0d7e1b1f630c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxhbWJpZW50JTIwYWxidW18ZW58MHx8fHwxNzYwNzQ5NjU1fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "ambient album"
     },
     {
       "id": "album-4",
-      "description": "A DJ setup with turntables and a mixer",
-      "imageUrl": "https://picsum.photos/seed/ab4/400/400",
+      "description": "A DJ setup with turntables and a mixer for a future funk track",
+      "imageUrl": "https://images.unsplash.com/photo-1620704087652-f4f843f04e6b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxkaiUyMHR1cm50YWJsZXN8ZW58MHx8fHwxNzYwNzMzMzE1fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "dj turntables"
     },
     {
       "id": "album-5",
-      "description": "Close-up of piano keys",
-      "imageUrl": "https://picsum.photos/seed/ab5/400/400",
+      "description": "Close-up of synthesizer keys with moody lighting",
+      "imageUrl": "https://images.unsplash.com/photo-1586042287090-1caed0885459?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxzeW50aGVzaXplciUyMGtleXN8ZW58MHx8fHwxNzYwNzQ5NjU1fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "synthesizer keys"
     },
     {
       "id": "album-6",
-      "description": "Colorful hip hop graffiti on a brick wall",
-      "imageUrl": "https://picsum.photos/seed/ab6/400/400",
+      "description": "Colorful hip hop graffiti on a brick wall for a funk track",
+      "imageUrl": "https://images.unsplash.com/photo-1755181032651-46426afc9604?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxmdW5rJTIwYWxidW18ZW58MHx8fHwxNzYwNzQ5NjU1fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "funk album"
     },
     {
       "id": "licensing-header",
-      "description": "Person signing a music contract",
-      "imageUrl": "https://picsum.photos/seed/license/1200/300",
+      "description": "A person signing a music contract with a fountain pen",
+      "imageUrl": "https://images.unsplash.com/photo-1648461513577-8521ecdf50c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxtdXNpYyUyMGNvbnRyYWN0fGVufDB8fHx8MTc2MDc0OTY1Nnww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "music contract"
     },
     {
       "id": "user-avatar-1",
-      "description": "User avatar 1",
-      "imageUrl": "https://picsum.photos/seed/u1/100/100",
+      "description": "Portrait of a male musician",
+      "imageUrl": "https://images.unsplash.com/photo-1593459866242-426f7768f3dc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxtdXNpY2lhbiUyMHBvcnRyYWl0fGVufDB8fHx8MTc2MDc0MTQxN3ww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "musician portrait"
     },
     {
       "id": "user-avatar-2",
-      "description": "User avatar 2",
-      "imageUrl": "https://picsum.photos/seed/u2/100/100",
+      "description": "Profile of a female music producer",
+      "imageUrl": "https://images.unsplash.com/photo-1606943537055-6cef4e5d3b68?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwcm9kdWNlciUyMHByb2ZpbGV8ZW58MHx8fHwxNzYwNzQ5NjU1fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "producer profile"
     },
     {
       "id": "midnight-bloom",
-      "description": "Midnight Bloom track image",
-      "imageUrl": "https://picsum.photos/seed/track1/40/40",
+      "description": "Album art for 'Midnight Bloom' synthwave track",
+      "imageUrl": "https://images.unsplash.com/photo-1658232190602-be6cd5b976f1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxzeW50aHdhdmUlMjBhcnR8ZW58MHx8fHwxNzYwNzQ5NjU2fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "synthwave art"
     },
     {
       "id": "crystal-caverns",
-      "description": "Crystal Caverns track image",
-      "imageUrl": "https://picsum.photos/seed/track2/40/40",
+      "description": "Pixel art for 'Crystal Caverns' track",
+      "imageUrl": "https://images.unsplash.com/photo-1634320714682-ae8b9c9cee60?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxwaXhlbCUyMGFydHxlbnwwfHx8fDE3NjA3MzcxMzl8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "pixel art"
     },
     {
       "id": "neon-drive",
-      "description": "Neon Drive track image",
-      "imageUrl": "https://picsum.photos/seed/track3/40/40",
+      "description": "Album art for 'Neon Drive' future funk track",
+      "imageUrl": "https://images.unsplash.com/photo-1754995823884-46f604cd1303?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxmdXR1cmUlMjBmdW5rfGVufDB8fHx8MTc2MDc0OTY1Nnww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "future funk"
     },
     {
       "id": "lunar-tides",
-      "description": "Lunar Tides track image",
-      "imageUrl": "https://picsum.photos/seed/track4/40/40",
+      "description": "Cosmic art for 'Lunar Tides' track",
+      "imageUrl": "https://images.unsplash.com/photo-1754851541354-081c37f1316c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxjb3NtaWMlMjBhcnR8ZW58MHx8fHwxNzYwNzQ5NjU1fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "cosmic art"
     },
     {
       "id": "streetlight-sonata",
-      "description": "Streetlight Sonata track image",
-      "imageUrl": "https://picsum.photos/seed/track5/40/40",
+      "description": "Urban synth art for 'Streetlight Sonata' track",
+      "imageUrl": "https://images.unsplash.com/photo-1561344640-2453889cde5b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHx1cmJhbiUyMHN5bnRofGVufDB8fHx8MTc2MDc0OTY1NXww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "urban synth"
     }
   ]
