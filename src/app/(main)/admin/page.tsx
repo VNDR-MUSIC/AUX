@@ -31,11 +31,11 @@ function AdminContent() {
 
 export default function AdminPage() {
   const { user, isUserLoading: isAuthLoading } = useUser();
-  
+
   // The admin property is now correctly attached to the user object by the Firebase provider.
   const isAdmin = (user as any)?.admin === true;
   const isSuperAdmin = user?.email === 'support@vndrmusic.com';
-  
+
   const isLoading = isAuthLoading;
 
   if (isLoading) {

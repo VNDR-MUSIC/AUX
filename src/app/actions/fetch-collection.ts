@@ -18,7 +18,7 @@ export async function fetchCollectionAction({
     const cookieStore = cookies();
     const idToken = cookieStore.get('firebaseIdToken')?.value;
     const { db, auth: adminAuth } = await getFirebaseAdmin();
-    
+
     let decodedToken;
     let uid;
     let isAdmin = false;
@@ -49,9 +49,9 @@ export async function fetchCollectionAction({
         // Return empty array if user is not logged in for protected collections
         return [];
     }
-    
+
     let query: Query<DocumentData> = db.collection(collectionPath);
-    
+
     // Non-admins have specific rules applied
     if (!isAdmin) {
         if (collectionPath === 'license_requests') {
@@ -67,7 +67,7 @@ export async function fetchCollectionAction({
              const requestsById = new Map();
              artistSnap.docs.forEach(doc => requestsById.set(doc.id, { id: doc.id, ...doc.data() }));
              requestorSnap.docs.forEach(doc => requestsById.set(doc.id, { id: doc.id, ...doc.data() }));
-             
+
              return Array.from(requestsById.values());
 
         } else if (collectionPath === 'works') {
@@ -97,14 +97,14 @@ export async function fetchCollectionAction({
              }
         }
     }
-    
+
     // Apply any additional filters passed from the client for admins
     // or for collections that don't have the strict non-admin rules above
     if (filters) {
       for (const key in filters) {
         // Skip artistId filter for non-admins on 'works' as it's already applied
         if (!isAdmin && collectionPath === 'works' && key === 'artistId') continue;
-        
+
         if (Object.prototype.hasOwnProperty.call(filters, key)) {
           if (filters[key] === null || filters[key] === undefined) continue;
           query = query.where(key, '==', filters[key]);

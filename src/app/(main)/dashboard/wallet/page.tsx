@@ -61,7 +61,7 @@ export default function WalletPage() {
       minute: '2-digit',
     }).format(date);
   };
-  
+
   const getTransactionIcon = (amount: number) => {
     return amount > 0 ? (
       <div className="h-8 w-8 rounded-full bg-green-500/20 text-green-500 flex items-center justify-center">
@@ -96,7 +96,7 @@ export default function WalletPage() {
           Manage your VSD-lite balance and view your transaction history.
         </p>
       </div>
-      
+
       <div className="grid gap-8 md:grid-cols-3">
         <div className="md:col-span-1">
             <Card>

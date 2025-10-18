@@ -59,7 +59,7 @@ export default function SubsidiaryStatusPage() {
         return <Badge variant="secondary"><Loader2 className="mr-1 h-3 w-3 animate-spin"/> Checking...</Badge>;
     }
   };
-  
+
   if (isUserLoading) {
     return (
       <div className="container mx-auto py-8">

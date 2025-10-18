@@ -40,7 +40,7 @@ export default function ManageLicenseRequests() {
       variant: result.success ? 'default' : 'destructive',
     });
   };
-  
+
   const formatDate = (dateString: string | any) => {
       // The data from the safe collection hook is JSON, so the timestamp will be a string
       if (!dateString) return 'N/A';
