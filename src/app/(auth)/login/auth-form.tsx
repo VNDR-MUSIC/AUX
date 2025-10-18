@@ -146,7 +146,7 @@ export default function AuthForm() {
 
 
   return (
-    <Card className="mx-auto max-w-sm w-full">
+    <Card className="mx-auto max-w-sm w-full bg-card/80 backdrop-blur-lg">
       <CardHeader className="text-center">
         <div className="mx-auto h-32 w-32 sm:h-40 sm:w-40 relative">
             <Icons.logo />
