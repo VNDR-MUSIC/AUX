@@ -4,7 +4,7 @@
 export default function VideoBackground() {
   return (
     <div className="fixed inset-0 z-0 w-screen h-screen overflow-hidden">
-      {/* The dark overlay div has been removed to increase video visibility */}
+      <div className="absolute inset-0 bg-black/70 z-10" />
       <div style={{ position: 'relative', paddingTop: '56.25%', height: '100vh', width: '100vw', overflow: 'hidden' }}>
         <iframe
           src="https://player.viloud.tv/embed/channel/2968a991e17f1c819af7785fa4ee6654?autoplay=1&volume=0&controls=0&title=0&share=0&open_playlist=0&random=0"
