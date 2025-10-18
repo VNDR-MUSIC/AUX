@@ -14,7 +14,7 @@ import MiuSlideOut from "@/components/layout/miu-slide-out";
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
     <FirebaseClientProvider>
-      <SidebarProvider>
+      <SidebarProvider defaultOpen={false}>
         <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden">
           <VideoBackground />
           <SessionRewind />
