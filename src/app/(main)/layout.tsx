@@ -14,28 +14,28 @@ import MiuSlideOut from "@/components/layout/miu-slide-out";
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
     <FirebaseClientProvider>
-        <SidebarProvider>
-            <div className="flex flex-col min-h-screen max-w-full overflow-x-hidden">
-                <VideoBackground />
-                <SessionRewind />
-                <MiuSlideOut />
-                <div className="flex-1 flex flex-col relative z-10">
-                    <div className="flex flex-1">
-                        <Sidebar>
-                            <SidebarNav />
-                        </Sidebar>
-                        <main className="flex-1 p-4 md:p-6 lg:p-8 bg-card rounded-tl-lg">
-                            {children}
-                        </main>
-                    </div>
-                    <div className="relative z-10">
-                      <Footer />
-                    </div>
-                </div>
-                <MusicPlayer />
-                <SymbiChatWidget />
-                <SessionRewindTracker />
+      <SidebarProvider>
+        <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+          <VideoBackground />
+          <SessionRewind />
+          <MiuSlideOut />
+          <div className="relative z-10 flex flex-1">
+            <Sidebar>
+              <SidebarNav />
+            </Sidebar>
+            <div className="flex flex-1 flex-col">
+              <main className="flex-1 p-4 md:p-6 lg:p-8 bg-card rounded-tl-lg">
+                {children}
+              </main>
+              <Footer />
             </div>
+          </div>
+          <div className="relative z-20">
+            <MusicPlayer />
+          </div>
+          <SymbiChatWidget />
+          <SessionRewindTracker />
+        </div>
       </SidebarProvider>
     </FirebaseClientProvider>
   );
