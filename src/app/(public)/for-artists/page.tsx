@@ -5,8 +5,8 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Upload, Sparkles, Speaker, DollarSign, ArrowRight, GitBranch, BarChart, Users, GraduationCap, Gavel, FileText, Bot, XCircle } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ArrowRight, BarChart, Bot, DollarSign, FileText, Gavel, GitBranch, GraduationCap, Sparkles, Users, XCircle } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Icons } from '@/components/icons';
 
 const painPoints = [
@@ -231,5 +231,3 @@ export default function ForArtistsPage() {
     </div>
   );
 }
-
-    

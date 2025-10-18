@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Icons } from '@/components/icons';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Award, Check, GitBranch, Gift, Sparkles, Star, Users, Waves } from 'lucide-react';
+import { Award, Check, GitBranch, Gift, HelpCircle, Sparkles, Star, Users, Waves } from 'lucide-react';
 import LandingPageHeader from '@/components/layout/landing-page-header';
 import Footer from '@/components/layout/footer';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,10 +23,18 @@ import { Label } from '@/components/ui/label';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { useUser, FirebaseClientProvider } from '@/firebase';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import VideoBackground from '@/components/layout/video-background';
 import SessionRewind from '@/components/session-rewind';
+import FairDealModal from '@/components/layout/fair-deal-modal';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
 
 const heroSlides = [
   {
@@ -112,6 +120,7 @@ const faqs = [
 function Home() {
   const { user, isUserLoading } = useUser();
   const router = useRouter();
+  const [isFairDealModalOpen, setFairDealModalOpen] = useState(false);
 
   useEffect(() => {
     if (!isUserLoading && user) {
@@ -138,6 +147,7 @@ function Home() {
   }
 
   return (
+    <>
     <div className="flex flex-col min-h-screen bg-background max-w-full overflow-x-hidden">
       <VideoBackground />
       <SessionRewind />
@@ -275,7 +285,21 @@ function Home() {
                               </div>
                           </CardHeader>
                           <CardContent className="flex-1 space-y-3">
-                              <p className="font-semibold text-primary">You Keep 60% of Royalties</p>
+                              <div className="font-semibold text-primary flex items-center gap-2">
+                                  <span>You Keep 60% of Royalties</span>
+                                  <TooltipProvider>
+                                      <Tooltip>
+                                          <TooltipTrigger asChild>
+                                              <button onClick={() => setFairDealModalOpen(true)} className="text-muted-foreground hover:text-primary transition-colors">
+                                                  <HelpCircle className="h-4 w-4" />
+                                              </button>
+                                          </TooltipTrigger>
+                                          <TooltipContent>
+                                              <p>Wait... is this a fair deal?</p>
+                                          </TooltipContent>
+                                      </Tooltip>
+                                  </TooltipProvider>
+                              </div>
                               <ul className="space-y-2 text-muted-foreground text-sm">
                                   <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Free unlimited distribution</li>
                                   <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Basic Analytics Dashboard</li>
@@ -423,6 +447,8 @@ function Home() {
         <Footer />
       </div>
     </div>
+    <FairDealModal isOpen={isFairDealModalOpen} onClose={() => setFairDealModalOpen(false)} />
+    </>
   );
 }
 
