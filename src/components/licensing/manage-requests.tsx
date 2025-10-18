@@ -1,7 +1,6 @@
 
 'use client';
 
-import { Timestamp } from 'firebase/firestore';
 import {
   Table,
   TableBody,
@@ -42,10 +41,10 @@ export default function ManageLicenseRequests() {
     });
   };
   
-  const formatDate = (timestamp: Timestamp | Date | any) => {
+  const formatDate = (dateString: string | any) => {
       // The data from the safe collection hook is JSON, so the timestamp will be a string
-      if (!timestamp) return 'N/A';
-      const date = new Date(timestamp);
+      if (!dateString) return 'N/A';
+      const date = new Date(dateString);
       return date.toLocaleDateString();
   }
 

@@ -2,7 +2,7 @@
 'use client';
 
 import { useUser, useDoc, useMemoFirebase } from '@/firebase';
-import { Timestamp, doc } from 'firebase/firestore';
+import { doc } from 'firebase/firestore';
 import {
   Card,
   CardContent,
@@ -32,7 +32,7 @@ type Transaction = {
   amount: number;
   type: string;
   details: string;
-  transactionDate: Timestamp;
+  transactionDate: string; // Dates will be ISO strings
 };
 
 export default function WalletPage() {
@@ -49,11 +49,10 @@ export default function WalletPage() {
 
   const isLoading = isUserDocLoading || areTransactionsLoading;
 
-  const formatDate = (timestamp: Timestamp | Date | any) => {
-    // Firestore Timestamps can be tricky. They might not always be instances of the Timestamp class
-    // on the client, especially after serialization/deserialization.
-    if (!timestamp) return 'N/A';
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+  const formatDate = (dateString: string | any) => {
+    // Data from server is serialized, so we create a Date object from the ISO string
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
     return new Intl.DateTimeFormat('en-US', {
       year: 'numeric',
       month: 'short',
