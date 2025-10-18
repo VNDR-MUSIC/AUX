@@ -11,6 +11,7 @@ import NDRadioModal from "./nd-radio-modal";
 import AudioExchangeModal from "./audio-exchange-modal";
 import MiuModal from "./miu-modal";
 import { MapPin } from "lucide-react";
+import SoundKlixModal from "./soundklix-modal"; // Corrected import
 
 const socialLinks = [
     { name: "Twitter", href: "#" },
@@ -40,7 +41,7 @@ export default function Footer() {
   const [isNdRadioModalOpen, setIsNdRadioModalOpen] = useState(false);
   const [isAudioExchangeModalOpen, setIsAudioExchangeModalOpen] = useState(false);
   const [isMiuModalOpen, setIsMiuModalOpen] = useState(false);
-  const [isSoundKlixModalOpen, setIsSoundKlixModalOpen] = useState(false); // New state for SoundKlix
+  const [isSoundKlixModalOpen, setIsSoundKlixModalOpen] = useState(false);
   const isAdmin = (user as any)?.customClaims?.admin === true;
 
   let finalArtistLinks = [...artistLinks];
@@ -112,22 +113,22 @@ export default function Footer() {
             <div>
                 <h3 className="font-semibold text-foreground">Our Subsidiaries & Partners</h3>
                 <div className="mt-4 grid grid-cols-3 gap-4 items-center">
-                    <button onClick={() => setIsIvtvModalOpen(true)} className="cursor-pointer">
-                        <Image src="https://i.ibb.co/FqwXfkL9/Screenshot-20250914-224236-Facebook.jpg" alt="IVtv Logo" width={100} height={50} className="object-contain" />
+                    <button onClick={() => setIsIvtvModalOpen(true)} className="cursor-pointer relative h-12">
+                        <Image src="https://i.ibb.co/FqwXfkL9/Screenshot-20250914-224236-Facebook.jpg" alt="IVtv Logo" fill className="object-contain" />
                     </button>
-                    <button onClick={() => setIsNdRadioModalOpen(true)} className="cursor-pointer">
-                        <Image src="https://i.ibb.co/4wvZ1Mzq/ND-Radio-transparent.png" alt="ND Radio Logo" width={100} height={50} className="object-contain" />
+                    <button onClick={() => setIsNdRadioModalOpen(true)} className="cursor-pointer relative h-12">
+                        <Image src="https://i.ibb.co/4wvZ1Mzq/ND-Radio-transparent.png" alt="ND Radio Logo" fill className="object-contain" />
                     </button>
-                     <button onClick={() => setIsAudioExchangeModalOpen(true)} className="cursor-pointer">
-                        <Image src="https://i.ibb.co/fVjNMVpk/logo2.png" alt="Audio Exchange Logo" width={100} height={50} className="object-contain" />
+                     <button onClick={() => setIsAudioExchangeModalOpen(true)} className="cursor-pointer relative h-12">
+                        <Image src="https://i.ibb.co/fVjNMVpk/logo2.png" alt="Audio Exchange Logo" fill className="object-contain" />
                     </button>
                 </div>
                  <div className="mt-4 grid grid-cols-2 gap-4 items-center">
-                    <button onClick={() => setIsMiuModalOpen(true)} className="flex justify-center items-center h-full">
-                        <Image src="https://i.ibb.co/4gJqBfM/MIU-logo-wt.png" alt="MIU Logo" width={100} height={50} className="object-contain" />
+                    <button onClick={() => setIsMiuModalOpen(true)} className="flex justify-center items-center h-12 relative">
+                        <Image src="https://i.ibb.co/4gJqBfM/MIU-logo-wt.png" alt="MIU Logo" fill className="object-contain" />
                     </button>
-                    <button onClick={() => setIsSoundKlixModalOpen(true)} className="flex justify-center items-center h-full">
-                         <Image src="https://i.ibb.co/M53tfW4/6afe7afc-3816-4f85-a250-50819e0f1b00.png" alt="SoundKlix Logo" width={100} height={50} className="object-contain" />
+                    <button onClick={() => setIsSoundKlixModalOpen(true)} className="flex justify-center items-center h-12 relative">
+                         <Image src="https://i.ibb.co/M53tfW4/6afe7afc-3816-4f85-a250-50819e0f1b00.png" alt="SoundKlix Logo" fill className="object-contain" />
                     </button>
                 </div>
             </div>
@@ -141,7 +142,7 @@ export default function Footer() {
     <NDRadioModal isOpen={isNdRadioModalOpen} onClose={() => setIsNdRadioModalOpen(false)} />
     <AudioExchangeModal isOpen={isAudioExchangeModalOpen} onClose={() => setIsAudioExchangeModalOpen(false)} />
     <MiuModal isOpen={isMiuModalOpen} onClose={() => setIsMiuModalOpen(false)} />
-    {/* SoundKlixModal would go here if it existed */}
+    <SoundKlixModal isOpen={isSoundKlixModalOpen} onClose={() => setIsSoundKlixModalOpen(false)} />
     </>
   );
 }
