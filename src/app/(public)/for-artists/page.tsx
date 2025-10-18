@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { ArrowRight, BarChart, Bot, DollarSign, FileText, Gavel, GitBranch, GraduationCap, Sparkles, Users, XCircle } from 'lucide-react';
+import { ArrowRight, BarChart, Bot, DollarSign, FileText, Gavel, GitBranch, GraduationCap, Sparkles, Users, XCircle, CalendarCheck } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Icons } from '@/components/icons';
 
@@ -186,6 +186,27 @@ export default function ForArtistsPage() {
                       </CardContent>
                     </Card>
                   ))}
+                </div>
+            </div>
+        </section>
+
+        {/* One-on-One Section */}
+        <section id="consultation" className="py-16 md:py-24 w-full">
+            <div className="container px-4 md:px-6">
+                <div className="bg-card/80 rounded-lg p-8 md:p-12 grid md:grid-cols-2 gap-8 items-center">
+                     <div className="text-center md:text-left">
+                        <h2 className="font-headline text-3xl sm:text-4xl font-bold tracking-tighter">Need Personalized Help?</h2>
+                        <p className="max-w-[700px] mt-4 text-muted-foreground md:text-lg">
+                            Book a one-on-one consultation with our industry experts for personalized advice on your career strategy, technical support, or to deep-dive into our platform's features.
+                        </p>
+                         <Button size="lg" disabled className="mt-6">
+                            <CalendarCheck className="mr-2 h-5 w-5" />
+                            Book a Meeting (Coming Soon)
+                        </Button>
+                    </div>
+                     <div className="relative h-48 w-full flex items-center justify-center">
+                        <Users className="h-32 w-32 text-primary/50" />
+                    </div>
                 </div>
             </div>
         </section>

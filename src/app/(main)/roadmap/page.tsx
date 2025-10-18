@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Check, Clock, DraftingCompass, BarChart } from 'lucide-react';
+import { Check, Clock, DraftingCompass, BarChart, Users } from 'lucide-react';
 
 const roadmapFeatures = [
   {
@@ -16,6 +16,13 @@ const roadmapFeatures = [
     description: 'A full-featured auction house for artists to buy and sell music rights using VSD tokens. Includes bidding, escrow, and smart contract integration.',
     icon: <DraftingCompass className="h-6 w-6 text-primary" />,
     statusColor: 'bg-yellow-500',
+  },
+  {
+    title: 'One-on-One Artist Consultations',
+    status: 'Planned',
+    description: 'Book personalized online sessions with our industry experts for tailored advice on career strategy, platform usage, and technical support.',
+    icon: <Users className="h-6 w-6 text-primary" />,
+    statusColor: 'bg-blue-500',
   },
   {
     title: 'Advanced AI Songwriting Tools',
