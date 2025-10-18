@@ -53,7 +53,7 @@
             "id": "miu",
             "name": "MIU",
             "description": "Music Industry University. Online education and resources for music professionals.",
-            "logoUrl": "https://i.ibb.co/4gJqBfM/MIU-logo-wt.png",
+            "logoUrl": "https://i.ibb.co/4gJqBfM8/MIU-logo-wt.png",
             "healthCheckUrl": "https://musicindustry.university/api/health",
             "functions": [
                 "Online Courses",
