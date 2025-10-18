@@ -45,8 +45,10 @@ export default function AuctionsPage() {
         <CardHeader>
           <CardTitle>Active Listings</CardTitle>
           <CardDescription>
-            This feature is currently under active development. Soon, this will be a marketplace for music rights.
-            Check out our <Link href="/roadmap" className="text-primary underline">public roadmap</Link> to see what&apos;s next.
+            This feature is currently under active development. See how transactions will work on our{' '}
+            <Link href="/vsd-demo" className="text-primary underline">
+              VSD Demo page
+            </Link>.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center justify-center text-center py-16">
