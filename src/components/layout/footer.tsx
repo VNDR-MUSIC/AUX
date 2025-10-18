@@ -51,7 +51,7 @@ export default function Footer() {
   }
 
   const ivtv = subsidiaries.find(s => s.id === 'ivtv');
-  const ndradio = subsidiaries.find(s => s.id === 'vsd_network'); // This seems wrong, should be ndradio, but none exists
+  const ndradio = subsidiaries.find(s => s.id === 'ndradio');
   const audex = subsidiaries.find(s => s.id === 'audio_exchange');
   const miu = subsidiaries.find(s => s.id === 'miu');
   const soundklix = subsidiaries.find(s => s.id === 'soundklix');
@@ -61,8 +61,8 @@ export default function Footer() {
     <>
     <footer className="bg-transparent border-t w-screen max-w-full">
       <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
-            <div className="col-span-2 md:col-span-1">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-8 items-start">
+            <div className="col-span-1 md:col-span-1">
                 <Link href="/" className="flex items-center gap-2">
                     <div className="relative h-20 w-40 sm:h-28 sm:w-56">
                         <Icons.logo />
@@ -76,7 +76,7 @@ export default function Footer() {
                 </div>
             </div>
             
-            <div className="col-span-2 grid grid-cols-2 sm:grid-cols-4 md:col-span-4 gap-8">
+            <div className="col-span-1 md:col-span-4 grid grid-cols-2 sm:grid-cols-4 gap-8">
                 {!isUserLoading && user && (
                   <div>
                       <h3 className="font-semibold text-foreground">For Artists</h3>
@@ -125,9 +125,9 @@ export default function Footer() {
                             {ivtv && <button onClick={() => setIsIvtvModalOpen(true)} className="cursor-pointer relative h-10 w-10">
                                 <Image src={ivtv.logoUrl} alt="IVtv Logo" fill className="object-contain" />
                             </button>}
-                            <button onClick={() => setIsNdRadioModalOpen(true)} className="cursor-pointer relative h-10 w-10">
-                                <Image src="https://i.ibb.co/4wvZ1Mzq/ND-Radio-transparent.png" alt="ND Radio Logo" fill className="object-contain" />
-                            </button>
+                            {ndradio && <button onClick={() => setIsNdRadioModalOpen(true)} className="cursor-pointer relative h-10 w-10">
+                                <Image src={ndradio.logoUrl} alt="ND Radio Logo" fill className="object-contain" />
+                            </button>}
                              {audex && <button onClick={() => setIsAudioExchangeModalOpen(true)} className="cursor-pointer relative h-10 w-10">
                                 <Image src={audex.logoUrl} alt="Audio Exchange Logo" fill className="object-contain" />
                             </button>}
