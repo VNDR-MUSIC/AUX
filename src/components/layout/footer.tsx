@@ -68,7 +68,6 @@ export default function Footer() {
                         <Icons.logo />
                     </div>
                 </Link>
-                <p className="mt-4 text-sm text-muted-foreground">The future of music licensing and streaming.</p>
                  <div className="mt-4 text-xs text-muted-foreground space-y-1">
                     <p className="flex items-start gap-2">
                         <MapPin className="h-4 w-4 flex-shrink-0 mt-0.5" />
