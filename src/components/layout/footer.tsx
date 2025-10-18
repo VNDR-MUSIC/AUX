@@ -11,7 +11,6 @@ import NDRadioModal from "./nd-radio-modal";
 import AudioExchangeModal from "./audio-exchange-modal";
 import MiuModal from "./miu-modal";
 import { MapPin } from "lucide-react";
-import SoundKlixModal from "./soundklix-modal";
 import { subsidiaries } from "@/lib/subsidiaries";
 
 const socialLinks = [
@@ -42,7 +41,6 @@ export default function Footer() {
   const [isNdRadioModalOpen, setIsNdRadioModalOpen] = useState(false);
   const [isAudioExchangeModalOpen, setIsAudioExchangeModalOpen] = useState(false);
   const [isMiuModalOpen, setIsMiuModalOpen] = useState(false);
-  const [isSoundKlixModalOpen, setIsSoundKlixModalOpen] = useState(false);
   const isAdmin = (user as any)?.customClaims?.admin === true;
 
   let finalArtistLinks = [...artistLinks];
@@ -54,7 +52,6 @@ export default function Footer() {
   const ndradio = subsidiaries.find(s => s.id === 'ndradio');
   const audex = subsidiaries.find(s => s.id === 'audio_exchange');
   const miu = subsidiaries.find(s => s.id === 'miu');
-  const soundklix = subsidiaries.find(s => s.id === 'soundklix');
 
 
   return (
@@ -136,9 +133,6 @@ export default function Footer() {
                             {miu && <button onClick={() => setIsMiuModalOpen(true)} className="flex justify-center items-center h-10 w-10 relative">
                                 <Image src={miu.logoUrl} alt="MIU Logo" fill className="object-contain" />
                             </button>}
-                            {soundklix && <button onClick={() => setIsSoundKlixModalOpen(true)} className="flex justify-center items-center h-10 w-10 relative">
-                                 <Image src={soundklix.logoUrl} alt="SoundKlix Logo" fill className="object-contain" />
-                            </button>}
                         </div>
                     </div>
                 </div>
@@ -153,7 +147,6 @@ export default function Footer() {
     <NDRadioModal isOpen={isNdRadioModalOpen} onClose={() => setIsNdRadioModalOpen(false)} />
     <AudioExchangeModal isOpen={isAudioExchangeModalOpen} onClose={() => setIsAudioExchangeModalOpen(false)} />
     <MiuModal isOpen={isMiuModalOpen} onClose={() => setIsMiuModalOpen(false)} />
-    <SoundKlixModal isOpen={isSoundKlixModalOpen} onClose={() => setIsSoundKlixModalOpen(false)} />
     </>
   );
 }

@@ -50,18 +50,6 @@
             ]
         },
         {
-            "id": "soundklix",
-            "name": "SoundKlix",
-            "description": "Music streaming platform for indie artists. Upload music, reach a wide audience, and increase visibility. Put indie music directly next to the “mainstream” recording artists and showcases both without the separation.",
-            "logoUrl": "https://i.ibb.co/JWz3tqR/Background-Eraser-20251016-103358034.png",
-            "healthCheckUrl": "https://soundklix.com/api/health",
-            "functions": [
-                "Digital Store Delivery",
-                "Playlist Pitching",
-                "Artist Promotion"
-            ]
-        },
-        {
             "id": "miu",
             "name": "MIU",
             "description": "Music Industry University. Online education and resources for music professionals.",
