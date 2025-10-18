@@ -233,7 +233,8 @@ const Sidebar = React.forwardRef<
         >
           <div
             data-sidebar="sidebar"
-            className="flex h-full w-full flex-col bg-sidebar/70 backdrop-blur-lg group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow"
+            className="flex h-full w-full flex-col backdrop-blur-lg group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow"
+            style={{background: 'linear-gradient(to bottom, hsl(var(--sidebar-background) / 0.7) 0%, hsl(var(--sidebar-background) / 0.7) 70%, transparent 100%)'}}
           >
             {children}
           </div>
