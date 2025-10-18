@@ -1,5 +1,6 @@
 import Footer from "@/components/layout/footer";
 import LandingPageHeader from "@/components/layout/landing-page-header";
+import MiuSlideOut from "@/components/layout/miu-slide-out";
 import { FirebaseClientProvider } from "@/firebase";
 
 export default function PublicLayout({
@@ -11,6 +12,7 @@ export default function PublicLayout({
     <FirebaseClientProvider>
       <div className="flex flex-col min-h-screen bg-background">
         <LandingPageHeader />
+        <MiuSlideOut />
         <main className="flex-1">{children}</main>
         <Footer />
       </div>
