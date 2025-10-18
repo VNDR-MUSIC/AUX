@@ -97,6 +97,19 @@ export default function Footer() {
             </div>
             
             <div>
+                <h3 className="font-semibold text-foreground">Connect</h3>
+                <ul className="mt-4 space-y-2">
+                    {socialLinks.map((link) => (
+                        <li key={link.name}>
+                            <Link href={link.href} className="text-sm text-muted-foreground hover:text-primary">
+                                {link.name}
+                            </Link>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+
+            <div>
                 <h3 className="font-semibold text-foreground">Our Subsidiaries & Partners</h3>
                 <div className="mt-4 grid grid-cols-3 gap-4 items-center">
                     <button onClick={() => setIsIvtvModalOpen(true)} className="cursor-pointer">
@@ -111,25 +124,12 @@ export default function Footer() {
                 </div>
                  <div className="mt-4 grid grid-cols-2 gap-4 items-center">
                     <button onClick={() => setIsMiuModalOpen(true)} className="col-span-1 cursor-pointer">
-                        <Image src="https://i.ibb.co/4gJqBfM8/MIU-logo-wt.png" alt="MIU Logo" width={100} height={50} className="object-contain" />
+                        <Image src="https://i.ibb.co/4gJqBfM/MIU-logo-wt.png" alt="MIU Logo" width={100} height={50} className="object-contain" />
                     </button>
                     <button onClick={() => setIsSoundKlixModalOpen(true)} className="col-span-1 cursor-pointer">
                          <Image src="https://i.ibb.co/3yRj2Z4/Screenshot-20250909-234041-Chrome.jpg" alt="SoundKlix Logo" width={100} height={50} className="object-contain" />
                     </button>
                 </div>
-            </div>
-
-            <div>
-                <h3 className="font-semibold text-foreground">Connect</h3>
-                <ul className="mt-4 space-y-2">
-                    {socialLinks.map((link) => (
-                        <li key={link.name}>
-                            <Link href={link.href} className="text-sm text-muted-foreground hover:text-primary">
-                                {link.name}
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
             </div>
         </div>
         <div className="mt-12 border-t pt-8 text-center text-sm text-muted-foreground">
