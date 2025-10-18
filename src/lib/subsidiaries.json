@@ -52,8 +52,8 @@
         {
             "id": "soundklix",
             "name": "SoundKlix",
-            "description": "Global music distribution and promotional services for emerging artists.",
-            "logoUrl": "https://placehold.co/100x50/000000/FFFFFF?text=SoundKlix",
+            "description": "Music streaming platform for indie artists. Upload music, reach a wide audience, and increase visibility. Put indie music directly next to the “mainstream” recording artists and showcases both without the separation.",
+            "logoUrl": "https://i.ibb.co/M53tfW4r/6afe7afc-3816-4f85-a250-50819e0f1b00.png",
             "healthCheckUrl": "https://soundklix.com/api/health",
             "functions": [
                 "Digital Store Delivery",
@@ -65,7 +65,7 @@
             "id": "miu",
             "name": "MIU",
             "description": "Music Industry University. Online education and resources for music professionals.",
-            "logoUrl": "https://placehold.co/100x50/000000/FFFFFF?text=MIU",
+            "logoUrl": "https://i.ibb.co/4gJqBfM8/MIU-logo-wt.png",
             "healthCheckUrl": "https://musicindustry.university/api/health",
             "functions": [
                 "Online Courses",

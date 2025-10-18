@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from "next/link";
@@ -39,6 +40,7 @@ export default function Footer() {
   const [isNdRadioModalOpen, setIsNdRadioModalOpen] = useState(false);
   const [isAudioExchangeModalOpen, setIsAudioExchangeModalOpen] = useState(false);
   const [isMiuModalOpen, setIsMiuModalOpen] = useState(false);
+  const [isSoundKlixModalOpen, setIsSoundKlixModalOpen] = useState(false); // New state for SoundKlix
   const isAdmin = (user as any)?.customClaims?.admin === true;
 
   let finalArtistLinks = [...artistLinks];
@@ -106,8 +108,13 @@ export default function Footer() {
                      <button onClick={() => setIsAudioExchangeModalOpen(true)} className="cursor-pointer">
                         <Image src="https://i.ibb.co/fVjNMVpk/logo2.png" alt="Audio Exchange Logo" width={100} height={50} className="object-contain" />
                     </button>
-                    <button onClick={() => setIsMiuModalOpen(true)} className="cursor-pointer">
+                </div>
+                 <div className="mt-4 grid grid-cols-2 gap-4 items-center">
+                    <button onClick={() => setIsMiuModalOpen(true)} className="col-span-1 cursor-pointer">
                         <Image src="https://i.ibb.co/4gJqBfM8/MIU-logo-wt.png" alt="MIU Logo" width={100} height={50} className="object-contain" />
+                    </button>
+                    <button onClick={() => setIsSoundKlixModalOpen(true)} className="col-span-1 cursor-pointer">
+                         <Image src="https://i.ibb.co/M53tfW4/6afe7afc-3816-4f85-a250-50819e0f1b00.png" alt="SoundKlix Logo" width={100} height={50} className="object-contain" />
                     </button>
                 </div>
             </div>
@@ -134,6 +141,7 @@ export default function Footer() {
     <NDRadioModal isOpen={isNdRadioModalOpen} onClose={() => setIsNdRadioModalOpen(false)} />
     <AudioExchangeModal isOpen={isAudioExchangeModalOpen} onClose={() => setIsAudioExchangeModalOpen(false)} />
     <MiuModal isOpen={isMiuModalOpen} onClose={() => setIsMiuModalOpen(false)} />
+    {/* SoundKlixModal would go here if it existed */}
     </>
   );
 }
