@@ -11,48 +11,25 @@ import { Icons } from '@/components/icons';
 
 const painPoints = [
     {
-        icon: <XCircle className="h-10 w-10 text-destructive" />,
-        title: "Opaque Royalties & Delayed Payments",
-        description: "Confusing statements and waiting months (or years) to get paid for your streams and sales.",
+        icon: <XCircle className="h-8 w-8 text-destructive" />,
+        title: "Opaque Royalties",
+        description: "Confusing statements and long waits for payments.",
     },
     {
-        icon: <XCircle className="h-10 w-10 text-destructive" />,
+        icon: <XCircle className="h-8 w-8 text-destructive" />,
         title: "Gatekept Opportunities",
-        description: "Struggling to get your music in front of music supervisors for sync placements in film, TV, and games.",
+        description: "Struggling to get your music in front of music supervisors.",
     },
      {
-        icon: <XCircle className="h-10 w-10 text-destructive" />,
-        title: "Lack of Support & Tools",
-        description: "Feeling like you're on your own, juggling everything from marketing to legal without expert guidance.",
+        icon: <XCircle className="h-8 w-8 text-destructive" />,
+        title: "Lack of Support",
+        description: "Feeling like you're juggling everything on your own.",
     },
     {
-        icon: <XCircle className="h-10 w-10 text-destructive" />,
-        title: "Giving Up Your Rights",
-        description: "Being forced into restrictive, long-term deals where you lose control of your master recordings and creative direction.",
+        icon: <XCircle className="h-8 w-8 text-destructive" />,
+        title: "Restrictive Deals",
+        description: "Losing control of your master recordings and creative direction.",
     },
-];
-
-const featureCards = [
-    {
-        icon: <GitBranch className="h-8 w-8 mb-4 text-primary" />,
-        title: "Effortless Distribution",
-        description: "Unlimited uploads to 150+ streaming services like Spotify and Apple Music. You always keep 100% of your rights."
-    },
-    {
-        icon: <Users className="h-8 w-8 mb-4 text-primary" />,
-        title: "Proactive Sync Licensing",
-        description: "Partner with us and we become your publisher. We actively pitch your music for high-value placements in film, TV, and games."
-    },
-    {
-        icon: <div className="h-8 w-8 mb-4 flex items-center justify-center"><Icons.vsd className="h-8 w-8" /></div>,
-        title: "Transparent Royalties",
-        description: "Get paid instantly. Our VSD token system provides a transparent, verifiable ledger for all your earnings."
-    },
-    {
-        icon: <Bot className="h-8 w-8 mb-4 text-primary" />,
-        title: "A Full AI-Powered Team",
-        description: "From generating cover art and performance reports to getting simulated legal advice, our AI toolkit is always on."
-    }
 ];
 
 const aiTools = [
@@ -93,7 +70,7 @@ export default function ForArtistsPage() {
   const heroImage = PlaceHolderImages.find((img) => img.id === 'hero-4');
 
   return (
-    <div className="flex flex-col min-h-screen bg-background/0 max-w-full overflow-x-hidden">
+    <div className="flex flex-col min-h-screen bg-background max-w-full overflow-x-hidden">
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative h-[60vh] w-full flex flex-col items-center justify-center p-0 overflow-hidden">
@@ -132,10 +109,12 @@ export default function ForArtistsPage() {
                 </div>
                 <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
                     {painPoints.map((point, index) => (
-                        <div key={index} className="relative flex flex-col items-center text-center p-6 bg-card rounded-lg shadow-md border border-destructive/20">
+                        <div key={index} className="relative flex items-center text-left p-4 bg-card rounded-lg shadow-sm border border-destructive/20 gap-4">
                             {point.icon}
-                            <h3 className="font-headline text-xl font-semibold mt-4 mb-2">{point.title}</h3>
-                            <p className="text-muted-foreground text-sm flex-1">{point.description}</p>
+                            <div>
+                                <h3 className="font-headline text-lg font-semibold">{point.title}</h3>
+                                <p className="text-muted-foreground text-sm">{point.description}</p>
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -143,24 +122,44 @@ export default function ForArtistsPage() {
         </section>
         
         {/* The VNDR Solution Section */}
-        <section id="the-solution" className="py-16 md:py-24 w-full">
-          <div className="container px-4 md:px-6">
-            <div className="text-center mb-12">
-              <h2 className="font-headline text-3xl sm:text-4xl font-bold tracking-tighter">The VNDR Ecosystem: Your Unfair Advantage</h2>
-              <p className="max-w-[700px] mx-auto mt-4 text-muted-foreground md:text-lg">
-                  VNDR is more than a distributor; it's a complete platform designed for the modern independent artist.
-              </p>
+        <section id="the-solution" className="py-16 md:py-24 w-full space-y-20">
+          <div className="container px-4 md:px-6 text-center">
+            <h2 className="font-headline text-3xl sm:text-4xl font-bold tracking-tighter">Your Unfair Advantage</h2>
+            <p className="max-w-[700px] mx-auto mt-4 text-muted-foreground md:text-lg">
+                VNDR is more than a distributor; it's a complete ecosystem designed for the modern independent artist.
+            </p>
+          </div>
+
+          <div className="container px-4 md:px-6 grid md:grid-cols-2 items-center gap-12">
+            <div className="flex justify-center">
+              <GitBranch className="h-32 w-32 text-primary" />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {featureCards.map((feature, index) => (
-                <Card key={index} className="text-center p-6 flex flex-col bg-card/80">
-                  {feature.icon}
-                  <h3 className="font-headline text-xl font-semibold">{feature.title}</h3>
-                  <p className="text-muted-foreground text-sm mt-2 flex-1">{feature.description}</p>
-                </Card>
-              ))}
+            <div>
+              <h3 className="font-headline text-2xl font-bold">Effortless Distribution</h3>
+              <p className="mt-2 text-muted-foreground md:text-lg">Unlimited uploads to over 150 streaming services like Spotify and Apple Music. You always keep 100% of your rights and get an industry-leading royalty share.</p>
             </div>
           </div>
+
+          <div className="container px-4 md:px-6 grid md:grid-cols-2 items-center gap-12">
+            <div className="order-last md:order-first">
+               <h3 className="font-headline text-2xl font-bold">Proactive Sync Licensing</h3>
+              <p className="mt-2 text-muted-foreground md:text-lg">Partner with us and we become your publisher. Our expert team and AI actively pitch your music for high-value placements in film, TV, video games, and commercials.</p>
+            </div>
+             <div className="flex justify-center">
+              <Users className="h-32 w-32 text-primary" />
+            </div>
+          </div>
+
+           <div className="container px-4 md:px-6 grid md:grid-cols-2 items-center gap-12">
+            <div className="flex justify-center">
+                <Icons.vsd className="h-32 w-32 text-primary" />
+            </div>
+            <div>
+              <h3 className="font-headline text-2xl font-bold">Transparent, Instant Royalties</h3>
+              <p className="mt-2 text-muted-foreground md:text-lg">No more confusing statements or waiting for payouts. Our VSD token system provides a transparent, verifiable, real-time ledger for all your earnings.</p>
+            </div>
+          </div>
+
         </section>
 
         {/* AI Toolkit Section */}
@@ -174,7 +173,7 @@ export default function ForArtistsPage() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {aiTools.map((tool, index) => (
-                    <Card key={index} className="flex flex-col">
+                    <Card key={index} className="flex flex-col bg-card/80">
                       <CardHeader className="flex flex-row items-center gap-4">
                         <div className="p-3 bg-primary/10 rounded-full text-primary">
                           {tool.icon}
@@ -212,10 +211,10 @@ export default function ForArtistsPage() {
         </section>
         
         {/* MIU Section */}
-        <section className="py-16 md:py-24 w-full">
+        <section className="py-16 md:py-24 bg-secondary w-full">
             <div className="container px-4 md:px-6">
-                <div className="grid md:grid-cols-2 gap-8 items-center">
-                    <div className="relative h-40 w-full">
+                <div className="grid md:grid-cols-2 gap-12 items-center">
+                    <div className="relative h-40 w-full flex justify-center items-center">
                         <Image src="https://i.ibb.co/4gJqBfM8/MIU-logo-wt.png" alt="MIU Logo" layout="fill" className="object-contain" />
                     </div>
                      <div className="text-center md:text-left">
