@@ -19,16 +19,18 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                 <VideoBackground />
                 <SessionRewind />
                 <MiuSlideOut />
-                <div className="flex flex-1 relative z-10">
-                    <Sidebar>
-                        <SidebarNav />
-                    </Sidebar>
-                    <main className="flex-1 p-4 md:p-6 lg:p-8 bg-card rounded-tl-lg">
-                        {children}
-                    </main>
-                </div>
-                <div className="relative z-10">
-                  <Footer />
+                <div className="flex-1 flex flex-col relative z-10">
+                    <div className="flex flex-1">
+                        <Sidebar>
+                            <SidebarNav />
+                        </Sidebar>
+                        <main className="flex-1 p-4 md:p-6 lg:p-8 bg-card rounded-tl-lg">
+                            {children}
+                        </main>
+                    </div>
+                    <div className="relative z-10">
+                      <Footer />
+                    </div>
                 </div>
                 <MusicPlayer />
                 <SymbiChatWidget />
