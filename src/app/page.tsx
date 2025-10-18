@@ -32,7 +32,7 @@ const heroSlides = [
   {
     id: 'hero-1',
     title: 'Your Music, Your Career, Your Choice.',
-    description: "Choose your path. Keep up to 90% of your royalties with our industry-leading distribution, or partner with us for a 50/50 publishing deal and let our AI and expert team find you sync licensing deals.",
+    description: "Choose your path. Keep 60% of your royalties with our industry-leading distribution, or partner with us for a 50/50 publishing deal and let our AI and expert team find you sync licensing deals.",
     imageHint: 'musician crossroads'
   },
   {
@@ -84,7 +84,7 @@ const testimonials = [
     name: 'Pixel Pulse',
     avatar: 'user-avatar-2',
     title: 'Producer (Distribution Plan)',
-    quote: "I just needed reliable distribution without giving up a big cut. VNDR's free plan is unbeatable. I get my music out everywhere and keep 90% of my royalties. It's straightforward and honest.",
+    quote: "I just needed reliable distribution without giving up a big cut. VNDR's free plan is unbeatable. I get my music out everywhere and keep 60% of my royalties. It's straightforward and honest.",
     stars: 5
   }
 ];
@@ -92,11 +92,11 @@ const testimonials = [
 const faqs = [
   {
     question: "What's the difference between the Distribution and Publishing plans?",
-    answer: "The Distribution plan is for artists who want to manage their own careers. You get unlimited distribution to all major platforms and keep 90% of your royalties. The Publishing Partnership is for artists who want us to act as their publisher. We take a 50% publishing share, and in return, we actively pitch your music for high-value sync licensing deals in film, TV, and games. You always keep 100% of your master rights on both plans."
+    answer: "The Distribution plan is for artists who want to manage their own careers. You get unlimited distribution to all major platforms and keep 60% of your royalties. The Publishing Partnership is for artists who want us to act as their publisher. We take a 50% publishing share, and in return, we actively pitch your music for high-value sync licensing deals in film, TV, and games. You always keep 100% of your master rights on both plans."
   },
   {
       question: "How can you offer unlimited distribution for free?",
-      answer: "Our model is built on shared success. For our Distribution plan, we take a small 10% commission on royalties, which is one of the lowest in the industry. For our Publishing partners, the 50% share aligns our goals with yours—we only make money when you do. This allows us to provide core services for free and offer powerful premium tools like our AI Pro toolkit."
+      answer: "Our model is built on shared success. For our Distribution plan, we take a 40% commission on royalties. This allows us to provide core services for free and offer powerful premium tools like our AI Pro toolkit. For our Publishing partners, the 50% share aligns our goals with yours—we only make money when you do."
   },
   {
     question: "How does the VSD token and royalty system work?",
@@ -268,14 +268,14 @@ function Home() {
                       <Card className="flex flex-col">
                           <CardHeader>
                               <CardTitle className="font-headline text-xl flex items-center gap-2"><GitBranch /> Distribution</CardTitle>
-                              <CardDescription>For artists who want maximum control and the highest royalty share.</CardDescription>
+                              <CardDescription>For artists who want maximum control and a generous royalty share.</CardDescription>
                               <div className="flex items-baseline gap-2 pt-2">
                                   <span className="text-3xl font-bold font-headline">Free</span>
                                   <span className="text-base font-normal text-muted-foreground">to start</span>
                               </div>
                           </CardHeader>
                           <CardContent className="flex-1 space-y-3">
-                              <p className="font-semibold text-primary">You Keep 90% of Royalties</p>
+                              <p className="font-semibold text-primary">You Keep 60% of Royalties</p>
                               <ul className="space-y-2 text-muted-foreground text-sm">
                                   <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Free unlimited distribution</li>
                                   <li className="flex items-center"><Check className="h-4 w-4 mr-2 text-primary"/>Basic Analytics Dashboard</li>

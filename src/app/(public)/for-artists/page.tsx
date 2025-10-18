@@ -36,7 +36,7 @@ const featureCards = [
     {
         icon: <GitBranch className="h-8 w-8 mb-4 text-accent" />,
         title: "Effortless Distribution",
-        description: "Unlimited uploads to 150+ streaming services. You keep 90% of your royalties and 100% of your rights. No hidden fees."
+        description: "Unlimited uploads to 150+ streaming services. You keep 60% of your royalties and 100% of your rights. No hidden fees."
     },
     {
         icon: <Users className="h-8 w-8 mb-4 text-accent" />,
