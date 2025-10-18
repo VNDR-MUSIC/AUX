@@ -96,7 +96,7 @@ export default function Footer() {
                 </ul>
             </div>
             
-            <div>
+             <div>
                 <h3 className="font-semibold text-foreground">Connect</h3>
                 <ul className="mt-4 space-y-2">
                     {socialLinks.map((link) => (
@@ -123,10 +123,10 @@ export default function Footer() {
                     </button>
                 </div>
                  <div className="mt-4 grid grid-cols-2 gap-4 items-center">
-                    <button onClick={() => setIsMiuModalOpen(true)} className="col-span-1 cursor-pointer">
+                    <button onClick={() => setIsMiuModalOpen(true)} className="flex justify-center items-center h-full">
                         <Image src="https://i.ibb.co/4gJqBfM/MIU-logo-wt.png" alt="MIU Logo" width={100} height={50} className="object-contain" />
                     </button>
-                    <button onClick={() => setIsSoundKlixModalOpen(true)} className="col-span-1 cursor-pointer">
+                    <button onClick={() => setIsSoundKlixModalOpen(true)} className="flex justify-center items-center h-full">
                          <Image src="https://i.ibb.co/3yRj2Z4/Screenshot-20250909-234041-Chrome.jpg" alt="SoundKlix Logo" width={100} height={50} className="object-contain" />
                     </button>
                 </div>
