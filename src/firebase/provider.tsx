@@ -3,7 +3,7 @@
 
 import React, { DependencyList, createContext, useContext, ReactNode, useMemo, useState, useEffect } from 'react';
 import { FirebaseApp } from 'firebase/app';
-import { Firestore } from 'firebase/firestore';
+import { Firestore, doc, getDoc } from 'firebase/firestore';
 import { Auth, User, onIdTokenChanged } from 'firebase/auth';
 import { FirebaseErrorListener } from '@/components/FirebaseErrorListener';
 
@@ -85,7 +85,7 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
 
   // Effect to subscribe to Firebase auth state changes
   useEffect(() => {
-    if (!auth) { // If no Auth service instance, cannot determine user state
+    if (!auth || !firestore) { // If no Auth service instance, cannot determine user state
       setUserAuthState({ user: null, isUserLoading: false, userError: new Error("Auth service not provided.") });
       return;
     }
@@ -96,12 +96,20 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
       auth,
       async (firebaseUser) => { // Auth state determined
         if (firebaseUser) {
-            const tokenResult = await firebaseUser.getIdTokenResult();
-            // This is where we attach the claims to the user object
-            (firebaseUser as any).admin = tokenResult.claims.admin === true;
-             // Set the token in a cookie for server-side access
+            const tokenPromise = firebaseUser.getIdTokenResult();
+            const adminDocPromise = getDoc(doc(firestore, `roles_admin/${firebaseUser.uid}`));
+
+            const [tokenResult, adminDoc] = await Promise.all([tokenPromise, adminDocPromise]);
+            
+            // User is an admin if the custom claim is true OR the admin doc exists
+            const isAdmin = tokenResult.claims.admin === true || adminDoc.exists();
+            
+            (firebaseUser as any).admin = isAdmin;
+
+            // Set the token in a cookie for server-side access
             const idToken = await firebaseUser.getIdToken();
             setCookie('firebaseIdToken', idToken, 1);
+
         } else {
             // User is signed out, so remove the cookie
             eraseCookie('firebaseIdToken');
@@ -115,7 +123,7 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
       }
     );
     return () => unsubscribe(); // Cleanup
-  }, [auth]); // Depends on the auth instance
+  }, [auth, firestore]); // Depends on the auth instance and firestore
 
   // Memoize the context value
   const contextValue = useMemo((): FirebaseContextState => {
