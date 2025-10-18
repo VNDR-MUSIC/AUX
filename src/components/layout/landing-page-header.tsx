@@ -16,6 +16,7 @@ export default function LandingPageHeader() {
           <Link href="/for-artists" className="text-muted-foreground hover:text-foreground">For Artists</Link>
           <Link href="#pricing" className="text-muted-foreground hover:text-foreground">Pricing</Link>
           <Link href="/dashboard/licensing" className="text-muted-foreground hover:text-foreground">Licensing</Link>
+          <Link href="/vsd-demo" className="text-muted-foreground hover:text-foreground">VSD Demo</Link>
         </nav>
         <div className="flex flex-1 items-center justify-end space-x-4">
           <Button variant="ghost" asChild>
