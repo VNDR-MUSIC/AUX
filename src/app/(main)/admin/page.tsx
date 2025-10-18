@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useMemo } from 'react';
 
 function AdminContent() {
   return (
@@ -32,15 +33,12 @@ function AdminContent() {
 
 export default function AdminPage() {
   const { user, isUserLoading: isAuthLoading } = useUser();
-  const { firestore } = useFirebase();
-
-  // Admin role check
-  const adminRef = useMemoFirebase(() => (firestore && user ? doc(firestore, `roles_admin/${user.uid}`) : null), [firestore, user]);
-  const { data: adminDoc, isLoading: isAdminLoading } = useDoc(adminRef);
-  const isAdmin = !!adminDoc;
+  
+  // Directly use the property attached in the Firebase provider
+  const isAdmin = (user as any)?.admin === true;
   const isSuperAdmin = user?.email === 'support@vndrmusic.com';
   
-  const isLoading = isAuthLoading || isAdminLoading;
+  const isLoading = isAuthLoading;
 
   if (isLoading) {
       return (

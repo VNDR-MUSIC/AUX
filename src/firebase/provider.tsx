@@ -97,7 +97,8 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
       async (firebaseUser) => { // Auth state determined
         if (firebaseUser) {
             const tokenResult = await firebaseUser.getIdTokenResult();
-            (firebaseUser as any).customClaims = tokenResult.claims;
+            // This is where we attach the claims to the user object
+            (firebaseUser as any).admin = tokenResult.claims.admin === true;
              // Set the token in a cookie for server-side access
             const idToken = await firebaseUser.getIdToken();
             setCookie('firebaseIdToken', idToken, 1);

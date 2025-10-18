@@ -75,7 +75,7 @@ export default function SidebarNav() {
   const isAdmin = useMemo(() => {
     if (isUserLoading || !user) return false;
     // Check for custom claim on the user object after it has loaded.
-    return (user as any)?.customClaims?.admin === true;
+    return (user as any).admin === true;
   }, [user, isUserLoading]);
 
   const menuItems = useMemo(() => {

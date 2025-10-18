@@ -41,7 +41,7 @@ export default function Footer() {
   const [isNdRadioModalOpen, setIsNdRadioModalOpen] = useState(false);
   const [isAudioExchangeModalOpen, setIsAudioExchangeModalOpen] = useState(false);
   const [isMiuModalOpen, setIsMiuModalOpen] = useState(false);
-  const isAdmin = (user as any)?.customClaims?.admin === true;
+  const isAdmin = (user as any)?.admin === true;
 
   let finalArtistLinks = [...artistLinks];
   if(user && isAdmin) {
@@ -65,15 +65,9 @@ export default function Footer() {
                         <Icons.logo />
                     </div>
                 </Link>
-                 <div className="mt-4 text-xs text-muted-foreground space-y-1">
-                    <p className="flex items-start gap-2">
-                        <MapPin className="h-4 w-4 flex-shrink-0 mt-0.5" />
-                        <span>3110 1ST AVENUE NORTH SUITE 2M PMB 1122 ST, SAINT PETERSBURG, FL 33713</span>
-                    </p>
-                </div>
             </div>
             
-            <div className="col-span-1 md:col-span-4 grid grid-cols-2 sm:grid-cols-4 gap-8">
+            <div className="col-span-1 md:col-span-4 grid grid-cols-1 sm:grid-cols-4 gap-8">
                 {!isUserLoading && user && (
                   <div>
                       <h3 className="font-semibold text-foreground">For Artists</h3>
@@ -117,29 +111,29 @@ export default function Footer() {
 
                 <div>
                     <h3 className="font-semibold text-foreground">Our Partners</h3>
-                    <div className="mt-4 flex flex-col gap-4">
-                        <div className="flex items-center gap-4">
-                            {ivtv && <button onClick={() => setIsIvtvModalOpen(true)} className="cursor-pointer relative h-10 w-10">
-                                <Image src={ivtv.logoUrl} alt="IVtv Logo" fill className="object-contain" />
-                            </button>}
-                            {ndradio && <button onClick={() => setIsNdRadioModalOpen(true)} className="cursor-pointer relative h-10 w-10">
-                                <Image src={ndradio.logoUrl} alt="ND Radio Logo" fill className="object-contain" />
-                            </button>}
-                             {audex && <button onClick={() => setIsAudioExchangeModalOpen(true)} className="cursor-pointer relative h-10 w-10">
-                                <Image src={audex.logoUrl} alt="Audio Exchange Logo" fill className="object-contain" />
-                            </button>}
-                        </div>
-                         <div className="flex items-center gap-4">
-                            {miu && <button onClick={() => setIsMiuModalOpen(true)} className="flex justify-center items-center h-10 w-10 relative">
-                                <Image src={miu.logoUrl} alt="MIU Logo" fill className="object-contain" />
-                            </button>}
-                        </div>
+                    <div className="mt-4 flex items-center gap-4">
+                        {ivtv && <button onClick={() => setIsIvtvModalOpen(true)} className="cursor-pointer relative h-10 w-10">
+                            <Image src={ivtv.logoUrl} alt="IVtv Logo" fill className="object-contain" />
+                        </button>}
+                        {ndradio && <button onClick={() => setIsNdRadioModalOpen(true)} className="cursor-pointer relative h-10 w-10">
+                            <Image src={ndradio.logoUrl} alt="ND Radio Logo" fill className="object-contain" />
+                        </button>}
+                         {audex && <button onClick={() => setIsAudioExchangeModalOpen(true)} className="cursor-pointer relative h-10 w-10">
+                            <Image src={audex.logoUrl} alt="Audio Exchange Logo" fill className="object-contain" />
+                        </button>}
+                        {miu && <button onClick={() => setIsMiuModalOpen(true)} className="flex justify-center items-center h-10 w-10 relative">
+                            <Image src={miu.logoUrl} alt="MIU Logo" fill className="object-contain" />
+                        </button>}
                     </div>
                 </div>
             </div>
         </div>
-        <div className="mt-12 border-t pt-8 text-center text-sm text-muted-foreground">
+        <div className="mt-12 border-t pt-8 text-center text-sm text-muted-foreground space-y-2 md:space-y-0 md:flex md:items-center md:justify-between">
             <p>&copy; {new Date().getFullYear()} VNDR Music, Inc. All rights reserved.</p>
+            <div className="text-xs text-muted-foreground/80 flex items-center justify-center gap-2">
+                <MapPin className="h-3 w-3 flex-shrink-0" />
+                <span>3110 1ST AVENUE NORTH SUITE 2M PMB 1122 ST, SAINT PETERSBURG, FL 33713</span>
+            </div>
         </div>
       </div>
     </footer>
