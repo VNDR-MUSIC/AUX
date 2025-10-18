@@ -15,6 +15,7 @@ import {
   Settings,
   Users,
   LogOut,
+  DollarSign,
 } from 'lucide-react';
 import { useUser } from '@/firebase';
 import {
@@ -58,6 +59,7 @@ const authenticatedMenuItems = [
 const publicMenuItems = [
     { href: '/', icon: Home, label: 'Home' },
     { href: '/catalog', icon: Library, label: 'Music Catalog' },
+    { href: '/vsd-demo', icon: DollarSign, label: 'VSD Demo' },
 ]
 
 const adminMenuItem = { href: '/admin', icon: Shield, label: 'Admin' };
