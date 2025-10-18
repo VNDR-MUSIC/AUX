@@ -128,9 +128,10 @@ export default function Footer() {
                 </div>
             </div>
         </div>
-        <div className="mt-12 border-t pt-8 text-center text-sm text-muted-foreground space-y-2 md:space-y-0 md:flex md:items-center md:justify-between">
+        <div className="mt-12 border-t pt-8 text-center text-sm text-muted-foreground">
             <p>&copy; {new Date().getFullYear()} VNDR Music, Inc. All rights reserved.</p>
-            <div className="text-xs text-muted-foreground/80 flex items-center justify-center gap-2">
+            <p className="font-semibold mt-2">An Independent Media Group (IMG) Company</p>
+            <div className="text-xs text-muted-foreground/80 flex items-center justify-center gap-2 mt-2">
                 <MapPin className="h-3 w-3 flex-shrink-0" />
                 <span>3110 1ST AVENUE NORTH SUITE 2M PMB 1122 ST, SAINT PETERSBURG, FL 33713</span>
             </div>
