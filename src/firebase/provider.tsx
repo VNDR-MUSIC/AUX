@@ -96,25 +96,23 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
       auth,
       async (firebaseUser) => { // Auth state determined
         if (firebaseUser) {
-            const tokenPromise = firebaseUser.getIdTokenResult();
-            const adminDocPromise = getDoc(doc(firestore, `roles_admin/${firebaseUser.uid}`));
-
-            const [tokenResult, adminDoc] = await Promise.all([tokenPromise, adminDocPromise]);
+            const tokenResult = await firebaseUser.getIdTokenResult();
+            const isAdmin = tokenResult.claims.admin === true;
             
-            // User is an admin if the custom claim is true OR the admin doc exists
-            const isAdmin = tokenResult.claims.admin === true || adminDoc.exists();
-            
-            (firebaseUser as any).admin = isAdmin;
+            // This is the key fix: create a new user object that includes our custom property.
+            const userWithAdmin = Object.assign(firebaseUser, { admin: isAdmin });
 
             // Set the token in a cookie for server-side access
             const idToken = await firebaseUser.getIdToken();
             setCookie('firebaseIdToken', idToken, 1);
+            
+            setUserAuthState({ user: userWithAdmin, isUserLoading: false, userError: null });
 
         } else {
             // User is signed out, so remove the cookie
             eraseCookie('firebaseIdToken');
+            setUserAuthState({ user: null, isUserLoading: false, userError: null });
         }
-        setUserAuthState({ user: firebaseUser, isUserLoading: false, userError: null });
       },
       (error) => { // Auth listener error
         console.error("FirebaseProvider: onAuthStateChanged error:", error);
