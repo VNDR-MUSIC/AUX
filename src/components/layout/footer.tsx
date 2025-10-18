@@ -61,8 +61,8 @@ export default function Footer() {
     <>
     <footer className="bg-transparent border-t w-screen max-w-full">
       <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
-            <div className="col-span-full sm:col-span-2 lg:col-span-1">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
+            <div className="col-span-2 md:col-span-1">
                 <Link href="/" className="flex items-center gap-2">
                     <div className="relative h-20 w-40 sm:h-28 sm:w-56">
                         <Icons.logo />
@@ -77,67 +77,71 @@ export default function Footer() {
                 </div>
             </div>
             
-            {!isUserLoading && user && (
-              <div>
-                  <h3 className="font-semibold text-foreground">For Artists</h3>
-                  <ul className="mt-4 space-y-2">
-                      {finalArtistLinks.map((link) => (
-                          <li key={link.name}>
-                              <Link href={link.href} className="text-sm text-muted-foreground hover:text-primary">
-                                  {link.name}
-                              </Link>
-                          </li>
-                      ))}
-                  </ul>
-              </div>
-            )}
+            <div className="col-span-2 grid grid-cols-2 sm:grid-cols-4 md:col-span-4 gap-8">
+                {!isUserLoading && user && (
+                  <div>
+                      <h3 className="font-semibold text-foreground">For Artists</h3>
+                      <ul className="mt-4 space-y-2">
+                          {finalArtistLinks.map((link) => (
+                              <li key={link.name}>
+                                  <Link href={link.href} className="text-sm text-muted-foreground hover:text-primary">
+                                      {link.name}
+                                  </Link>
+                              </li>
+                          ))}
+                      </ul>
+                  </div>
+                )}
 
-            <div>
-                <h3 className="font-semibold text-foreground">Company</h3>
-                <ul className="mt-4 space-y-2">
-                    {companyLinks.map((link) => (
-                        <li key={link.name}>
-                            <Link href={link.href} className="text-sm text-muted-foreground hover:text-primary">
-                                {link.name}
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-            
-             <div>
-                <h3 className="font-semibold text-foreground">Connect</h3>
-                <ul className="mt-4 space-y-2">
-                    {socialLinks.map((link) => (
-                        <li key={link.name}>
-                            <Link href={link.href} className="text-sm text-muted-foreground hover:text-primary">
-                                {link.name}
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-
-            <div>
-                <h3 className="font-semibold text-foreground">Our Subsidiaries & Partners</h3>
-                <div className="mt-4 grid grid-cols-3 gap-4 items-center">
-                    {ivtv && <button onClick={() => setIsIvtvModalOpen(true)} className="cursor-pointer relative h-12">
-                        <Image src={ivtv.logoUrl} alt="IVtv Logo" fill className="object-contain" />
-                    </button>}
-                    <button onClick={() => setIsNdRadioModalOpen(true)} className="cursor-pointer relative h-12">
-                        <Image src="https://i.ibb.co/4wvZ1Mzq/ND-Radio-transparent.png" alt="ND Radio Logo" fill className="object-contain" />
-                    </button>
-                     {audex && <button onClick={() => setIsAudioExchangeModalOpen(true)} className="cursor-pointer relative h-12">
-                        <Image src={audex.logoUrl} alt="Audio Exchange Logo" fill className="object-contain" />
-                    </button>}
+                <div>
+                    <h3 className="font-semibold text-foreground">Company</h3>
+                    <ul className="mt-4 space-y-2">
+                        {companyLinks.map((link) => (
+                            <li key={link.name}>
+                                <Link href={link.href} className="text-sm text-muted-foreground hover:text-primary">
+                                    {link.name}
+                                </Link>
+                            </li>
+                        ))}
+                    </ul>
                 </div>
-                 <div className="mt-4 grid grid-cols-2 gap-4 items-center">
-                    {miu && <button onClick={() => setIsMiuModalOpen(true)} className="flex justify-center items-center h-12 relative">
-                        <Image src={miu.logoUrl} alt="MIU Logo" fill className="object-contain" />
-                    </button>}
-                    {soundklix && <button onClick={() => setIsSoundKlixModalOpen(true)} className="flex justify-center items-center h-12 relative">
-                         <Image src={soundklix.logoUrl} alt="SoundKlix Logo" fill className="object-contain" />
-                    </button>}
+                
+                 <div>
+                    <h3 className="font-semibold text-foreground">Connect</h3>
+                    <ul className="mt-4 space-y-2">
+                        {socialLinks.map((link) => (
+                            <li key={link.name}>
+                                <Link href={link.href} className="text-sm text-muted-foreground hover:text-primary">
+                                    {link.name}
+                                </Link>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 className="font-semibold text-foreground">Our Partners</h3>
+                    <div className="mt-4 flex flex-col gap-4">
+                        <div className="flex items-center gap-4">
+                            {ivtv && <button onClick={() => setIsIvtvModalOpen(true)} className="cursor-pointer relative h-10 w-10">
+                                <Image src={ivtv.logoUrl} alt="IVtv Logo" fill className="object-contain" />
+                            </button>}
+                            <button onClick={() => setIsNdRadioModalOpen(true)} className="cursor-pointer relative h-10 w-10">
+                                <Image src="https://i.ibb.co/4wvZ1Mzq/ND-Radio-transparent.png" alt="ND Radio Logo" fill className="object-contain" />
+                            </button>
+                             {audex && <button onClick={() => setIsAudioExchangeModalOpen(true)} className="cursor-pointer relative h-10 w-10">
+                                <Image src={audex.logoUrl} alt="Audio Exchange Logo" fill className="object-contain" />
+                            </button>}
+                        </div>
+                         <div className="flex items-center gap-4">
+                            {miu && <button onClick={() => setIsMiuModalOpen(true)} className="flex justify-center items-center h-10 w-10 relative">
+                                <Image src={miu.logoUrl} alt="MIU Logo" fill className="object-contain" />
+                            </button>}
+                            {soundklix && <button onClick={() => setIsSoundKlixModalOpen(true)} className="flex justify-center items-center h-10 w-10 relative">
+                                 <Image src={soundklix.logoUrl} alt="SoundKlix Logo" fill className="object-contain" />
+                            </button>}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
