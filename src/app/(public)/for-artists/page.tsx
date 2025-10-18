@@ -5,54 +5,87 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Upload, Sparkles, Speaker, DollarSign, ArrowRight, GitBranch, BarChart, Users, GraduationCap } from 'lucide-react';
+import { Upload, Sparkles, Speaker, DollarSign, ArrowRight, GitBranch, BarChart, Users, GraduationCap, Gavel, FileText, Bot, XCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Icons } from '@/components/icons';
 
-const journeySteps = [
+const painPoints = [
     {
-        icon: <Upload className="h-10 w-10 text-primary" />,
-        title: "1. Upload & Enrich",
-        description: "Submit your track. Our AI analyzes its DNA—BPM, key, mood—and can even generate unique cover art for you.",
+        icon: <XCircle className="h-10 w-10 text-destructive" />,
+        title: "Opaque Royalties & Delayed Payments",
+        description: "Confusing statements and waiting months (or years) to get paid for your streams and sales.",
     },
     {
-        icon: <Sparkles className="h-10 w-10 text-primary" />,
-        title: "2. Distribute & Publish",
-        description: "We deliver your music to over 150 platforms. If you're a publishing partner, our team begins pitching your track for sync deals.",
+        icon: <XCircle className="h-10 w-10 text-destructive" />,
+        title: "Gatekept Opportunities",
+        description: "Struggling to get your music in front of music supervisors for sync placements in film, TV, and games.",
+    },
+     {
+        icon: <XCircle className="h-10 w-10 text-destructive" />,
+        title: "Lack of Support & Tools",
+        description: "Feeling like you're on your own, juggling everything from marketing to legal without expert guidance.",
     },
     {
-        icon: <Speaker className="h-10 w-10 text-primary" />,
-        title: "3. License & Promote",
-        description: "Your music is discovered in our catalog by music supervisors. Our AI and human A&R teams work to place your music in film, TV, and games.",
-    },
-    {
-        icon: <DollarSign className="h-10 w-10 text-primary" />,
-        title: "4. Earn & Grow",
-        description: "All royalties and licensing fees are paid directly to your VSD wallet. Use our analytics to track your growth and make informed decisions.",
+        icon: <XCircle className="h-10 w-10 text-destructive" />,
+        title: "Giving Up Your Rights",
+        description: "Being forced into restrictive, long-term deals where you lose control of your master recordings and creative direction.",
     },
 ];
 
 const featureCards = [
     {
-        icon: <GitBranch className="h-8 w-8 mb-4 text-accent" />,
+        icon: <GitBranch className="h-8 w-8 mb-4 text-primary" />,
         title: "Effortless Distribution",
-        description: "Unlimited uploads to 150+ streaming services. You keep 60% of your royalties and 100% of your rights. No hidden fees."
+        description: "Unlimited uploads to 150+ streaming services like Spotify and Apple Music. You always keep 100% of your rights."
     },
     {
-        icon: <Users className="h-8 w-8 mb-4 text-accent" />,
+        icon: <Users className="h-8 w-8 mb-4 text-primary" />,
         title: "Proactive Sync Licensing",
-        description: "Partner with us and we become your publisher. We actively pitch your music for high-value placements in media."
-    },
-    {
-        icon: <BarChart className="h-8 w-8 mb-4 text-accent" />,
-        title: "AI-Powered Analytics",
-        description: "Generate in-depth reports on your catalog's performance, audience demographics, and revenue projections."
+        description: "Partner with us and we become your publisher. We actively pitch your music for high-value placements in film, TV, and games."
     },
     {
         icon: <div className="h-8 w-8 mb-4 flex items-center justify-center"><Icons.vsd className="h-8 w-8" /></div>,
         title: "Transparent Royalties",
         description: "Get paid instantly. Our VSD token system provides a transparent, verifiable ledger for all your earnings."
+    },
+    {
+        icon: <Bot className="h-8 w-8 mb-4 text-primary" />,
+        title: "A Full AI-Powered Team",
+        description: "From generating cover art and performance reports to getting simulated legal advice, our AI toolkit is always on."
     }
+];
+
+const aiTools = [
+  {
+    icon: <BarChart />,
+    title: "AI Performance Reports",
+    description: "Generate in-depth reports on your catalog's performance, audience demographics, and revenue projections for a small VSD fee."
+  },
+  {
+    icon: <Sparkles />,
+    title: "AI Cover Art Generation",
+    description: "No designer? No problem. Create unique, professional cover art for your tracks based on title and genre."
+  },
+  {
+    icon: <Gavel />,
+    title: "Legal Eagle AI",
+    description: "Ask general questions about complex industry topics like copyright, splits, and contracts, and get simulated legal information."
+  },
+  {
+    icon: <FileText />,
+    title: "AI Marketing Assistant",
+    description: "Let Symbi, our platform AI, help you draft social media posts and press releases to promote your music."
+  },
+  {
+    icon: <DollarSign />,
+    title: "AI Licensing Price Recommendations",
+    description: "Not sure what to charge for a license? Our AI suggests a fair market price based on genre and market data."
+  },
+  {
+    icon: <Users />,
+    title: "AI-Powered A&R",
+    description: "Our system analyzes your music's DNA to identify potential collaborators and suggest which tracks to pitch for sync deals."
+  }
 ];
 
 
@@ -82,42 +115,45 @@ export default function ForArtistsPage() {
                 <p className="max-w-[700px] text-base sm:text-lg text-neutral-200 md:text-xl drop-shadow-lg">
                     We provide the tools, technology, and team to turn your music into a thriving career, without the old-school gatekeepers.
                 </p>
+                 <Button asChild size="lg" className="font-bold mt-4">
+                    <Link href="/login">Get Started Free <ArrowRight className="ml-2 h-5 w-5" /></Link>
+                </Button>
             </div>
         </section>
 
-        {/* The Journey Section */}
-        <section id="how-it-works" className="py-16 md:py-24 bg-secondary w-full">
+        {/* Pain Points Section */}
+        <section id="the-problem" className="py-16 md:py-24 bg-secondary w-full">
             <div className="container px-4 md:px-6">
                 <div className="text-center mb-12">
-                    <h2 className="font-headline text-3xl sm:text-4xl font-bold tracking-tighter">Your Journey on VNDR</h2>
+                    <h2 className="font-headline text-3xl sm:text-4xl font-bold tracking-tighter">The Old Industry Wasn't Built For You</h2>
                     <p className="max-w-[700px] mx-auto mt-4 text-muted-foreground md:text-lg">
-                        From studio session to royalty payment, we've streamlined the entire process.
+                        Independent artists face the same challenges over and over. Sound familiar?
                     </p>
                 </div>
                 <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-                    {journeySteps.map((step, index) => (
-                        <div key={index} className="relative flex flex-col items-center text-center p-6 bg-card rounded-lg shadow-md border">
-                            {step.icon}
-                            <h3 className="font-headline text-xl font-semibold mt-4 mb-2">{step.title}</h3>
-                            <p className="text-muted-foreground text-sm flex-1">{step.description}</p>
+                    {painPoints.map((point, index) => (
+                        <div key={index} className="relative flex flex-col items-center text-center p-6 bg-card rounded-lg shadow-md border border-destructive/20">
+                            {point.icon}
+                            <h3 className="font-headline text-xl font-semibold mt-4 mb-2">{point.title}</h3>
+                            <p className="text-muted-foreground text-sm flex-1">{point.description}</p>
                         </div>
                     ))}
                 </div>
             </div>
         </section>
         
-        {/* Features Section */}
-        <section className="py-16 md:py-24 w-full">
+        {/* The VNDR Solution Section */}
+        <section id="the-solution" className="py-16 md:py-24 w-full">
           <div className="container px-4 md:px-6">
             <div className="text-center mb-12">
-              <h2 className="font-headline text-3xl sm:text-4xl font-bold tracking-tighter">Everything You Need to Succeed</h2>
+              <h2 className="font-headline text-3xl sm:text-4xl font-bold tracking-tighter">The VNDR Ecosystem: Your Unfair Advantage</h2>
               <p className="max-w-[700px] mx-auto mt-4 text-muted-foreground md:text-lg">
-                  VNDR is more than a distributor; it's a complete ecosystem for the modern independent artist.
+                  VNDR is more than a distributor; it's a complete platform designed for the modern independent artist.
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {featureCards.map((feature, index) => (
-                <Card key={index} className="text-center p-6 flex flex-col">
+                <Card key={index} className="text-center p-6 flex flex-col bg-card/80">
                   {feature.icon}
                   <h3 className="font-headline text-xl font-semibold">{feature.title}</h3>
                   <p className="text-muted-foreground text-sm mt-2 flex-1">{feature.description}</p>
@@ -126,9 +162,36 @@ export default function ForArtistsPage() {
             </div>
           </div>
         </section>
+
+        {/* AI Toolkit Section */}
+        <section id="ai-toolkit" className="py-16 md:py-24 bg-secondary w-full">
+            <div className="container px-4 md:px-6">
+                <div className="text-center mb-12">
+                    <h2 className="font-headline text-3xl sm:text-4xl font-bold tracking-tighter">Your AI-Powered Team</h2>
+                    <p className="max-w-[700px] mx-auto mt-4 text-muted-foreground md:text-lg">
+                       Stop juggling tasks. Our suite of AI tools acts as your dedicated designer, analyst, and legal assistant, available 24/7.
+                    </p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {aiTools.map((tool, index) => (
+                    <Card key={index} className="flex flex-col">
+                      <CardHeader className="flex flex-row items-center gap-4">
+                        <div className="p-3 bg-primary/10 rounded-full text-primary">
+                          {tool.icon}
+                        </div>
+                        <CardTitle className="font-headline text-lg">{tool.title}</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-sm text-muted-foreground">{tool.description}</p>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+            </div>
+        </section>
         
         {/* MIU Section */}
-        <section className="py-16 md:py-24 bg-secondary w-full">
+        <section className="py-16 md:py-24 w-full">
             <div className="container px-4 md:px-6">
                 <div className="grid md:grid-cols-2 gap-8 items-center">
                     <div className="relative h-40 w-full">
@@ -168,3 +231,5 @@ export default function ForArtistsPage() {
     </div>
   );
 }
+
+    
