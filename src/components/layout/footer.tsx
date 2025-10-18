@@ -127,7 +127,7 @@ export default function Footer() {
                         <Image src="https://i.ibb.co/4gJqBfM/MIU-logo-wt.png" alt="MIU Logo" width={100} height={50} className="object-contain" />
                     </button>
                     <button onClick={() => setIsSoundKlixModalOpen(true)} className="flex justify-center items-center h-full">
-                         <Image src="https://i.ibb.co/3yRj2Z4/Screenshot-20250909-234041-Chrome.jpg" alt="SoundKlix Logo" width={100} height={50} className="object-contain" />
+                         <Image src="https://i.ibb.co/M53tfW4/6afe7afc-3816-4f85-a250-50819e0f1b00.png" alt="SoundKlix Logo" width={100} height={50} className="object-contain" />
                     </button>
                 </div>
             </div>
