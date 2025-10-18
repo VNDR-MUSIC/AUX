@@ -11,7 +11,8 @@ import NDRadioModal from "./nd-radio-modal";
 import AudioExchangeModal from "./audio-exchange-modal";
 import MiuModal from "./miu-modal";
 import { MapPin } from "lucide-react";
-import SoundKlixModal from "./soundklix-modal"; // Corrected import
+import SoundKlixModal from "./soundklix-modal";
+import { subsidiaries } from "@/lib/subsidiaries";
 
 const socialLinks = [
     { name: "Twitter", href: "#" },
@@ -48,6 +49,13 @@ export default function Footer() {
   if(user && isAdmin) {
     finalArtistLinks.push(adminLink);
   }
+
+  const ivtv = subsidiaries.find(s => s.id === 'ivtv');
+  const ndradio = subsidiaries.find(s => s.id === 'vsd_network'); // This seems wrong, should be ndradio, but none exists
+  const audex = subsidiaries.find(s => s.id === 'audio_exchange');
+  const miu = subsidiaries.find(s => s.id === 'miu');
+  const soundklix = subsidiaries.find(s => s.id === 'soundklix');
+
 
   return (
     <>
@@ -113,23 +121,23 @@ export default function Footer() {
             <div>
                 <h3 className="font-semibold text-foreground">Our Subsidiaries & Partners</h3>
                 <div className="mt-4 grid grid-cols-3 gap-4 items-center">
-                    <button onClick={() => setIsIvtvModalOpen(true)} className="cursor-pointer relative h-12">
-                        <Image src="https://i.ibb.co/FqwXfkL9/Screenshot-20250914-224236-Facebook.jpg" alt="IVtv Logo" fill className="object-contain" />
-                    </button>
+                    {ivtv && <button onClick={() => setIsIvtvModalOpen(true)} className="cursor-pointer relative h-12">
+                        <Image src={ivtv.logoUrl} alt="IVtv Logo" fill className="object-contain" />
+                    </button>}
                     <button onClick={() => setIsNdRadioModalOpen(true)} className="cursor-pointer relative h-12">
                         <Image src="https://i.ibb.co/4wvZ1Mzq/ND-Radio-transparent.png" alt="ND Radio Logo" fill className="object-contain" />
                     </button>
-                     <button onClick={() => setIsAudioExchangeModalOpen(true)} className="cursor-pointer relative h-12">
-                        <Image src="https://i.ibb.co/fVjNMVpk/logo2.png" alt="Audio Exchange Logo" fill className="object-contain" />
-                    </button>
+                     {audex && <button onClick={() => setIsAudioExchangeModalOpen(true)} className="cursor-pointer relative h-12">
+                        <Image src={audex.logoUrl} alt="Audio Exchange Logo" fill className="object-contain" />
+                    </button>}
                 </div>
                  <div className="mt-4 grid grid-cols-2 gap-4 items-center">
-                    <button onClick={() => setIsMiuModalOpen(true)} className="flex justify-center items-center h-12 relative">
-                        <Image src="https://i.ibb.co/4gJqBfM/MIU-logo-wt.png" alt="MIU Logo" fill className="object-contain" />
-                    </button>
-                    <button onClick={() => setIsSoundKlixModalOpen(true)} className="flex justify-center items-center h-12 relative">
-                         <Image src="https://i.ibb.co/M53tfW4/6afe7afc-3816-4f85-a250-50819e0f1b00.png" alt="SoundKlix Logo" fill className="object-contain" />
-                    </button>
+                    {miu && <button onClick={() => setIsMiuModalOpen(true)} className="flex justify-center items-center h-12 relative">
+                        <Image src={miu.logoUrl} alt="MIU Logo" fill className="object-contain" />
+                    </button>}
+                    {soundklix && <button onClick={() => setIsSoundKlixModalOpen(true)} className="flex justify-center items-center h-12 relative">
+                         <Image src={soundklix.logoUrl} alt="SoundKlix Logo" fill className="object-contain" />
+                    </button>}
                 </div>
             </div>
         </div>

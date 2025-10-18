@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { GraduationCap, X, BookOpen, Cpu, Network } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { subsidiaries } from '@/lib/subsidiaries';
 
 const panelVariants = {
   hidden: { x: '-100%' },
@@ -17,6 +18,7 @@ const panelVariants = {
 
 export default function MiuSlideOut() {
   const [isOpen, setIsOpen] = useState(false);
+  const miu = subsidiaries.find(s => s.id === 'miu');
 
   return (
     <>
@@ -41,12 +43,12 @@ export default function MiuSlideOut() {
           >
             <div className="relative w-full h-full flex items-center justify-end">
               <div className="relative w-32 h-32 transition-transform duration-300 group-hover:scale-105">
-                <Image 
-                    src="https://i.ibb.co/4gJqBfM/MIU-logo-wt.png" 
+                {miu && <Image 
+                    src={miu.logoUrl} 
                     alt="MIU Logo" 
                     fill 
                     className="object-contain" 
-                  />
+                  />}
               </div>
             </div>
           </motion.div>
@@ -76,12 +78,12 @@ export default function MiuSlideOut() {
             >
               <div className="flex items-center justify-between p-4 border-b">
                  <div className="relative h-20 w-full">
-                  <Image 
-                    src="https://i.ibb.co/4gJqBfM/MIU-logo-wt.png" 
+                  {miu && <Image 
+                    src={miu.logoUrl} 
                     alt="MIU Logo" 
                     fill 
                     className="object-contain" 
-                  />
+                  />}
                 </div>
                 <Button 
                   variant="ghost" 

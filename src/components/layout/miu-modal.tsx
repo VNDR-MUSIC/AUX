@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -12,6 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '../ui/button';
 import { GraduationCap } from 'lucide-react';
+import { subsidiaries } from '@/lib/subsidiaries';
 
 interface MiuModalProps {
   isOpen: boolean;
@@ -19,12 +21,13 @@ interface MiuModalProps {
 }
 
 export default function MiuModal({ isOpen, onClose }: MiuModalProps) {
+  const miu = subsidiaries.find(s => s.id === 'miu');
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md bg-card text-card-foreground">
         <DialogHeader>
-          <div className="flex justify-center mb-4">
-            <Image src="https://i.ibb.co/4gJqBfM/MIU-logo-wt.png" alt="Music Industry University Logo" width={150} height={75} className="object-contain" />
+          <div className="flex justify-center mb-4 relative h-20">
+            {miu && <Image src={miu.logoUrl} alt="Music Industry University Logo" fill className="object-contain" />}
           </div>
           <DialogTitle className="font-headline text-2xl text-center">Music Industry University</DialogTitle>
           <DialogDescription className="text-center">

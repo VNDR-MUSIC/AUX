@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '../ui/button';
 import { Music } from 'lucide-react';
+import { subsidiaries } from '@/lib/subsidiaries';
 
 interface SoundKlixModalProps {
   isOpen: boolean;
@@ -20,12 +21,14 @@ interface SoundKlixModalProps {
 }
 
 export default function SoundKlixModal({ isOpen, onClose }: SoundKlixModalProps) {
+  const soundklix = subsidiaries.find(s => s.id === 'soundklix');
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md bg-card text-card-foreground">
         <DialogHeader>
           <div className="flex justify-center mb-4 relative h-20">
-            <Image src="https://i.ibb.co/M53tfW4/6afe7afc-3816-4f85-a250-50819e0f1b00.png" alt="SoundKlix Logo" fill className="object-contain" />
+            {soundklix && <Image src={soundklix.logoUrl} alt="SoundKlix Logo" fill className="object-contain" />}
           </div>
           <DialogTitle className="font-headline text-2xl text-center">SoundKlix</DialogTitle>
           <DialogDescription className="text-center">
