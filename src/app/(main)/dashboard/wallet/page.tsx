@@ -79,8 +79,9 @@ export default function WalletPage() {
   const sortedTransactions = useMemo(() => {
     if (!transactions) return [];
     return [...transactions].sort((a, b) => {
-        const dateA = a.transactionDate?.toDate ? a.transactionDate.toDate().getTime() : 0;
-        const dateB = b.transactionDate?.toDate ? b.transactionDate.toDate().getTime() : 0;
+        // Data from server is serialized, so we create Date objects from strings
+        const dateA = new Date(a.transactionDate as any).getTime();
+        const dateB = new Date(b.transactionDate as any).getTime();
         return dateB - dateA;
     });
   }, [transactions]);
