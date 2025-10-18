@@ -82,7 +82,7 @@ export default function SidebarNav() {
     if (isUserLoading) return [];
     let items = user ? [...authenticatedMenuItems] : [...publicMenuItems];
     if (user && isAdmin) {
-      items.push(adminMenuItem);
+      items.unshift(adminMenuItem);
     }
     return items;
   }, [user, isAdmin, isUserLoading]);
