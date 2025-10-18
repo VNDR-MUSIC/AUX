@@ -63,8 +63,9 @@ export default function AuthForm() {
       if (signupState.user && auth?.currentUser) {
         // After successful sign-up, force a token refresh to get custom claims
         auth.currentUser.getIdToken(true).then(() => {
-           // Firebase onAuthStateChanged will trigger with the new user object (and claims)
-           // and the previous useEffect will handle the redirect.
+           // Firebase onIdTokenChanged listener will now trigger with the new user object
+           // (containing the fresh claims) and the previous useEffect will handle the redirect.
+           console.log("Token refreshed, custom claims should be available.");
         });
       }
     }
@@ -220,3 +221,5 @@ export default function AuthForm() {
     </Card>
   );
 }
+
+    
