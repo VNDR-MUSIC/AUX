@@ -42,7 +42,7 @@ export default function MiuSlideOut() {
             <div className="relative w-full h-full flex items-center justify-end">
               <div className="relative w-32 h-32 transition-transform duration-300 group-hover:scale-105">
                 <Image 
-                    src="https://i.ibb.co/4gJqBfM8/MIU-logo-wt.png" 
+                    src="https://i.ibb.co/4gJqBfM/MIU-logo-wt.png" 
                     alt="MIU Logo" 
                     fill 
                     className="object-contain" 
@@ -77,7 +77,7 @@ export default function MiuSlideOut() {
               <div className="flex items-center justify-between p-4 border-b">
                  <div className="relative h-20 w-full">
                   <Image 
-                    src="https://i.ibb.co/4gJqBfM8/MIU-logo-wt.png" 
+                    src="https://i.ibb.co/4gJqBfM/MIU-logo-wt.png" 
                     alt="MIU Logo" 
                     fill 
                     className="object-contain" 
