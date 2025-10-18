@@ -95,7 +95,7 @@ export default function Home2Page() {
                                     <Image
                                         src={cardBgImage.imageUrl}
                                         alt="Music production background"
-                                        layout="fill"
+                                        fill
                                         className="object-cover"
                                         data-ai-hint={cardBgImage.imageHint}
                                     />
@@ -170,7 +170,7 @@ export default function Home2Page() {
             <div className="container px-4 md:px-6">
                 <div className="text-center mb-12">
                     <div className="flex justify-center mb-4 relative h-32 w-auto">
-                        <Image src="https://i.ibb.co/4gJqBfM8/MIU-logo-wt.png" alt="MIU Logo" layout="fill" className="object-contain" />
+                        <Image src="https://i.ibb.co/4gJqBfM8/MIU-logo-wt.png" alt="MIU Logo" fill className="object-contain" />
                     </div>
                     <h2 className="font-headline text-3xl sm:text-4xl font-bold tracking-tighter">Continue Your Education</h2>
                     <p className="max-w-[700px] mx-auto mt-4 text-muted-foreground md:text-lg">

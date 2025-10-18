@@ -44,7 +44,7 @@ export default function MiuSlideOut() {
                 <Image 
                     src="https://i.ibb.co/4gJqBfM8/MIU-logo-wt.png" 
                     alt="MIU Logo" 
-                    layout="fill" 
+                    fill 
                     className="object-contain" 
                   />
               </div>
@@ -79,7 +79,7 @@ export default function MiuSlideOut() {
                   <Image 
                     src="https://i.ibb.co/4gJqBfM8/MIU-logo-wt.png" 
                     alt="MIU Logo" 
-                    layout="fill" 
+                    fill 
                     className="object-contain" 
                   />
                 </div>
