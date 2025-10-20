@@ -386,7 +386,3 @@ export async function rejectLicenseRequestAction(requestId: string): Promise<{ s
     return { success: false, message: 'Failed to reject request.' };
   }
 }
-
-    
-
-    
